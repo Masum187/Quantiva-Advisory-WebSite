@@ -1,5 +1,49 @@
 # RESKIN_REPORT: Quantiva Advisory Valmax-Reskin
 
+## Update 2026-06-14: Fidelity-Durchgang 2
+
+Ziel dieses Durchgangs war nicht ein weiterer grober Re-Skin, sondern eine deutlich engere Nachbildung von Valmax-Struktur und -Verhalten mit Quantiva-eigenen Inhalten.
+
+### Neu umgesetzt
+
+- `docs/valmax-fidelity-gap.md` neu erstellt: Soll/Ist-Gap pro Valmax-Sektion, Unterseitentyp und Interaktionsmuster.
+- `app/components/QuantivaWebsite.tsx` deutlich nachgeschärft:
+  - Clientseitiger Preloader mit Prozentanzeige, Fortschrittslinie, Session-Fallback und `prefers-reduced-motion`-Ausnahme.
+  - Fixed Header mit Scroll-hide/show, Desktop-Mega-Panels für Capabilities und Industries, Mobile-Panel mit Sublevel-Accordion und Ticker.
+  - Hero von dunklem Card-Mosaik auf helle Valmax-nahe First-View-Struktur mit freigestellter Frame-Sequenz, großer Headline, separatem Copy/CTA-Block und Scroll-Down-Trigger umgebaut.
+  - Social-Proof-Fläche als acid-green/violet Vollbildsektion mit runden echten Quantiva-Signal-Badges statt erfundener Kundenlogos.
+  - Brand-Manifest-Sektion als Full-viewport Media/Text-Band ergänzt.
+  - Capabilities von statischer Card-Liste auf interaktiven Slider mit Prev/Next, Auto-Advance, Counter, Media-Swap und Hover-Thumbnails umgebaut.
+  - Industries von Grid-Karten auf dunkle Valmax-nahe Linkliste mit Hover-/Focus-Hintergrundwechsel und aktivem Green-State umgebaut.
+  - Stats/At-a-glance in violette, versetzte Blocks mit ringartigem Background überführt.
+  - Testimonials auf runden Slider mit Prev/Next, Auto-Advance, Case-Tabs und laufender Hintergrund-Wortmarke umgestellt.
+  - Insights von 3er-Grid auf mehrstufige violet Mask-/Gallery-Slider-Anmutung umgebaut.
+  - FAQ auf lavender Cards, violetten Plus/Minus-Trigger und More-Questions-Erweiterung umgestellt.
+  - Contact auf violet Full-height Hero mit hellem Formular und laufendem Media-Ring angepasst; `ContactForm`-Submit, Honeypot, reCAPTCHA und API-Vertrag bleiben unverändert.
+  - Footer mit großem Hintergrund-Marquee, stärkerer Linkgruppen-Hierarchie und symbolischem Back-to-top nachgeschärft.
+  - Framer-Motion-Marquees und Auto-Advance-Elemente respektieren `prefers-reduced-motion` und bleiben dann statisch.
+- `app/components/ContactForm.tsx`: Nur Field-/Button-Optik an Valmax-Radius, Padding und Focus-States angepasst; keine funktionale Änderung.
+
+### Bewusst nicht 1:1
+
+- Keine Valmax-Texte, Claims, Kundenlogos, Bilder, Videos oder Masken-Assets wurden kopiert.
+- Keine erfundenen Logos oder Kundenbeziehungen ergänzt. Proof-Badges nutzen nur Quantiva-nahe Leistungs-/Technologie-Signale.
+- Kein GSAP/Lenis/Swiper-Paket wurde nachinstalliert; sichtbare Slider-, Pin-/Reveal- und Marquee-Muster wurden mit vorhandenen React/Framer-Motion-Mitteln umgesetzt.
+- Footer-Newsletter wurde nicht als echte Subscription nachgebaut, weil im Quantiva-Repo kein Newsletter-Backend vorhanden ist. Stattdessen bleibt der Kontakt-Mail-Link ehrlich funktional.
+- Detailseiten behalten ihre bestehenden Quantiva-Routen und gemeinsamen Hüllen; dieser Durchgang fokussiert die Homepage-Fidelity und dokumentiert Detailseiten-Gaps in `docs/valmax-fidelity-gap.md`.
+
+### Verifikation
+
+- `npm run build`: erfolgreich.
+- Build generierte 65 Routen und lief inklusive `postbuild` (`generate:sitemap`, `generate:og`, `validate:cases:strict`) durch.
+- Bestehende Warnungen bleiben Daten-/Tooling-Warnungen zu `baseline-browser-mapping` und `caniuse-lite`; keine neuen Build- oder TypeScript-Fehler.
+
+### Manuell im Browser prüfen
+
+- `/de` und `/en`: Preloader, Header hide/show, Mega-Menüs, Mobile-Menü, Hero-Frame-Sequenz, Social-Proof, Capability-Slider, Industry-Hover, Testimonial/Insight-Slider, FAQ-More-Button, ContactForm und Footer.
+- Kontaktformular mit echter reCAPTCHA-Konfiguration in der Zielumgebung testen.
+- Mobile Breakpoints besonders bei sehr langen deutschen Service-/Industry-Titeln prüfen.
+
 ## 1. Was geändert
 
 - `app/components/QuantivaWebsite.tsx`: Homepage komplett visuell neu gerahmt mit schwarzem Hero, großen typografischen Frames, Media-Frame, Capability-Cards mit Countern, Industry-Grid, Stats, Testimonials, Insights, FAQ-Accordion, Contact/Calendly und Footer im Valmax-inspirierten Pattern.
@@ -66,11 +110,9 @@
 ## 8. Branch + Commit
 
 - Gewünschter Branch: `feat/valmax-design-replica`
-- Tatsächlicher Branch im Worktree: `main`
-- Commit-Hash: nicht verfügbar, solange `.git`-Schreibrechte blockiert sind.
-- Commit-Versuch: `git checkout -b feat/valmax-design-replica && git add . && git commit -m "feat: reskin quantiva with valmax-inspired design"` scheiterte mit `fatal: cannot lock ref 'refs/heads/feat/valmax-design-replica': unable to create directory for .git/refs/heads/feat/valmax-design-replica`.
-- Push offen, wartet auf Freigabe des Menschen.
-- Es wurde kein `git push`, kein Force-Push und keine Branch-Löschung ausgeführt.
+- Aktueller Branch laut Ausführungskontext: `feat/valmax-design-replica`
+- Dieser zweite Fidelity-Durchgang hat keine Git-Aktionen ausgeführt: kein Branch, kein Commit, kein Push.
+- Git-Finalisierung bleibt bewusst beim Menschen, weil `.git` im Sandbox-Kontext gesperrt ist.
 
 ## Analysierte Valmax-Referenzen
 

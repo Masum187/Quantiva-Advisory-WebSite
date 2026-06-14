@@ -133,7 +133,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
   };
 
   const inputClass =
-    'w-full rounded-lg border border-black/12 bg-[#f7f6ff] px-4 py-3 text-black outline-none transition focus:border-black focus:ring-2 focus:ring-[#d9ff80] disabled:cursor-not-allowed disabled:bg-black/5';
+    'w-full rounded-[10px] border border-black/10 bg-[#f7f6ff] px-4 py-4 text-black outline-none transition placeholder:text-black/35 focus:border-[#5241d4] focus:ring-2 focus:ring-[#d9ff80] disabled:cursor-not-allowed disabled:bg-black/5';
   const labelClass = 'mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-black/55';
 
   return (
@@ -215,7 +215,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="group flex w-full items-center justify-center rounded-full bg-black px-6 py-3 font-semibold text-white transition hover:bg-[#d9ff80] hover:text-black disabled:cursor-not-allowed disabled:bg-black/35 disabled:text-white"
+        className="group flex w-full items-center justify-center rounded-[10px] bg-black px-6 py-4 font-semibold uppercase text-white transition hover:bg-[#d9ff80] hover:text-black disabled:cursor-not-allowed disabled:bg-black/35 disabled:text-white"
       >
         {status === 'loading' ? t[lang].sending : t[lang].submit}
       </button>
@@ -247,7 +247,6 @@ export default function ContactForm({ lang }: ContactFormProps) {
     </form>
   );
 }
-
 
 
 
