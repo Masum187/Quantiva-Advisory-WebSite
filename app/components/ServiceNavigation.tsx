@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Menu, X } from 'lucide-react';
 import { useNavigationContent } from '../lib/contexts/ContentContext';
 
 interface ServiceNavigationProps {
@@ -12,12 +12,23 @@ interface ServiceNavigationProps {
   serviceId: string;
 }
 
-export default function ServiceNavigation({ lang, serviceTitle, serviceId }: ServiceNavigationProps) {
+function normalizeHref(href: string, lang: 'de' | 'en') {
+  if (href.startsWith('#')) return `/${lang}${href}`;
+  if (href.startsWith('/de') || href.startsWith('/en')) {
+    return href.replace(/^\/(de|en)/, `/${lang}`);
+  }
+  if (href.startsWith('/')) return `/${lang}${href}`;
+  return href;
+}
+
+export default function ServiceNavigation({
+  lang,
+  serviceTitle,
+}: ServiceNavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const nav = useNavigationContent(lang);
 
-  // Close menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
@@ -25,144 +36,141 @@ export default function ServiceNavigation({ lang, serviceTitle, serviceId }: Ser
   const switchLang = () => {
     const currentPath = pathname;
     const newLang = lang === 'de' ? 'en' : 'de';
-    
-    // Replace language prefix in path
     const pathSegments = currentPath.split('/');
+
     if (pathSegments[1] === lang) {
       pathSegments[1] = newLang;
     } else {
       pathSegments.splice(1, 0, newLang);
     }
-    
-    const newPath = pathSegments.join('/');
-    window.location.href = newPath;
+
+    window.location.href = pathSegments.join('/');
   };
 
+  const items = nav.items.map((item) => ({
+    ...item,
+    href: normalizeHref(item.href, lang),
+  }));
+
   return (
-    <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/80 border-b border-white/10">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 text-white">
-        {/* Logo */}
+    <header className="sticky top-0 z-50 px-3 pt-3">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between rounded-lg border border-white/10 bg-[#111]/92 px-4 py-3 text-white shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl">
         <Link href={`/${lang}`} className="flex items-center gap-3">
-          <div className="relative">
-            <svg width="40" height="40" viewBox="0 0 100 100" className="text-teal-400">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="2" opacity="0.3"/>
-              <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.5"/>
-              <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.7"/>
-              <circle cx="50" cy="50" r="15" fill="currentColor" opacity="0.8"/>
-              <line x1="50" y1="50" x2="65" y2="35" stroke="currentColor" strokeWidth="0.6" opacity="0.4"/>
-              <line x1="50" y1="50" x2="35" y2="35" stroke="currentColor" strokeWidth="0.6" opacity="0.4"/>
-              <line x1="50" y1="50" x2="65" y2="65" stroke="currentColor" strokeWidth="0.6" opacity="0.4"/>
-              <line x1="50" y1="50" x2="35" y2="65" stroke="currentColor" strokeWidth="0.6" opacity="0.4"/>
+          <span className="grid h-9 w-9 place-items-center rounded-md border border-white/18 bg-white text-black">
+            <svg viewBox="0 0 100 100" className="h-6 w-6" aria-hidden="true">
+              <polygon
+                points="50,8 85,25 85,75 50,92 15,75 15,25"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="6"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M35 37h30v26H35zM50 8v29M85 25 65 37M85 75 65 63M50 92V63M15 75l20-12M15 25l20 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
             </svg>
-          </div>
-          
-          {/* Company Name */}
-          <div className="text-xl font-bold tracking-tight">
-            Quantiva <span className="text-teal-400">Advisory</span>
-          </div>
+          </span>
+          <span className="hidden text-base font-semibold sm:inline">Quantiva Advisory</span>
+          <span className="hidden rounded-full border border-white/12 px-3 py-1 text-xs text-white/55 md:inline">
+            {serviceTitle}
+          </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-2 md:flex">
-          {/* Back to Home */}
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Service navigation">
           <Link
             href={`/${lang}`}
-            className="flex items-center gap-1 px-3 py-2 rounded-md hover:bg-white/10 transition text-sm text-gray-300"
+            className="mr-1 inline-flex items-center gap-2 rounded-full border border-white/14 px-4 py-2 text-sm text-white/72 transition hover:bg-white hover:text-black"
           >
-            <ArrowLeft className="w-4 h-4" />
-            {lang === 'de' ? 'Zurück' : 'Back'}
+            <ArrowLeft className="h-4 w-4" />
+            {lang === 'de' ? 'Zurueck' : 'Back'}
           </Link>
 
-          {/* Navigation Items */}
-          {nav.items.map((item) => (
+          {items.map((item) => (
             <Link
               key={item.id}
               href={item.href}
-              className={`px-4 py-2 rounded-md hover:bg-white/10 transition text-sm ${
-                pathname === item.href ? 'text-teal-400 font-medium' : 'text-white'
+              className={`rounded-full px-4 py-2 text-sm transition ${
+                pathname === item.href
+                  ? 'bg-white text-black'
+                  : 'text-white/72 hover:bg-white/8 hover:text-white'
               }`}
             >
               {item.label}
             </Link>
           ))}
-          
-          {/* Language Switch */}
+
           <button
+            type="button"
             onClick={switchLang}
-            className="ml-2 rounded-xl border border-white/20 px-4 py-2 text-sm hover:bg-white/10"
+            className="ml-2 rounded-full border border-white/20 px-4 py-2 text-sm transition hover:border-[#d9ff80] hover:text-[#d9ff80]"
           >
             {lang === 'de' ? 'EN' : 'DE'}
           </button>
-          
-          {/* Contact Button */}
+
           <Link
             href={`/${lang}#contact`}
-            className="ml-3 rounded-xl bg-teal-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-teal-600 transition-colors"
+            className="group ml-2 inline-flex items-center gap-2 rounded-full bg-[#d9ff80] px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white"
           >
             {lang === 'de' ? 'Kontakt' : 'Contact'}
+            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
           </Link>
         </nav>
 
-        {/* Mobile Menu Button */}
         <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden p-2 rounded-md hover:bg-white/10 transition"
-          aria-label="Toggle menu"
+          type="button"
+          onClick={() => setIsMenuOpen((value) => !value)}
+          className="grid h-10 w-10 place-items-center rounded-full border border-white/20 text-white lg:hidden"
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMenuOpen}
         >
-          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-slate-900/95 backdrop-blur border-t border-white/10">
-          <div className="px-4 py-4 space-y-3">
-            {/* Back to Home */}
-            <Link
-              href={`/${lang}`}
-              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-white/10 transition text-sm text-gray-300"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <ArrowLeft className="w-4 h-4" />
-              {lang === 'de' ? 'Zurück zur Hauptseite' : 'Back to Home'}
-            </Link>
-
-            {/* Navigation Items */}
-            {nav.items.map((item) => (
+      {isMenuOpen ? (
+        <div className="fixed inset-x-3 top-[76px] z-50 rounded-lg border border-white/12 bg-[#111] p-4 text-white shadow-2xl lg:hidden">
+          <Link
+            href={`/${lang}`}
+            className="mb-3 flex items-center gap-2 rounded-full border border-white/12 px-4 py-3 text-sm text-white/72"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {lang === 'de' ? 'Zurueck zur Hauptseite' : 'Back to home'}
+          </Link>
+          <nav className="grid gap-1" aria-label="Mobile service navigation">
+            {items.map((item, index) => (
               <Link
                 key={item.id}
                 href={item.href}
-                className={`block px-3 py-2 rounded-md hover:bg-white/10 transition text-sm ${
-                  pathname === item.href ? 'text-teal-400 font-medium' : 'text-white'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center justify-between border-b border-white/10 py-4 text-xl font-semibold"
               >
-                {item.label}
+                <span>{item.label}</span>
+                <span className="font-mono text-xs uppercase tracking-[0.14em] text-white/45">
+                  {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
+                </span>
               </Link>
             ))}
-
-            {/* Language Switch */}
+          </nav>
+          <div className="mt-4 flex items-center gap-3">
             <button
-              onClick={() => {
-                switchLang();
-                setIsMenuOpen(false);
-              }}
-              className="w-full text-left px-3 py-2 rounded-md hover:bg-white/10 transition text-sm text-white"
+              type="button"
+              onClick={switchLang}
+              className="flex-1 rounded-full border border-white/20 px-4 py-3 text-sm"
             >
-              {lang === 'de' ? 'Switch to English' : 'Zu Deutsch wechseln'}
+              {lang === 'de' ? 'English' : 'Deutsch'}
             </button>
-
-            {/* Contact Button */}
             <Link
               href={`/${lang}#contact`}
-              className="block w-full text-center rounded-xl bg-teal-500 px-4 py-3 text-sm font-semibold text-white shadow hover:bg-teal-600 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
+              className="flex-1 rounded-full bg-[#d9ff80] px-4 py-3 text-center text-sm font-semibold text-black"
             >
               {lang === 'de' ? 'Kontakt' : 'Contact'}
             </Link>
           </div>
         </div>
-      )}
+      ) : null}
     </header>
   );
 }
