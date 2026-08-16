@@ -1,0 +1,133 @@
+/* Forge variant tokens — scoped under .forge-reskin; Valmax untouched */
+
+.forge-reskin {
+  --forge-bg: #0a0a0a;
+  --forge-bg-elevated: #121212;
+  --forge-bg-soft: #161616;
+  --forge-ink: #f4f4f0;
+  --forge-muted: rgba(244, 244, 240, 0.58);
+  --forge-faint: rgba(244, 244, 240, 0.28);
+  --forge-line: rgba(244, 244, 240, 0.12);
+  --forge-signal: #d9ff80;
+  --forge-signal-ink: #0a0a0a;
+  --forge-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --forge-display: var(--font-forge-display), "Instrument Serif", Georgia, serif;
+  --forge-sans: var(--font-forge-sans), "Geist", "Helvetica Neue", sans-serif;
+
+  background: var(--forge-bg);
+  color: var(--forge-ink);
+  font-family: var(--forge-sans);
+  letter-spacing: -0.01em;
+  min-height: 100vh;
+}
+
+.forge-reskin ::selection {
+  background: var(--forge-signal);
+  color: var(--forge-signal-ink);
+}
+
+.forge-reskin a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.forge-display {
+  font-family: var(--forge-display);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+.forge-meta {
+  font-family: var(--forge-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--forge-faint);
+}
+
+.forge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--forge-line);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--forge-muted);
+}
+
+.forge-container {
+  width: min(100% - 2rem, 1200px);
+  margin-inline: auto;
+}
+
+.forge-section {
+  padding: clamp(4.5rem, 12vw, 9rem) 0;
+}
+
+.forge-hairline {
+  border-color: var(--forge-line);
+}
+
+.forge-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 999px;
+  background: var(--forge-signal);
+  color: var(--forge-signal-ink);
+  padding: 0.9rem 1.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform 0.35s var(--forge-ease), background 0.35s var(--forge-ease);
+}
+
+.forge-cta:hover {
+  transform: translateY(-1px);
+  background: #e8ff9e;
+}
+
+.forge-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--forge-line);
+  color: var(--forge-ink);
+  padding: 0.9rem 1.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: border-color 0.35s var(--forge-ease), background 0.35s var(--forge-ease);
+}
+
+.forge-cta-ghost:hover {
+  border-color: var(--forge-ink);
+  background: rgba(244, 244, 240, 0.04);
+}
+
+.forge-grid-bg {
+  background-image:
+    linear-gradient(rgba(244, 244, 240, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 244, 240, 0.04) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forge-reskin *,
+  .forge-reskin *::before,
+  .forge-reskin *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
