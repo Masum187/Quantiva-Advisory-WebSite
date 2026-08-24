@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Boxes, ArrowLeft, CheckCircle, Network, Zap, Shield, Database } from 'lucide-react';
+import ServiceVideoBackground from '../../../components/ServiceVideoBackground';
 
 function SlideIn({ children, direction = 'up', delay = 0, duration = 0.8 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; duration?: number }) {
   const variants = {
@@ -123,9 +124,14 @@ export default function MicroservicesServicePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Fixed Background Video */}
+      <ServiceVideoBackground videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1760435639/kling_20251014_Text_to_Video_Title__The_4165_1_t3grxn.mp4"]} />
+
+      {/* Content */}
+      <div className="relative z-10">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-teal-900/20 via-black to-cyan-900/20">
+      <section className="relative py-20 bg-gradient-to-br from-teal-900/20 via-black/60 to-cyan-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SlideIn>
             <div className="text-center mb-16">
@@ -159,7 +165,7 @@ export default function MicroservicesServicePage() {
       </section>
 
       {/* Service Overview */}
-      <section className="py-24 bg-black">
+      <section className="py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SlideIn>
             <div className="text-center mb-20">
@@ -251,7 +257,7 @@ export default function MicroservicesServicePage() {
       </section>
 
       {/* Studies Section */}
-      <section className="py-24 bg-black">
+      <section className="py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SlideIn>
             <div className="text-center mb-20">
@@ -388,6 +394,7 @@ export default function MicroservicesServicePage() {
           </SlideIn>
         </div>
       </section>
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, TrendingUp, BookOpen, CheckCircle, ArrowRight, Target, Lightbulb, Award } from 'lucide-react';
 import { AnimatedCard } from '../../services/AnimatedCard';
+import ServiceVideoBackground from '../../ServiceVideoBackground';
 
 interface ChangeManagementPageProps {
   lang: 'de' | 'en';
@@ -124,9 +125,14 @@ export default function ChangeManagementPage({ lang }: ChangeManagementPageProps
   }[lang];
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Fixed Background Video */}
+      <ServiceVideoBackground videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1762015286/openart-video_b6992003_1761933215657_wgjmwh.mp4"]} />
+
+      {/* Content */}
+      <div className="relative z-10">
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-orange-900/40 via-black to-black py-32">
+      <section className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-orange-900/40 via-black/60 to-black/60 py-32">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(249,115,22,0.15),_transparent_50%)]" />
         <div className="relative mx-auto max-w-6xl px-6">
           <motion.div
@@ -196,7 +202,7 @@ export default function ChangeManagementPage({ lang }: ChangeManagementPageProps
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-b from-black to-orange-950/20">
+      <section className="py-20 bg-gradient-to-b from-black/60 to-orange-950/20">
         <div className="mx-auto max-w-6xl px-6">
           <AnimatedCard direction="up">
             <h2 className="mb-12 text-center text-4xl font-bold">{content.benefits.title}</h2>
@@ -259,6 +265,7 @@ export default function ChangeManagementPage({ lang }: ChangeManagementPageProps
           </AnimatedCard>
         </div>
       </section>
+      </div>
     </div>
   );
 }

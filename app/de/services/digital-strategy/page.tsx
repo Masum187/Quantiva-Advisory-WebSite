@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Target, ArrowLeft, CheckCircle, Users, TrendingUp, Lightbulb, BookOpen } from 'lucide-react';
+import ServiceVideoBackground from '../../../components/ServiceVideoBackground';
 
 function SlideIn({ children, direction = 'up', delay = 0, duration = 0.8 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; duration?: number }) {
   const variants = {
@@ -69,9 +70,14 @@ export default function DigitalStrategyServicePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Fixed Background Video */}
+      <ServiceVideoBackground videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1762103900/grok-video-dda3f51a-7efb-453a-a311-9467a101e4a0_rteefh.mp4"]} />
+
+      {/* Content */}
+      <div className="relative z-10">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-emerald-900/20 via-black to-teal-900/20">
+      <section className="relative py-20 bg-gradient-to-br from-emerald-900/20 via-black/60 to-teal-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SlideIn>
             <div className="text-center mb-16">
@@ -105,7 +111,7 @@ export default function DigitalStrategyServicePage() {
       </section>
 
       {/* Service Overview */}
-      <section className="py-24 bg-black">
+      <section className="py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SlideIn>
             <div className="text-center mb-20">
@@ -187,6 +193,7 @@ export default function DigitalStrategyServicePage() {
           </SlideIn>
         </div>
       </section>
+      </div>
     </div>
   );
 }

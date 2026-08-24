@@ -106,7 +106,7 @@ export default function V3Hero({ locale }: { locale: V3Locale }) {
         >
           <Image
             className="v3-hero-media"
-            src="/assets/v3/quantiva-data-landscape.jpg"
+            src="/assets/v3/quantiva-data-landscape-orange.jpg"
             alt={content.imageLabel}
             fill
             priority

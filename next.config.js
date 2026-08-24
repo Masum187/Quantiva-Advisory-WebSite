@@ -9,6 +9,7 @@ const ContentSecurityPolicy = `
   connect-src 'self' https://*.contentful.com https://api.openai.com https://www.google.com https://www.gstatic.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' data: https://images.unsplash.com https://res.cloudinary.com https://images.ctfassets.net;
+  media-src 'self' https://res.cloudinary.com;
   font-src 'self' https://fonts.gstatic.com data:;
   frame-src https://www.google.com;
   base-uri 'self';
