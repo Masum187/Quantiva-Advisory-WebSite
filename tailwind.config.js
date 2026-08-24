@@ -9,6 +9,25 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        surface: {
+          DEFAULT: 'var(--bg)',
+          elevated: 'var(--bg-elevated)',
+          card: 'var(--bg-card)',
+        },
+        border: {
+          DEFAULT: 'var(--border)',
+          strong: 'var(--border-strong)',
+        },
+        foreground: {
+          DEFAULT: 'var(--fg)',
+          muted: 'var(--fg-muted)',
+          subtle: 'var(--fg-subtle)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          glow: 'var(--accent-glow)',
+          secondary: 'var(--accent-secondary)',
+        },
         quantiva: {
           ink: '#050505',
           'ink-soft': '#111111',
@@ -24,6 +43,12 @@ module.exports = {
         },
       },
       fontFamily: {
+        forge: [
+          'var(--font-forge-sans)',
+          'Geist',
+          'Helvetica Neue',
+          'sans-serif',
+        ],
         sans: [
           'Inter',
           'Helvetica Neue',
@@ -31,6 +56,16 @@ module.exports = {
           'Helvetica',
           'sans-serif',
         ],
+      },
+      spacing: {
+        'forge-1': '0.5rem',
+        'forge-2': '1rem',
+        'forge-3': '1.5rem',
+        'forge-4': '2rem',
+        'forge-6': '3rem',
+        'forge-8': '4rem',
+        'forge-12': '6rem',
+        'forge-16': '8rem',
       },
       boxShadow: {
         'valmax-soft': '0 18px 60px rgba(0, 0, 0, 0.28)',

@@ -1,100 +1,120 @@
 export type ForgeLocale = 'de' | 'en';
 
+/** Primary chrome — fewer items, clearer hierarchy */
 export const FORGE_NAV = {
   de: [
     { href: '', label: 'Home' },
-    { href: '/about', label: 'Über uns' },
     { href: '/services', label: 'Services' },
-    { href: '/industries', label: 'Branchen' },
     { href: '/cases', label: 'Projekte' },
-    { href: '/team', label: 'Team' },
-    { href: '/career', label: 'Karriere' },
+    { href: '/about', label: 'Über uns' },
     { href: '/contact', label: 'Kontakt' },
   ],
   en: [
     { href: '', label: 'Home' },
-    { href: '/about', label: 'About' },
     { href: '/services', label: 'Services' },
-    { href: '/industries', label: 'Industries' },
     { href: '/cases', label: 'Cases' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+  ],
+} as const;
+
+export const FORGE_NAV_MORE = {
+  de: [
+    { href: '/industries', label: 'Branchen' },
+    { href: '/team', label: 'Team' },
+    { href: '/career', label: 'Karriere' },
+  ],
+  en: [
+    { href: '/industries', label: 'Industries' },
     { href: '/team', label: 'Team' },
     { href: '/career', label: 'Careers' },
-    { href: '/contact', label: 'Contact' },
   ],
 } as const;
 
 export const FORGE_HOME = {
   de: {
     brand: 'Quantiva',
-    meta: 'SAP · CLOUD · KI · S.0108.16.26',
-    headline: 'Transformation,\ndie sich bauen lässt.',
+    badge: 'SAP S/4HANA Transformation',
+    metaLeft: 'S/4HANA · SIT/UAT · Cutover',
+    metaRight: 'Quantiva Advisory',
+    headline: 'SAP-Transformationen, die im Testmanagement nicht kippen.',
     support:
-      'SAP-Landschaften, Cloud-Betriebsmodelle und KI — für mittelständische Marktführer, die messbar liefern.',
-    ctaPrimary: 'Gespräch buchen',
-    ctaSecondary: 'Services',
-    proof: '45+ Projekte · DACH Mittelstand · ISO-ready Delivery',
-    featuresTitle: 'Gebaut auf dem,\nwas Sie schon nutzen.',
+      'Beratung für S/4HANA-Migrationen, SIT- und UAT-Testmanagement sowie eine kontrollierte Cutover-Steuerung.',
+    ctaPrimary: 'Erstgespräch vereinbaren',
+    ctaSecondary: 'Leistungen ansehen',
+    proofLabel: 'Fokus',
+    proof: 'S/4HANA-Transformation · SIT/UAT · Cutover · Hypercare',
+    featuresEyebrow: 'Leistungsfelder',
+    featuresTitle: 'Vier Hebel.\nEin Delivery-Modell.',
     features: [
       {
         n: '01',
-        title: 'SAP-Kern modernisieren',
-        body: 'S/4HANA, BTP und Testautomation — ohne Parallelwelt, mit klaren Quality Gates.',
+        title: 'SAP-Transformation',
+        body: 'S/4HANA, BTP und Testautomation mit klaren Quality Gates — ohne parallele Schattenlandschaft.',
       },
       {
         n: '02',
-        title: 'Cloud, die trägt',
-        body: 'Landing Zones, Operating Model und FinOps — skalierbar, auditierbar, finanzierbar.',
+        title: 'Cloud Operating Model',
+        body: 'Landing Zones, Platform Teams und FinOps — so, dass Betrieb und Governance mitwachsen.',
       },
       {
         n: '03',
-        title: 'KI in die Fläche',
-        body: 'Use Cases mit Datenfundament und Governance — nicht Demo-Theater.',
+        title: 'KI in Produktion',
+        body: 'Use Cases mit Datenfundament, Evaluation und Governance — vom Pilot in den Regelbetrieb.',
       },
       {
         n: '04',
-        title: 'Security by Design',
-        body: 'Compliance und Risiko von Anfang an mitgedacht — nicht als Nachtrag.',
+        title: 'Security & Compliance',
+        body: 'Risiko, Kontrollen und Nachweispflicht von Anfang an integriert — nicht als Nacharbeit.',
       },
     ],
-    closeTitle: 'Bereit für den nächsten Schritt?',
-    closeBody: 'Ein kurzes Erstgespräch. Klare nächste Schritte. Kein Pitch-Deck-Marathon.',
-    closeCta: 'Kontakt aufnehmen',
+    closeEyebrow: 'Nächster Schritt',
+    closeTitle: 'Kurz abstimmen.\nKlar entscheiden.',
+    closeBody:
+      'In 30 Minuten klären wir Zielbild, Rahmen und die sinnvollste nächste Lieferung — ohne Pitch-Marathon.',
+    closeCta: 'Termin anfragen',
   },
   en: {
     brand: 'Quantiva',
-    meta: 'SAP · CLOUD · AI · S.0108.16.26',
-    headline: 'Transformation\nyou can ship.',
+    badge: 'SAP S/4HANA transformation',
+    metaLeft: 'S/4HANA · SIT/UAT · Cutover',
+    metaRight: 'Quantiva Advisory',
+    headline: 'SAP transformations that stay in control through testing.',
     support:
-      'SAP landscapes, cloud operating models, and AI — for mid-market leaders who need measurable delivery.',
-    ctaPrimary: 'Book a call',
-    ctaSecondary: 'Services',
-    proof: '45+ projects · DACH mid-market · ISO-ready delivery',
-    featuresTitle: 'Built on what\nyou already run.',
+      'Advisory for S/4HANA migrations, SIT and UAT test management, and controlled cutover delivery.',
+    ctaPrimary: 'Book an intro call',
+    ctaSecondary: 'View services',
+    proofLabel: 'Focus',
+    proof: 'S/4HANA transformation · SIT/UAT · Cutover · Hypercare',
+    featuresEyebrow: 'Capabilities',
+    featuresTitle: 'Four levers.\nOne delivery model.',
     features: [
       {
         n: '01',
-        title: 'Modernize the SAP core',
-        body: 'S/4HANA, BTP, and test automation — no parallel universe, with clear quality gates.',
+        title: 'SAP transformation',
+        body: 'S/4HANA, BTP, and test automation with clear quality gates — no parallel shadow landscape.',
       },
       {
         n: '02',
-        title: 'Cloud that holds',
-        body: 'Landing zones, operating model, and FinOps — scalable, auditable, fundable.',
+        title: 'Cloud operating model',
+        body: 'Landing zones, platform teams, and FinOps — so operations and governance scale with you.',
       },
       {
         n: '03',
-        title: 'AI into production',
-        body: 'Use cases with data foundations and governance — not demo theater.',
+        title: 'AI in production',
+        body: 'Use cases with data foundations, evaluation, and governance — from pilot to steady state.',
       },
       {
         n: '04',
-        title: 'Security by design',
-        body: 'Compliance and risk from day one — not bolted on later.',
+        title: 'Security & compliance',
+        body: 'Risk, controls, and evidence built in from day one — not bolted on later.',
       },
     ],
-    closeTitle: 'Ready for the next step?',
-    closeBody: 'A short first call. Clear next steps. No pitch-deck marathon.',
-    closeCta: 'Get in touch',
+    closeEyebrow: 'Next step',
+    closeTitle: 'Align briefly.\nDecide clearly.',
+    closeBody:
+      'In 30 minutes we clarify target state, constraints, and the most useful next delivery — no pitch marathon.',
+    closeCta: 'Request a meeting',
   },
 } as const;
 

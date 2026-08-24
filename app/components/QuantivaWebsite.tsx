@@ -7,11 +7,20 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  type MotionProps,
+  type Variants,
+} from 'framer-motion';
 import {
   ArrowRight,
   ArrowUp,
@@ -42,6 +51,18 @@ import {
   useNavigationContent,
   useServices,
 } from '../lib/contexts/ContentContext';
+import {
+  ARROW_NUDGE,
+  DRAMATIC_RISE,
+  FADE_UP,
+  FADE_UP_SUBTLE,
+  MOTION_VIEWPORT,
+  STAGGER_CONTAINER,
+  STATIC_FINAL,
+  STRONG_SPLIT_LEFT,
+  STRONG_SPLIT_RIGHT,
+  STRONG_SPLIT_RIGHT_STAGGER,
+} from './motion/presets';
 
 const ORIGIN =
   (typeof window !== 'undefined' && window.location.origin) ||
@@ -49,7 +70,10 @@ const ORIGIN =
 const VALID_LOCALES = ['de', 'en'] as const;
 const SERVICE_SLUGS = ['sap', 'cloud', 'ai', 'microservices', 'cyber-security', 'new-work'];
 const VM_EASE: [number, number, number, number] = [0.4, 0, 0.2, 1];
-const VM_SECTION_PAD = 'px-4 py-20 md:px-8 lg:py-32';
+const VM_SECTION_PAD = 'px-4 py-20 md:px-8 lg:py-[5.625rem]';
+const VM_H1 = 'text-[clamp(3rem,5vw,4.375rem)] font-semibold leading-none tracking-normal';
+const VM_H2 = 'text-[clamp(2.5rem,3.75vw,3.375rem)] font-semibold leading-none tracking-normal';
+const VM_MANIFEST = 'text-[clamp(3.125rem,5.625vw,5.0625rem)] font-semibold leading-[1.1] tracking-normal';
 
 type Locale = (typeof VALID_LOCALES)[number];
 
@@ -221,6 +245,49 @@ function SectionKicker({
   );
 }
 
+function revealMotion(reduceMotion: boolean | null, variants: Variants): MotionProps {
+  if (reduceMotion) {
+    return {
+      initial: false,
+      whileInView: STATIC_FINAL,
+      viewport: MOTION_VIEWPORT,
+    };
+  }
+
+  return {
+    initial: 'hidden',
+    whileInView: 'visible',
+    viewport: MOTION_VIEWPORT,
+    variants,
+  };
+}
+
+function NudgeArrow({
+  className = 'h-4 w-4',
+  icon = 'arrow',
+}: {
+  className?: string;
+  icon?: 'arrow' | 'chevron';
+}) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.span
+      aria-hidden="true"
+      className="inline-flex"
+      animate={reduceMotion ? STATIC_FINAL : ARROW_NUDGE}
+    >
+      {icon === 'chevron' ? (
+        <ChevronRight className={className} />
+      ) : (
+        <ArrowRight className={className} />
+      )}
+    </motion.span>
+  );
+}
+
+const MotionLink = motion.create(Link);
+
 function Preloader() {
   const reduceMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
@@ -328,57 +395,49 @@ function HomeHeader() {
     { id: 'insights', label: lang === 'de' ? 'Insights' : 'Insights', href: resolveHref('/content', lang) },
   ];
   const utilityLinks = rawLinks.filter((link) => !['home', 'services', 'cases', 'contact'].includes(link.id));
+  const mobileGroups = [
+    { id: 'services' as const, label: lang === 'de' ? 'Capabilities' : 'Capabilities', items: serviceLinks },
+    { id: 'industries' as const, label: lang === 'de' ? 'Branchen' : 'Industries', items: industryLinks },
+  ];
+  const activeMobileGroup = mobileGroups.find((group) => group.id === openGroup);
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-[9999] px-3 pt-2 transition-transform duration-500 ${
+      className={`fixed inset-x-0 top-0 z-[9999] px-[0.9375rem] pt-2.5 transition-transform duration-500 ${
         hidden && !open ? '-translate-y-[120%]' : 'translate-y-0'
       }`}
       onMouseLeave={() => setMega(null)}
     >
       <div
-        className={`mx-auto max-w-[1440px] overflow-hidden rounded-[10px] border px-4 text-white backdrop-blur-xl transition ${
+        className={`mx-auto max-w-[1440px] overflow-hidden rounded-[10px] border px-4 text-white backdrop-blur-xl transition lg:overflow-visible lg:border-transparent lg:bg-transparent lg:px-0 lg:shadow-none lg:backdrop-blur-0 ${
           scrolled || open || mega
-            ? 'border-white/12 bg-[#111]/96 shadow-[0_18px_70px_rgba(0,0,0,0.28)]'
-            : 'border-black/8 bg-[#111]/90'
+            ? 'border-white/12 bg-[#111]/96 shadow-[0_18px_70px_rgba(0,0,0,0.28)] lg:border-transparent lg:bg-transparent lg:shadow-none'
+            : 'border-black/8 bg-[#111]/90 lg:border-transparent lg:bg-transparent'
         }`}
       >
-        <div className="flex min-h-[58px] items-center justify-between gap-5">
+        <div className="flex min-h-[58px] items-center justify-between gap-5 lg:min-h-[5.1875rem]">
           <Link
             href={`/${lang}`}
-            className="group flex items-center gap-3"
+            className="group flex items-center rounded-[10px] bg-white px-2 py-1.5 text-black shadow-[0_16px_50px_rgba(0,0,0,0.12)]"
             aria-label="Quantiva Advisory"
             onClick={() => setOpen(false)}
           >
-            <span className="grid h-10 w-10 place-items-center rounded-[6px] bg-white text-black transition group-hover:bg-[#d9ff80]">
-              <svg viewBox="0 0 100 100" className="h-6 w-6" aria-hidden="true">
-                <polygon
-                  points="50,8 85,25 85,75 50,92 15,75 15,25"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="6"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M35 37h30v26H35zM50 8v29M85 25 65 37M85 75 65 63M50 92V63M15 75l20-12M15 25l20 12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="hidden text-base font-semibold uppercase tracking-[0.02em] sm:block">
-              Quantiva
-            </span>
+            <Image
+              src="/logo-badge.svg"
+              alt="Quantiva Advisory"
+              width={107}
+              height={40}
+              priority
+              className="h-10 w-auto rounded-[6px]"
+            />
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-1 rounded-[10px] bg-white p-1 shadow-[0_16px_50px_rgba(0,0,0,0.12)] lg:flex" aria-label="Primary">
             {primaryLinks.map((item) => (
               <Link
                 key={item.id}
                 href={item.href}
-                className="rounded-[6px] px-4 py-3 text-sm font-semibold uppercase tracking-[0.04em] text-white/76 transition hover:bg-white/8 hover:text-white"
+                className="rounded-[10px] px-5 py-[0.9375rem] text-sm font-semibold uppercase tracking-normal text-black/78 transition hover:bg-[#d9ff80] hover:text-black"
                 onMouseEnter={() => setMega(('menu' in item ? item.menu : null) ?? null)}
                 onFocus={() => setMega(('menu' in item ? item.menu : null) ?? null)}
                 onClick={() => analytics.trackNavigationClick(item.id, item.href)}
@@ -392,13 +451,13 @@ function HomeHeader() {
             <button
               type="button"
               onClick={() => setLang(lang === 'de' ? 'en' : 'de')}
-              className="rounded-[6px] border border-white/14 px-4 py-3 text-sm font-semibold uppercase text-white transition hover:border-[#d9ff80] hover:text-[#d9ff80]"
+              className="rounded-[10px] bg-[#111] px-4 py-[1.1875rem] text-sm font-semibold uppercase text-white shadow-[0_16px_50px_rgba(0,0,0,0.12)] transition hover:bg-[#d9ff80] hover:text-black"
             >
               {lang === 'de' ? 'EN' : 'DE'}
             </button>
             <Link
               href={`/${lang}#contact`}
-              className="group inline-flex items-center gap-3 rounded-[6px] bg-[#d9ff80] px-5 py-3 text-sm font-semibold uppercase text-black transition hover:bg-white"
+              className="group inline-flex items-center gap-3 rounded-[10px] bg-white px-5 py-[1.1875rem] text-sm font-semibold uppercase text-black shadow-[0_16px_50px_rgba(0,0,0,0.12)] transition hover:bg-[#d9ff80]"
             >
               {lang === 'de' ? 'Kontakt' : 'Contact'}
               <ArrowRight className="h-4 w-4 transition group-hover:-rotate-45" />
@@ -407,7 +466,10 @@ function HomeHeader() {
 
           <button
             type="button"
-            onClick={() => setOpen((value) => !value)}
+            onClick={() => {
+              setOpen((value) => !value);
+              if (open) setOpenGroup(null);
+            }}
             className="relative grid h-11 w-11 place-items-center rounded-[6px] border border-white/18 text-white lg:hidden"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
@@ -423,7 +485,7 @@ function HomeHeader() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.35, ease: VM_EASE }}
-              className="hidden overflow-hidden border-t border-white/8 lg:block"
+              className="hidden overflow-hidden border-t border-white/8 lg:mt-2 lg:block lg:rounded-[10px] lg:border lg:border-white/10 lg:bg-[#111]/98 lg:px-5"
             >
               <div className="grid gap-8 py-6 lg:grid-cols-[0.35fr_1fr]">
                 <div>
@@ -485,52 +547,79 @@ function HomeHeader() {
           >
             <div className="max-h-[calc(100svh-205px)] overflow-y-auto p-4">
               <nav className="grid" aria-label="Mobile primary">
-                {[
-                  { id: 'services' as const, label: lang === 'de' ? 'Capabilities' : 'Capabilities', items: serviceLinks },
-                  { id: 'industries' as const, label: lang === 'de' ? 'Branchen' : 'Industries', items: industryLinks },
-                ].map((group) => {
-                  const isOpen = openGroup === group.id;
-                  return (
-                    <div key={group.id} className="border-t border-white/6">
+                <AnimatePresence mode="wait" initial={false}>
+                  {!activeMobileGroup ? (
+                    <motion.div
+                      key="mobile-root"
+                      initial={{ opacity: 0, x: -24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -24 }}
+                      transition={{ duration: 0.35, ease: VM_EASE }}
+                    >
+                      {mobileGroups.map((group) => (
+                        <button
+                          key={group.id}
+                          type="button"
+                          onClick={() => setOpenGroup(group.id)}
+                          className="flex w-full items-center justify-between gap-5 border-t border-white/6 py-5 text-left text-[2rem] font-semibold uppercase leading-[1.1]"
+                          aria-expanded={false}
+                        >
+                          {group.label}
+                          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[6px] bg-[#d9ff80] text-black">
+                            <ChevronRight className="h-4 w-4" />
+                          </span>
+                        </button>
+                      ))}
+                      {[...primaryLinks.filter((item) => !('menu' in item)), ...utilityLinks].map((item, index) => (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          className="flex items-center justify-between border-t border-white/6 py-5 text-[2rem] font-semibold uppercase leading-[1.1]"
+                        >
+                          <span>{item.label}</span>
+                          <Counter index={index + 1} total={primaryLinks.length + utilityLinks.length} />
+                        </Link>
+                      ))}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={`mobile-${activeMobileGroup.id}`}
+                      initial={{ opacity: 0, x: 24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 24 }}
+                      transition={{ duration: 0.35, ease: VM_EASE }}
+                    >
                       <button
                         type="button"
-                        onClick={() => setOpenGroup(isOpen ? null : group.id)}
-                        className="flex w-full items-center justify-between gap-5 py-5 text-left text-[2rem] font-semibold uppercase leading-none"
-                        aria-expanded={isOpen}
+                        onClick={() => setOpenGroup(null)}
+                        className="mb-6 inline-flex items-center gap-3 text-sm font-semibold uppercase text-white/70"
                       >
-                        {group.label}
-                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[6px] bg-[#d9ff80] text-black">
-                          {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                        </span>
+                        <ArrowRight className="h-4 w-4 rotate-180" />
+                        {lang === 'de' ? 'Zurück' : 'Back'}
                       </button>
-                      {isOpen ? (
-                        <div className="grid gap-2 pb-4">
-                          {group.items.map((item) => (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={() => setOpen(false)}
-                              className="rounded-[6px] bg-[#191919] px-4 py-4 text-lg font-semibold text-white/82"
-                            >
-                              {item.label}
-                            </Link>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
-                {[...primaryLinks.filter((item) => !('menu' in item)), ...utilityLinks].map((item, index) => (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="flex items-center justify-between border-t border-white/6 py-5 text-[2rem] font-semibold uppercase leading-none"
-                  >
-                    <span>{item.label}</span>
-                    <Counter index={index + 1} total={primaryLinks.length + utilityLinks.length} />
-                  </Link>
-                ))}
+                      <p className="text-[2rem] font-semibold uppercase leading-[1.1] text-white">
+                        {activeMobileGroup.label}
+                      </p>
+                      <div className="mt-6 grid gap-2">
+                        {activeMobileGroup.items.map((item, index) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => {
+                              setOpen(false);
+                              setOpenGroup(null);
+                            }}
+                            className="group flex min-h-[4rem] items-center justify-between rounded-[6px] bg-[#191919] px-4 py-3 text-lg font-semibold leading-tight text-white/82 transition hover:bg-[#252525] hover:text-white"
+                          >
+                            <span>{item.label}</span>
+                            <Counter index={index + 1} total={activeMobileGroup.items.length} />
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </nav>
             </div>
 
@@ -583,9 +672,9 @@ function HeroFrameSequence({ services }: { services: any[] }) {
   }, [frames.length, reduceMotion]);
 
   return (
-    <div className="relative mx-auto aspect-[302/454] h-[min(52svh,32rem)] min-h-[21rem] max-h-[34rem] w-auto">
-      <div className="absolute -inset-4 rounded-[18px] border border-black/8" />
-      <div className="absolute inset-0 rounded-[15px] bg-[#111]" />
+    <div className="relative mx-auto aspect-[231/328] h-[min(40svh,20.5rem)] min-h-[20.5rem] w-auto">
+      <div className="absolute -inset-3 rounded-[18px] border border-black/8" />
+      <div className="absolute inset-0 rounded-[14px] bg-[#111]" />
       {frames.map((service, index) => {
         const isActive = index === active;
         return (
@@ -598,7 +687,7 @@ function HeroFrameSequence({ services }: { services: any[] }) {
               scale: isActive ? 1 : 0.96,
               y: isActive ? 0 : 18,
             }}
-            transition={{ duration: 0.65, ease: VM_EASE }}
+            transition={{ duration: reduceMotion ? 0 : 0.65, ease: VM_EASE }}
           >
             {service.image ? (
               <Image
@@ -611,9 +700,9 @@ function HeroFrameSequence({ services }: { services: any[] }) {
               />
             ) : null}
             <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/20 to-black/10" />
-            <figcaption className="absolute inset-x-0 bottom-0 p-5 text-white">
+            <figcaption className="absolute inset-x-0 bottom-0 p-4 text-white">
               <Counter index={index + 1} total={frames.length} />
-              <p className="mt-3 text-2xl font-semibold leading-none">{service.title}</p>
+              <p className="mt-3 text-xl font-semibold leading-none">{service.title}</p>
             </figcaption>
           </motion.figure>
         );
@@ -630,6 +719,20 @@ function HeroFrameSequence({ services }: { services: any[] }) {
             aria-label={`Show ${service.title}`}
           />
         ))}
+        <motion.span
+          aria-hidden="true"
+          className="mt-1 h-2.5 w-2.5 rounded-full bg-[#d9ff80] shadow-[0_0_0_5px_rgba(217,255,128,0.18)]"
+          animate={
+            reduceMotion
+              ? undefined
+              : { opacity: [0.35, 1, 0.35], scale: [0.85, 1.2, 0.85] }
+          }
+          transition={
+            reduceMotion
+              ? undefined
+              : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }
+          }
+        />
       </div>
     </div>
   );
@@ -640,47 +743,58 @@ function HeroSection() {
   const hero = useHero(lang);
   const services = useServices(lang);
   const reduceMotion = useReducedMotion();
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.3], [1, 0.95]);
 
   return (
-    <section
+    <motion.section
+      ref={heroRef}
       id="home"
       className="relative min-h-svh overflow-hidden bg-[#f7f6ff] pt-[92px] text-black"
+      style={{
+        opacity: reduceMotion ? 1 : heroOpacity,
+        scale: reduceMotion ? 1 : heroScale,
+        transformOrigin: 'top center',
+      }}
     >
       <div className="absolute inset-x-0 top-0 h-[18rem] bg-white" />
-      <div className="relative mx-auto grid min-h-[calc(100svh-92px)] max-w-[1440px] gap-10 px-4 pb-12 pt-10 md:px-8 lg:grid-cols-[1.05fr_0.55fr_0.78fr] lg:items-center lg:pb-16 lg:pt-14">
+      <div className="relative mx-auto grid min-h-[calc(100svh-92px)] max-w-[1440px] gap-10 px-4 pb-12 pt-10 md:px-8 lg:grid-cols-[24.375rem_minmax(14.5rem,1fr)_23.125rem] lg:items-start lg:gap-7 lg:pb-[calc(5.1875rem+2.390625rem)] lg:pt-16">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75, ease: VM_EASE }}
-          className="max-w-4xl"
+          initial={false}
+          className="max-w-[24.375rem] lg:pt-8"
         >
           <SectionKicker>{hero.subtitle}</SectionKicker>
-          <h1 className="mt-6 text-[clamp(3.7rem,9vw,7.25rem)] font-semibold leading-[0.92] tracking-normal">
+          <h1 className={`mt-6 ${VM_H1}`}>
             {hero.title}
           </h1>
           {hero.highlight ? (
-            <p className="mt-6 max-w-xl text-[clamp(1.4rem,2vw,2rem)] font-semibold leading-tight text-[#5241d4]">
+            <p className="mt-6 max-w-[22rem] text-[clamp(1.25rem,1.8vw,1.625rem)] font-semibold leading-tight text-[#5241d4]">
               {hero.highlight}
             </p>
           ) : null}
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 36 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 36 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75, delay: 0.15, ease: VM_EASE }}
-          className="order-last lg:order-none"
+          transition={{ duration: reduceMotion ? 0 : 0.75, delay: reduceMotion ? 0 : 0.15, ease: VM_EASE }}
+          className="order-last self-center lg:order-none lg:pt-4"
         >
           <HeroFrameSequence services={services.items} />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75, delay: 0.2, ease: VM_EASE }}
-          className="self-end lg:pb-12"
+          transition={{ duration: reduceMotion ? 0 : 0.75, delay: reduceMotion ? 0 : 0.2, ease: VM_EASE }}
+          className="self-end lg:pb-12 lg:pr-5 lg:text-left"
         >
-          <p className="max-w-[31rem] text-lg leading-[1.45] text-black/70">
+          <p className="max-w-[23.125rem] text-lg leading-[1.4] text-black/70">
             {hero.description}
           </p>
 
@@ -690,14 +804,14 @@ function HeroSection() {
               className="group inline-flex items-center gap-3 rounded-[10px] bg-[#111] px-5 py-4 text-sm font-semibold uppercase text-white transition hover:bg-[#d9ff80] hover:text-black"
             >
               {hero.ctaPrimary}
-              <ArrowRight className="h-4 w-4 transition group-hover:-rotate-45" />
+              <NudgeArrow className="h-4 w-4 transition group-hover:-rotate-45" />
             </Link>
             <Link
               href={localePath('/cases')}
               className="group inline-flex items-center gap-3 rounded-[10px] border border-black/14 px-5 py-4 text-sm font-semibold uppercase text-black transition hover:bg-[#5241d4] hover:text-white"
             >
               {hero.ctaSecondary}
-              <ChevronRight className="h-4 w-4 transition group-hover:translate-x-1" />
+              <NudgeArrow icon="chevron" />
             </Link>
           </div>
         </motion.div>
@@ -729,12 +843,13 @@ function HeroSection() {
           ))}
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
 function ProofSection() {
   const { lang, localePath } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const proofItems =
     lang === 'de'
       ? [
@@ -756,33 +871,35 @@ function ProofSection() {
 
   return (
     <section id="social-proof" className="relative overflow-hidden bg-[#d9ff80] text-black">
-      <div className="absolute inset-x-0 bottom-0 h-[48%] bg-[#5241d4]" />
+      <div className="absolute inset-y-0 left-1/2 w-full max-w-[90rem] -translate-x-1/2 bg-[#5241d4]" />
       <div className="relative mx-auto min-h-svh max-w-[1440px] px-4 py-20 md:px-8 lg:py-28">
         <div className="mx-auto max-w-5xl text-center">
-          <SectionKicker>{lang === 'de' ? 'Proof ohne Logo-Wall' : 'Proof without a logo wall'}</SectionKicker>
-          <h2 className="mt-6 text-[clamp(3rem,6vw,5.6rem)] font-semibold leading-none">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/55">
+            {lang === 'de' ? 'Proof ohne Logo-Wall' : 'Proof without a logo wall'}
+          </p>
+          <h2 className={`mx-auto mt-6 max-w-[48rem] text-white ${VM_H2}`}>
             {lang === 'de'
               ? 'Vertrauen entsteht, wenn Strategie, Technologie und Umsetzung dieselbe Sprache sprechen.'
               : 'Trust compounds when strategy, technology and delivery speak the same language.'}
           </h2>
           <Link
             href={localePath('/cases')}
-            className="mt-8 inline-flex items-center gap-3 rounded-[10px] bg-[#111] px-5 py-4 text-sm font-semibold uppercase text-white transition hover:bg-white hover:text-black"
+            className="mt-10 inline-flex items-center gap-3 rounded-[10px] bg-white px-5 py-[1.1875rem] text-sm font-semibold uppercase text-black transition hover:bg-[#d9ff80]"
           >
             {lang === 'de' ? 'Projekte ansehen' : 'View projects'}
             <ArrowRight className="h-4 w-4 -rotate-45" />
           </Link>
         </div>
 
-        <div className="relative mt-12 min-h-[28rem] md:mt-20">
+        <motion.div
+          className="relative mt-12 min-h-[28rem] md:mt-20"
+          {...revealMotion(reduceMotion, STAGGER_CONTAINER)}
+        >
           {proofItems.map(([value, label], index) => (
             <motion.div
               key={label}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ delay: index * 0.07, duration: 0.55, ease: VM_EASE }}
-              className={`absolute grid aspect-square place-items-center rounded-full bg-white text-center shadow-[0_24px_70px_rgba(0,0,0,0.12)] ${
+              variants={DRAMATIC_RISE}
+              className={`absolute grid aspect-square place-items-center rounded-full bg-white text-center shadow-[0_24px_70px_rgba(0,0,0,0.12)] transition-transform duration-500 hover:scale-105 ${
                 [
                   'left-[4%] top-[12%] w-36 md:w-44',
                   'right-[6%] top-[2%] w-32 md:w-40',
@@ -794,7 +911,7 @@ function ProofSection() {
               }`}
             >
               <div className="px-4">
-                <p className="text-[clamp(1.7rem,4vw,3rem)] font-semibold leading-none text-[#5241d4]">
+                <p className="text-[clamp(1.7rem,3.4vw,3rem)] font-semibold leading-none text-[#5241d4]">
                   {value}
                 </p>
                 <p className="mt-2 text-xs font-semibold uppercase leading-tight tracking-[0.08em] text-black/55">
@@ -803,7 +920,7 @@ function ProofSection() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -812,27 +929,26 @@ function ProofSection() {
 function BrandManifestSection() {
   const { lang } = useLanguage();
   const services = useServices(lang);
+  const reduceMotion = useReducedMotion();
   const media = services.items[2]?.image || services.items[0]?.image;
 
   return (
-    <section className="relative min-h-svh overflow-hidden bg-[#111] text-white">
+    <section className="relative min-h-svh overflow-hidden bg-[#f7f6ff] text-black">
       {media ? (
         <Image
           src={media}
           alt=""
           fill
           sizes="100vw"
-          className="object-cover opacity-42"
+          className="object-cover opacity-75"
         />
       ) : null}
-      <div className="absolute inset-0 bg-black/58" />
+      <div className="absolute inset-0 bg-[#f7f6ff]/90" />
       <div className="relative mx-auto flex min-h-svh max-w-[1440px] items-center justify-center px-4 py-20 text-center md:px-8">
         <motion.h2
-          initial={{ opacity: 0, y: 36 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-20%' }}
-          transition={{ duration: 0.75, ease: VM_EASE }}
-          className="max-w-5xl text-[clamp(3rem,7vw,6.8rem)] font-semibold leading-[1.02]"
+          {...revealMotion(reduceMotion, FADE_UP)}
+          className={`max-w-[65.625rem] ${VM_MANIFEST} ${media ? 'bg-clip-text text-transparent' : 'text-[#111]'}`}
+          style={media ? { backgroundImage: `url(${media})`, backgroundPosition: 'center', backgroundSize: 'cover' } : undefined}
         >
           {lang === 'de'
             ? 'Wir formen digitale Systeme, die entscheiden, lernen und im Betrieb standhalten.'
@@ -864,17 +980,20 @@ function CapabilitiesSection() {
   };
 
   return (
-    <section id="services" className="relative overflow-hidden bg-[#f7f6ff] text-black">
-      <div className="mx-auto max-w-[1440px] px-4 py-20 md:px-8 lg:min-h-svh lg:py-0">
-        <div className="grid gap-0 lg:min-h-svh lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="relative min-h-[24rem] overflow-hidden rounded-[14px] bg-[#111] lg:my-20 lg:min-h-0 lg:rounded-[14px]">
+    <section id="services" className="relative overflow-hidden bg-[#111] text-black">
+      <div className="mx-auto max-w-[1440px] px-4 py-20 md:px-8 lg:min-h-svh lg:py-5">
+        <div className="grid gap-5 lg:min-h-[calc(100svh-2.5rem)] lg:grid-cols-[minmax(0,1fr)_37rem]">
+          <motion.div
+            className="relative min-h-[24rem] overflow-hidden rounded-[14px] bg-[#111] lg:min-h-0"
+            {...revealMotion(reduceMotion, STRONG_SPLIT_LEFT)}
+          >
             <AnimatePresence mode="wait">
               <motion.figure
                 key={activeService?.id}
-                initial={{ opacity: 0, scale: 1.04 }}
+                initial={reduceMotion ? false : { opacity: 0, scale: 1.04 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.65, ease: VM_EASE }}
+                transition={{ duration: reduceMotion ? 0 : 0.65, ease: VM_EASE }}
                 className="absolute inset-0"
               >
                 {activeService?.image ? (
@@ -892,37 +1011,44 @@ function CapabilitiesSection() {
             <div className="absolute left-5 top-5 rounded-[8px] bg-white px-3 py-2">
               <Counter index={active + 1} total={slides.length} />
             </div>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-col justify-center bg-[#f7f6ff] py-10 lg:px-12">
+          <motion.div
+            className="flex flex-col justify-center rounded-[14px] bg-[#f7f6ff] p-5 lg:px-12 lg:py-10"
+            {...revealMotion(reduceMotion, STRONG_SPLIT_RIGHT)}
+          >
             <SectionKicker>{services.subtitle}</SectionKicker>
             <div className="mt-6 min-h-[14rem]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeService?.id}
-                  initial={{ opacity: 0, y: 28 }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 28 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -18 }}
-                  transition={{ duration: 0.55, ease: VM_EASE }}
+                  transition={{ duration: reduceMotion ? 0 : 0.55, ease: VM_EASE }}
                 >
-                  <h2 className="max-w-[34rem] text-[clamp(3rem,6vw,5.25rem)] font-semibold leading-none">
+                  <h2 className={`max-w-[25rem] ${VM_H2}`}>
                     {activeService?.title || services.title}
                   </h2>
-                  <p className="mt-6 max-w-2xl text-lg leading-[1.45] text-black/70">
+                  <p className="mt-6 max-w-[25rem] text-lg leading-[1.4] text-black/70">
                     {activeService?.description}
                   </p>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            <div className="mt-10 grid gap-2">
+            <motion.div
+              className="mt-10 grid gap-2"
+              {...revealMotion(reduceMotion, STAGGER_CONTAINER)}
+            >
               {slides.map((service: any, index: number) => (
-                <Link
+                <MotionLink
                 key={service.id}
                 href={localePath(`/services/${SERVICE_SLUGS[index]}`)}
                 onMouseEnter={() => setActive(index)}
                 onFocus={() => setActive(index)}
-                className={`group relative flex min-h-[3.5rem] items-center justify-between overflow-hidden rounded-[6px] px-4 py-3 text-left transition ${
+                variants={FADE_UP_SUBTLE}
+                className={`group relative flex min-h-[4.375rem] items-center justify-between overflow-hidden rounded-[6px] px-4 py-3 text-left transition ${
                   index === active ? 'bg-[#ebe9fa] text-[#111]' : 'bg-[#f0f7e0] text-black/72 hover:text-black'
                 }`}
               >
@@ -930,22 +1056,22 @@ function CapabilitiesSection() {
                   {service.title}
                 </span>
                 <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-[6px] bg-[#111] text-[#d9ff80] transition group-hover:bg-[#d9ff80] group-hover:text-black">
-                  <ArrowRight className="h-4 w-4 transition group-hover:-rotate-45" />
+                  <NudgeArrow className="h-4 w-4 transition group-hover:-rotate-45" />
                 </span>
-                <figure className="pointer-events-none absolute right-[4.5rem] top-1/2 hidden h-[3.875rem] w-[3.875rem] -translate-y-1/2 overflow-hidden rounded-[6px] opacity-0 transition group-hover:opacity-100 md:block">
+                <figure className="pointer-events-none absolute right-[4.5rem] top-1/2 hidden h-[3.875rem] w-[3.875rem] -translate-y-1/2 overflow-hidden rounded-[6px] opacity-0 transition-opacity duration-500 group-hover:opacity-100 md:block">
                   {service.image ? (
                     <Image
                       src={service.image}
                       alt={service.title}
                       fill
                       sizes="62px"
-                      className="object-cover"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   ) : null}
                 </figure>
-              </Link>
+              </MotionLink>
               ))}
-            </div>
+            </motion.div>
 
             <div className="mt-8 flex items-center gap-2">
               <button
@@ -968,7 +1094,7 @@ function CapabilitiesSection() {
                 {String(active + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
               </span>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -977,6 +1103,7 @@ function CapabilitiesSection() {
 
 function IndustriesShowcase() {
   const { lang, localePath } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const industries = lang === 'de' ? industriesDe : industriesEn;
   const [active, setActive] = useState(0);
   const activeIndustry = industries[active] || industries[0];
@@ -986,10 +1113,10 @@ function IndustriesShowcase() {
       <AnimatePresence mode="wait">
         <motion.figure
           key={activeIndustry.slug}
-          initial={{ opacity: 0, scale: 1.04 }}
+          initial={reduceMotion ? false : { opacity: 0, scale: 1.04 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.55, ease: VM_EASE }}
+          transition={{ duration: reduceMotion ? 0 : 0.55, ease: VM_EASE }}
           className="absolute inset-0"
         >
           <Image
@@ -1003,10 +1130,13 @@ function IndustriesShowcase() {
         </motion.figure>
       </AnimatePresence>
 
-      <div className={`relative mx-auto grid min-h-svh max-w-[1440px] gap-10 ${VM_SECTION_PAD} lg:grid-cols-[0.82fr_1.18fr] lg:items-center`}>
-        <div className="max-w-lg">
+      <div className={`relative mx-auto grid min-h-svh max-w-[1440px] gap-10 ${VM_SECTION_PAD} lg:grid-cols-[30rem_minmax(0,1fr)] lg:items-center`}>
+        <motion.div
+          className="max-w-[27.1875rem]"
+          {...revealMotion(reduceMotion, STRONG_SPLIT_RIGHT)}
+        >
           <SectionKicker dark>{lang === 'de' ? 'Branchen' : 'Industries'}</SectionKicker>
-          <h2 className="mt-5 text-[clamp(3rem,6vw,5.25rem)] font-semibold leading-none">
+          <h2 className={`mt-5 text-white ${VM_H2}`}>
             {lang === 'de' ? 'Branchen, die wir befähigen' : 'Industries we empower'}
           </h2>
           <p className="mt-7 text-lg leading-[1.45] text-white/70">
@@ -1019,27 +1149,32 @@ function IndustriesShowcase() {
             className="mt-8 inline-flex items-center gap-3 rounded-[10px] bg-[#d9ff80] px-5 py-4 text-sm font-semibold uppercase text-black transition hover:bg-white"
           >
             {lang === 'de' ? 'Branche ansehen' : 'View industry'}
-            <ArrowRight className="h-4 w-4 -rotate-45" />
+            <NudgeArrow className="h-4 w-4 -rotate-45" />
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-1">
-          {industries.map((industry, index) => {
-            const isActive = index === active;
-            return (
-              <Link
-                key={industry.slug}
-                href={localePath(`/industries/${industry.slug}`)}
-                onMouseEnter={() => setActive(index)}
-                onFocus={() => setActive(index)}
-                className={`group relative flex items-center justify-between gap-6 border-t border-white/10 py-4 transition last:border-b md:py-5 ${
-                  isActive ? 'text-[#d9ff80]' : 'text-white/72 hover:text-white'
-                }`}
-              >
-                <span className="text-[clamp(2rem,5vw,4.2rem)] font-semibold leading-none">
+        <motion.div
+          className="w-full max-w-[40.3125rem] lg:ml-auto"
+          {...revealMotion(reduceMotion, STRONG_SPLIT_LEFT)}
+        >
+          <motion.div className="grid gap-0" variants={STAGGER_CONTAINER}>
+            {industries.map((industry, index) => {
+              const isActive = index === active;
+              return (
+                <MotionLink
+                  key={industry.slug}
+                  href={localePath(`/industries/${industry.slug}`)}
+                  onMouseEnter={() => setActive(index)}
+                  onFocus={() => setActive(index)}
+                  variants={FADE_UP_SUBTLE}
+                  className={`group relative flex items-center justify-between gap-6 border-t border-white/10 py-2.5 transition last:border-b md:py-3 ${
+                    isActive ? 'text-[#d9ff80]' : 'text-white/72 hover:text-white'
+                  }`}
+                >
+                <span className="text-[clamp(1.875rem,3.47vw,3.125rem)] font-semibold leading-[1.4] tracking-normal">
                   {industry.title}
                 </span>
-                <span className={`hidden max-w-[14rem] text-sm leading-relaxed md:block ${
+                <span className={`hidden max-w-[14rem] text-sm leading-relaxed ${
                   isActive ? 'text-[#d9ff80]/72' : 'text-white/42'
                 }`}>
                   {industry.description}
@@ -1049,15 +1184,16 @@ function IndustriesShowcase() {
                     isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                   }`}
                 >
-                  <ArrowRight className="h-4 w-4 -rotate-45" />
+                  <NudgeArrow className="h-4 w-4 -rotate-45" />
                 </span>
                 <span className="absolute -left-10 top-1/2 hidden -translate-y-1/2 lg:block">
                   <Counter index={index + 1} total={industries.length} />
                 </span>
-              </Link>
-            );
-          })}
-        </div>
+                </MotionLink>
+              );
+            })}
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1067,18 +1203,19 @@ function AtAGlanceSection() {
   const { lang, localePath } = useLanguage();
   const about = useAbout(lang);
   const stats = Object.values(about.stats);
+  const reduceMotion = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden bg-[#d9ff80] text-black">
+    <section className="relative overflow-hidden bg-[#f7f6ff] text-black">
       <div className="absolute inset-0 grid grid-cols-4 opacity-30 md:grid-cols-8">
         {Array.from({ length: 32 }).map((_, index) => (
           <span key={index} className="aspect-square rounded-full border border-[#5241d4]/25" />
         ))}
       </div>
       <div className={`relative mx-auto grid max-w-[1440px] gap-12 ${VM_SECTION_PAD} lg:grid-cols-[0.8fr_1.2fr] lg:items-center`}>
-        <div>
+        <motion.div {...revealMotion(reduceMotion, STRONG_SPLIT_LEFT)}>
           <SectionKicker>{lang === 'de' ? 'Quantiva at a glance' : 'Quantiva at a glance'}</SectionKicker>
-          <h2 className="mt-5 max-w-3xl text-[clamp(3rem,6vw,5.25rem)] font-semibold leading-none">
+          <h2 className={`mt-5 max-w-[22.5rem] ${VM_H2}`}>
             {about.title}
           </h2>
           <p className="mt-6 max-w-2xl text-lg leading-[1.45] text-black/70">
@@ -1089,29 +1226,29 @@ function AtAGlanceSection() {
             className="mt-8 inline-flex items-center gap-3 rounded-[10px] bg-black px-5 py-4 text-sm font-semibold uppercase text-white transition hover:bg-white hover:text-black"
           >
             {lang === 'de' ? 'Mehr über Quantiva' : 'More about Quantiva'}
-            <ArrowRight className="h-4 w-4 -rotate-45" />
+            <NudgeArrow className="h-4 w-4 -rotate-45" />
           </Link>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-3">
+        </motion.div>
+        <motion.div
+          className="grid gap-4 sm:grid-cols-3"
+          {...revealMotion(reduceMotion, STRONG_SPLIT_RIGHT_STAGGER)}
+        >
           {stats.map((stat: any, index) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.55, delay: index * 0.08, ease: VM_EASE }}
-              className={`flex min-h-[17rem] flex-col rounded-[10px] bg-[#5241d4] p-5 text-white ${
+              variants={DRAMATIC_RISE}
+              className={`flex min-h-[13.5rem] flex-col rounded-[10px] bg-[#5241d4] px-[1.875rem] py-5 text-white transition-transform duration-500 hover:scale-105 ${
                 index === 1 ? 'sm:mt-20' : index === 2 ? 'sm:mt-8' : ''
               }`}
             >
               <Counter index={index + 1} total={stats.length} />
-              <p className="mt-auto text-[clamp(3.5rem,7vw,6.25rem)] font-semibold leading-none text-[#d9ff80]">
+              <p className="mt-auto text-[clamp(3.75rem,4.3vw,4.375rem)] font-semibold leading-none text-[#d9ff80]">
                 {stat.value}
               </p>
               <p className="mt-4 max-w-[12rem] text-base leading-tight text-white/78">{stat.label}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1147,13 +1284,22 @@ function TestimonialsSection() {
   if (!testimonials.length) return null;
 
   const current = testimonials[active] || testimonials[0];
+  const activeBg = active % 2 === 0 ? '#d9ff80' : '#dedafe';
+  const lineColor = active % 2 === 0 ? 'rgba(148, 189, 52, 0.16)' : 'rgb(216, 212, 255)';
   const move = (direction: -1 | 1) => {
     setActive((value) => (value + direction + testimonials.length) % testimonials.length);
   };
 
   return (
-    <section id="references" className="relative overflow-hidden bg-[#f7f6ff] text-black">
-      <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden text-[clamp(9rem,29vw,29rem)] font-semibold uppercase leading-none text-[#5241d4]/10">
+    <section
+      id="references"
+      className="relative overflow-hidden text-black transition-colors duration-500"
+      style={{ backgroundColor: activeBg }}
+    >
+      <div
+        className="pointer-events-none absolute inset-x-0 top-1/2 hidden -translate-y-1/2 overflow-hidden text-[clamp(12rem,39vw,35.9899375rem)] font-semibold uppercase leading-none lg:block"
+        style={{ color: lineColor }}
+      >
         <motion.div
           className="flex w-max gap-12"
           animate={reduceMotion ? { x: '0%' } : { x: ['0%', '-50%'] }}
@@ -1165,19 +1311,22 @@ function TestimonialsSection() {
         </motion.div>
       </div>
 
-      <div className={`relative mx-auto max-w-[1440px] ${VM_SECTION_PAD}`}>
-        <div className="mb-12 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div className={`relative mx-auto grid min-h-svh max-w-[1440px] gap-10 ${VM_SECTION_PAD} lg:grid-cols-[24.0625rem_minmax(0,1fr)] lg:items-center`}>
+        <motion.div
+          className="flex flex-col gap-10 text-center lg:text-left"
+          {...revealMotion(reduceMotion, FADE_UP)}
+        >
           <div>
             <SectionKicker>{lang === 'de' ? 'Kundenstimmen' : 'Client voices'}</SectionKicker>
-            <h2 className="mt-5 max-w-2xl text-[clamp(3rem,6vw,5.25rem)] font-semibold leading-none">
+            <h2 className={`mt-5 ${VM_H2}`}>
               {lang === 'de' ? 'Was unsere Partner sagen' : 'What our partners say'}
             </h2>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-1 lg:justify-start">
             <button
               type="button"
               onClick={() => move(-1)}
-              className="grid h-12 w-12 place-items-center rounded-[6px] border border-black/12 transition hover:bg-black hover:text-white"
+              className="grid h-[3.25rem] w-[3.25rem] place-items-center rounded-[6px] bg-[#111] text-white transition hover:bg-white hover:text-black"
               aria-label="Previous testimonial"
             >
               <ArrowRight className="h-4 w-4 rotate-180" />
@@ -1185,26 +1334,29 @@ function TestimonialsSection() {
             <button
               type="button"
               onClick={() => move(1)}
-              className="grid h-12 w-12 place-items-center rounded-[6px] bg-black text-white transition hover:bg-[#d9ff80] hover:text-black"
+              className="grid h-[3.25rem] w-[3.25rem] place-items-center rounded-[6px] bg-[#111] text-white transition hover:bg-white hover:text-black"
               aria-label="Next testimonial"
             >
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <motion.div
+          className="relative min-h-[28rem] lg:min-h-[36.875rem]"
+          {...revealMotion(reduceMotion, FADE_UP)}
+        >
           <Link
             href={localePath(`/cases/${current.slug}`)}
-            className="group relative mx-auto grid aspect-square w-full max-w-[34rem] place-items-center overflow-hidden rounded-full bg-[#111] text-white"
+            className="group relative mx-auto grid aspect-square w-full max-w-[36.875rem] place-items-center overflow-hidden rounded-full bg-[#111] text-white lg:mr-[5.625rem]"
           >
             <AnimatePresence mode="wait">
               <motion.figure
                 key={current.slug}
-                initial={{ opacity: 0, scale: 1.08 }}
+                initial={reduceMotion ? false : { opacity: 0, scale: 1.08 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.55, ease: VM_EASE }}
+                transition={{ duration: reduceMotion ? 0 : 0.55, ease: VM_EASE }}
                 className="absolute inset-0"
               >
                 {current.image ? (
@@ -1212,64 +1364,52 @@ function TestimonialsSection() {
                     src={current.image}
                     alt={current.title}
                     fill
-                    sizes="(max-width: 1024px) 90vw, 34rem"
-                    className="object-cover"
+                    sizes="(max-width: 1024px) 90vw, 36.875rem"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : null}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/28 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/18 via-black/45 to-black/60 transition-opacity duration-500 group-hover:opacity-90" />
               </motion.figure>
             </AnimatePresence>
-            <span className="relative z-10 grid h-16 w-16 place-items-center rounded-[10px] bg-white text-black transition group-hover:bg-[#d9ff80]">
-              <ArrowRight className="h-6 w-6 -rotate-45" />
-            </span>
-          </Link>
 
-          <div>
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.slug}
-                initial={{ opacity: 0, y: 28 }}
+                initial={reduceMotion ? false : { opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -18 }}
-                transition={{ duration: 0.55, ease: VM_EASE }}
+                transition={{ duration: reduceMotion ? 0 : 0.55, ease: VM_EASE }}
+                className="relative z-10 flex h-full w-full flex-col items-center justify-center px-8 text-center md:px-16"
               >
                 <Counter index={active + 1} total={testimonials.length} />
-                <p className="mt-8 max-w-4xl text-[clamp(2rem,4.7vw,4.6rem)] font-semibold leading-[1.05]">
+                <p className="mt-6 max-w-[27.9375rem] text-[clamp(1.375rem,2.4vw,2rem)] font-semibold leading-[1.2]">
                   &quot;{current.quote}&quot;
                 </p>
-                <p className="mt-8 text-base font-semibold uppercase text-black">
+                <p className="mt-7 text-sm font-semibold uppercase text-white">
                   {current.author}
                 </p>
-                <p className="mt-1 text-sm uppercase tracking-[0.08em] text-black/50">
+                <p className="mt-2 max-w-[18.75rem] text-xs uppercase leading-tight tracking-[0.08em] text-white/55">
                   {current.title}
                 </p>
               </motion.div>
             </AnimatePresence>
+          </Link>
 
-            <div className="mt-10 flex flex-wrap gap-2">
-              {testimonials.map((item, index) => (
-                <button
-                  key={item.slug}
-                  type="button"
-                  onClick={() => setActive(index)}
-                  className={`rounded-[6px] px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] transition ${
-                    index === active ? 'bg-[#5241d4] text-white' : 'bg-white text-black/50 hover:text-black'
-                  }`}
-                >
-                  {item.title}
-                </button>
-              ))}
-            </div>
-
-            <Link
-              href={localePath('/cases')}
-              className="mt-10 inline-flex items-center gap-3 rounded-[10px] border border-black/12 px-5 py-4 text-sm font-semibold uppercase transition hover:bg-black hover:text-white"
-            >
-              {lang === 'de' ? 'Referenzen ansehen' : 'View case studies'}
-              <ArrowRight className="h-4 w-4 -rotate-45" />
-            </Link>
+          <div className="mt-8 flex flex-wrap justify-center gap-2 lg:mr-[5.625rem]">
+            {testimonials.map((item, index) => (
+              <button
+                key={item.slug}
+                type="button"
+                onClick={() => setActive(index)}
+                className={`rounded-[6px] px-3 py-2 text-xs font-semibold uppercase tracking-normal transition ${
+                  index === active ? 'bg-[#111] text-white' : 'bg-white/70 text-black/55 hover:bg-white hover:text-black'
+                }`}
+              >
+                {item.title}
+              </button>
+            ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1277,6 +1417,7 @@ function TestimonialsSection() {
 
 function InsightsSection() {
   const { lang, localePath } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const posts = (postsData as any[])
     .filter((post) => post.language === lang)
     .slice(0, 4);
@@ -1287,33 +1428,36 @@ function InsightsSection() {
 
   return (
     <section id="insights" className="relative overflow-hidden bg-white text-black">
-      <div className="bg-[#f7f6ff] px-4 py-20 text-center md:px-8 lg:py-28">
+      <motion.div
+        className="bg-[#f7f6ff] px-4 py-20 text-center md:px-8 lg:py-[5.625rem]"
+        {...revealMotion(reduceMotion, FADE_UP)}
+      >
         <SectionKicker>{lang === 'de' ? 'Content Hub' : 'Content Hub'}</SectionKicker>
-        <h2 className="mx-auto mt-5 max-w-4xl text-[clamp(3rem,6vw,5.25rem)] font-semibold leading-none">
+        <h2 className={`mx-auto mt-5 max-w-[33.75rem] ${VM_H2}`}>
           {lang === 'de'
             ? 'Impulse, Playbooks und Projekteinblicke'
             : 'Insights, playbooks and project takeaways'}
         </h2>
-      </div>
+      </motion.div>
 
       <div className="relative bg-[#5241d4] text-white">
-        <div className="pointer-events-none absolute inset-x-0 top-0 overflow-hidden py-8 text-center text-[clamp(3rem,6vw,5.25rem)] font-semibold leading-none text-white/16">
+        <div className={`pointer-events-none absolute inset-x-0 top-0 overflow-hidden py-8 text-center text-white/16 ${VM_H2}`}>
           {lang === 'de'
             ? 'Impulse, Playbooks und Projekteinblicke'
             : 'Insights, playbooks and project takeaways'}
         </div>
-        <div className={`relative mx-auto grid min-h-svh max-w-[1440px] gap-10 ${VM_SECTION_PAD} lg:grid-cols-[0.78fr_0.7fr_0.82fr] lg:items-center`}>
-          <div>
+        <div className={`relative mx-auto grid min-h-svh max-w-[1440px] gap-10 ${VM_SECTION_PAD} lg:grid-cols-[23.125rem_minmax(24rem,35.25rem)_23.125rem] lg:items-center lg:justify-between`}>
+          <motion.div {...revealMotion(reduceMotion, FADE_UP)}>
             <Counter index={active + 1} total={posts.length} />
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.slug}
-                initial={{ opacity: 0, y: 24 }}
+                initial={reduceMotion ? false : { opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -18 }}
-                transition={{ duration: 0.5, ease: VM_EASE }}
+                transition={{ duration: reduceMotion ? 0 : 0.5, ease: VM_EASE }}
               >
-                <h3 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.08]">
+                <h3 className="mt-6 text-[clamp(1.625rem,3vw,2.5rem)] font-semibold leading-[1.1]">
                   {current.title}
                 </h3>
                 <p className="mt-5 text-lg leading-[1.45] text-white/74">
@@ -1336,19 +1480,22 @@ function InsightsSection() {
               className="mt-9 inline-flex items-center gap-3 rounded-[10px] bg-[#d9ff80] px-5 py-4 text-sm font-semibold uppercase text-black transition hover:bg-white"
             >
               {lang === 'de' ? 'Lesen' : 'Read'}
-              <ArrowRight className="h-4 w-4 -rotate-45" />
+              <NudgeArrow className="h-4 w-4 -rotate-45" />
             </Link>
-          </div>
+          </motion.div>
 
-          <div className="relative mx-auto aspect-[290/436] w-full max-w-[19rem]">
+          <motion.div
+            className="relative mx-auto aspect-[564/339] w-full max-w-[35.25rem]"
+            {...revealMotion(reduceMotion, FADE_UP)}
+          >
             <div className="absolute inset-0 rounded-[18px] border border-white/18" />
             <AnimatePresence mode="wait">
               <motion.figure
                 key={current.slug}
-                initial={{ opacity: 0, y: 24, rotate: 3 }}
+                initial={reduceMotion ? false : { opacity: 0, y: 24, rotate: 3 }}
                 animate={{ opacity: 1, y: 0, rotate: 0 }}
                 exit={{ opacity: 0, y: -18, rotate: -3 }}
-                transition={{ duration: 0.55, ease: VM_EASE }}
+                transition={{ duration: reduceMotion ? 0 : 0.55, ease: VM_EASE }}
                 className="absolute inset-4 overflow-hidden rounded-[14px] bg-[#111]"
               >
                 {current.heroImage ? (
@@ -1356,7 +1503,7 @@ function InsightsSection() {
                     src={current.heroImage}
                     alt={current.title}
                     fill
-                    sizes="(max-width: 1024px) 80vw, 19rem"
+                    sizes="(max-width: 1024px) 88vw, 35.25rem"
                     className="object-cover"
                   />
                 ) : null}
@@ -1365,22 +1512,26 @@ function InsightsSection() {
             {posts.slice(0, 3).map((post, index) => (
               <figure
                 key={post.slug}
-                className="absolute left-1/2 top-1/2 -z-10 aspect-[290/436] w-[72%] -translate-x-1/2 overflow-hidden rounded-[10px] opacity-30"
-                style={{ transform: `translate(-50%, calc(-50% + ${index * 28}px)) scale(${1 - index * 0.08})` }}
+                className="absolute left-1/2 top-1/2 -z-10 aspect-[564/339] w-[82%] -translate-x-1/2 overflow-hidden rounded-[10px] opacity-30"
+                style={{ transform: `translate(-50%, calc(-50% + ${index * 30}px)) scale(${1 - index * 0.08})` }}
               >
                 {post.heroImage ? (
                   <Image src={post.heroImage} alt="" fill sizes="12rem" className="object-cover" />
                 ) : null}
               </figure>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="grid gap-2">
+          <motion.div
+            className="grid gap-2"
+            {...revealMotion(reduceMotion, STAGGER_CONTAINER)}
+          >
             {posts.map((post, index) => (
-              <button
+              <motion.button
                 key={post.slug}
                 type="button"
                 onClick={() => setActive(index)}
+                variants={FADE_UP_SUBTLE}
                 className={`group flex items-center justify-between gap-5 rounded-[6px] px-4 py-4 text-left transition ${
                   index === active ? 'bg-white text-black' : 'bg-white/10 text-white/70 hover:bg-white/16 hover:text-white'
                 }`}
@@ -1394,7 +1545,7 @@ function InsightsSection() {
                   </span>
                 </span>
                 <Counter index={index + 1} total={posts.length} />
-              </button>
+              </motion.button>
             ))}
 
             <Link
@@ -1402,9 +1553,9 @@ function InsightsSection() {
               className="mt-5 inline-flex items-center justify-center gap-3 rounded-[10px] border border-white/18 px-5 py-4 text-sm font-semibold uppercase text-white transition hover:bg-white hover:text-black"
             >
               {lang === 'de' ? 'Alle Inhalte' : 'All insights'}
-              <ArrowRight className="h-4 w-4 -rotate-45" />
+              <NudgeArrow className="h-4 w-4 -rotate-45" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -1412,6 +1563,7 @@ function InsightsSection() {
 }
 function FaqSection() {
   const { lang } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const [openIndex, setOpenIndex] = useState(0);
   const [showAll, setShowAll] = useState(false);
 
@@ -1474,22 +1626,32 @@ function FaqSection() {
   return (
     <section className="bg-[#f7f6ff] text-black">
       <div className={`mx-auto grid max-w-[1440px] gap-10 ${VM_SECTION_PAD} lg:grid-cols-[0.75fr_1.25fr]`}>
-        <div>
+        <motion.div
+          className="max-w-[27.1875rem]"
+          {...revealMotion(reduceMotion, FADE_UP)}
+        >
           <SectionKicker>{lang === 'de' ? 'FAQ' : 'FAQ'}</SectionKicker>
-          <h2 className="mt-5 text-[clamp(3rem,6vw,5.25rem)] font-semibold leading-none">
+          <h2 className={`mt-5 lg:sticky lg:top-[5.625rem] ${VM_H2}`}>
             {lang === 'de' ? 'Fragen, die Sie haben könnten' : 'Questions you may have'}
           </h2>
-        </div>
-        <div>
+        </motion.div>
+        <motion.div
+          className="lg:ml-auto lg:max-w-[50.5rem]"
+          {...revealMotion(reduceMotion, STAGGER_CONTAINER)}
+        >
           <div className="grid gap-3">
           {visibleItems.map((item, index) => {
             const isOpen = openIndex === index;
             return (
-              <div key={item.q} className="overflow-hidden rounded-[10px] bg-[#ebe9fa]">
+              <motion.div
+                key={item.q}
+                variants={FADE_UP_SUBTLE}
+                className="overflow-hidden rounded-[10px] bg-[#ebe9fa]"
+              >
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? -1 : index)}
-                  className="relative flex min-h-[5.5rem] w-full items-center justify-between gap-6 px-5 py-5 text-left"
+                  className="relative flex min-h-[5.5rem] w-full items-center justify-between gap-6 px-5 py-5 text-left md:min-h-[6.625rem] md:px-6 md:py-6"
                   aria-expanded={isOpen}
                 >
                   <span className="text-xl font-semibold leading-tight md:text-2xl">{item.q}</span>
@@ -1499,15 +1661,15 @@ function FaqSection() {
                 </button>
                 {isOpen ? (
                   <motion.div
-                    initial={{ opacity: 0, height: 0 }}
+                    initial={reduceMotion ? false : { opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    transition={{ duration: 0.35, ease: VM_EASE }}
-                    className="px-5 pb-5 text-lg leading-[1.45] text-black/68"
+                    transition={{ duration: reduceMotion ? 0 : 0.35, ease: VM_EASE }}
+                    className="px-5 pb-5 text-lg leading-[1.4] text-black/68 md:px-6 md:pb-6"
                   >
                     {item.a}
                   </motion.div>
                 ) : null}
-              </div>
+              </motion.div>
             );
           })}
           </div>
@@ -1518,10 +1680,10 @@ function FaqSection() {
               className="mt-7 inline-flex items-center gap-3 rounded-[10px] bg-[#111] px-5 py-4 text-sm font-semibold uppercase text-white transition hover:bg-[#d9ff80] hover:text-black"
             >
               {showAll ? (lang === 'de' ? 'Weniger Fragen' : 'Fewer questions') : (lang === 'de' ? 'Mehr Fragen' : 'More questions')}
-              <ArrowRight className={`h-4 w-4 transition ${showAll ? '-rotate-90' : 'rotate-90'}`} />
+              <NudgeArrow className={`h-4 w-4 transition ${showAll ? '-rotate-90' : 'rotate-90'}`} />
             </button>
           ) : null}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1557,9 +1719,12 @@ function ContactSection() {
       </div>
 
       <div className="relative mx-auto flex min-h-svh max-w-[1440px] flex-col items-center justify-center px-4 py-24 md:px-8 lg:py-32">
-        <div className="mx-auto max-w-4xl text-center">
+        <motion.div
+          className="mx-auto max-w-4xl text-center"
+          {...revealMotion(reduceMotion, FADE_UP)}
+        >
           <SectionKicker dark>{lang === 'de' ? 'Kontakt' : 'Contact'}</SectionKicker>
-          <h2 className="mt-5 text-[clamp(3rem,7vw,6.25rem)] font-semibold leading-none">
+          <h2 className={`mx-auto mt-5 max-w-[48rem] text-white ${VM_H2}`}>
             {contact.title}
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-[1.45] text-white/78">
@@ -1575,11 +1740,14 @@ function ContactSection() {
               +49 (0) 123 456789
             </a>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="relative z-10 mt-10 w-full max-w-[37.125rem] rounded-[10px] bg-white p-5 text-black shadow-[0_28px_90px_rgba(0,0,0,0.22)] md:p-6">
+        <motion.div
+          className="relative z-10 mt-10 w-full max-w-[37.125rem] rounded-[10px] bg-white p-5 text-black shadow-[0_28px_90px_rgba(0,0,0,0.22)] md:p-6"
+          {...revealMotion(reduceMotion, DRAMATIC_RISE)}
+        >
           <ContactForm lang={lang} />
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1588,6 +1756,7 @@ function ContactSection() {
 function MeetingCalendlySection() {
   const { lang } = useLanguage();
   const meeting = useMeetingContent(lang);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const src = 'https://assets.calendly.com/assets/external/widget.js';
@@ -1610,10 +1779,13 @@ function MeetingCalendlySection() {
   return (
     <section id="meeting" className="bg-white text-black">
       <div className="mx-auto max-w-[1440px] px-4 py-20 md:px-8 lg:py-28">
-        <div className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+        <motion.div
+          className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end"
+          {...revealMotion(reduceMotion, FADE_UP)}
+        >
           <div>
             <SectionKicker>{lang === 'de' ? 'Termin' : 'Meeting'}</SectionKicker>
-            <h2 className="mt-5 text-[clamp(2.7rem,5vw,4.4rem)] font-semibold leading-none">
+            <h2 className={`mt-5 ${VM_H2}`}>
               {meeting.title}
             </h2>
             <p className="mt-5 text-lg text-black/65">{meeting.subtitle}</p>
@@ -1628,14 +1800,17 @@ function MeetingCalendlySection() {
             {meeting.fallbackButton}
             <ExternalLink className="h-4 w-4" />
           </a>
-        </div>
-        <div className="overflow-hidden rounded-[10px] border border-black/12 bg-[#f7f6ff]">
+        </motion.div>
+        <motion.div
+          className="overflow-hidden rounded-[10px] border border-black/12 bg-[#f7f6ff]"
+          {...revealMotion(reduceMotion, DRAMATIC_RISE)}
+        >
           <div
             className="calendly-inline-widget"
             data-url={`${meeting.calendlyUrl}?hide_event_type_details=1&hide_gdpr_banner=1`}
             style={{ minWidth: 320, height: 720, width: '100%' }}
           />
-        </div>
+        </motion.div>
       </div>
     </section>
   );

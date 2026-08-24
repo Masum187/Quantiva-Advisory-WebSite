@@ -4,7 +4,7 @@ import React from 'react';
 import casesData from '../../lib/data/cases.json';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Head from 'next/head';
 import CommandPalette from '../../components/CommandPalette';
 import Navigation from '../../components/Navigation';
@@ -25,8 +25,10 @@ import {
   Bot,
   Users
 } from 'lucide-react';
+import { MOTION_VIEWPORT } from '../../components/motion/presets';
 
 export default function CasesPage() {
+  const shouldReduceMotion = useReducedMotion();
   // Navigation items for German
   const navigationItems = [
     { id: 'home', label: 'Home', href: '/de' },
@@ -145,9 +147,9 @@ export default function CasesPage() {
           <video
             className="absolute inset-0 w-full h-full object-cover"
             src="https://res.cloudinary.com/dbrisux8i/video/upload/v1762103900/grok-video-dda3f51a-7efb-453a-a311-9467a101e4a0_rteefh.mp4"
-            autoPlay
+            autoPlay={!shouldReduceMotion}
             muted
-            loop
+            loop={!shouldReduceMotion}
             playsInline
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70" />
@@ -159,9 +161,9 @@ export default function CasesPage() {
             {/* Main Hero Content */}
             <div className="text-center mb-16">
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.8, ease: 'easeOut' }}
                 className="mb-8"
               >
               {/* Main Headline */}
@@ -180,7 +182,7 @@ export default function CasesPage() {
                 
                 {/* CTA Button */}
                 <motion.button
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
                   whileHover={{ scale: 1.05 }}
@@ -201,7 +203,7 @@ export default function CasesPage() {
             
             {/* Statistics Cards */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="grid md:grid-cols-3 gap-8 mb-16"
@@ -236,12 +238,15 @@ export default function CasesPage() {
           <div className="absolute inset-0 bg-gradient-to-l from-black to-transparent z-10"></div>
           <motion.div
             className="flex items-center whitespace-nowrap"
+            initial={shouldReduceMotion ? false : undefined}
+            whileInView={shouldReduceMotion ? { x: 0 } : undefined}
+            viewport={MOTION_VIEWPORT}
             animate={{
-              x: ["100%", "-100%"]
+              x: shouldReduceMotion ? 0 : ["100%", "-100%"]
             }}
             transition={{
               x: {
-                repeat: Infinity,
+                repeat: shouldReduceMotion ? 0 : Infinity,
                 repeatType: "loop",
                 duration: 30,
                 ease: "linear",

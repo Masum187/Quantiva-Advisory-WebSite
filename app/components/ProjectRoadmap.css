@@ -1528,6 +1528,16 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .roadmap-wrapper *,
+  .roadmap-wrapper *::before,
+  .roadmap-wrapper *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Utility classes für Framer Motion Integration */
 .no-transform {
   transform: none !important;

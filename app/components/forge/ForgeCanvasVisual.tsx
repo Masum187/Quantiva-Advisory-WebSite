@@ -1,90 +1,165 @@
-'use client';
+import type { ForgeLocale } from '../../lib/data/forge-content';
 
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+const STREAMS = [
+  { id: 'O2C', pct: 92, status: 'Ready' },
+  { id: 'S2P', pct: 78, status: 'In test' },
+  { id: 'R2R', pct: 64, status: 'Design' },
+  { id: 'P2M', pct: 88, status: 'Ready' },
+];
 
-/** Full-bleed canvas mock — product visual without cards in the hero. */
-export default function ForgeCanvasVisual() {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end start'],
-  });
-  const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1, 1.08]);
-  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [0, 80]);
-  const opacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.35]);
+const COPY = {
+  de: {
+    board: 'Programmsteuerung · S/4HANA Cutover · Welle 2',
+    live: 'Live',
+    workstreams: 'Arbeitsbereiche',
+    navigation: ['Übersicht', 'Testdurchführung', 'Fehler', 'Cutover', 'Steuerung'],
+    chips: ['QG-3 freigegeben', 'Abdeckung 87,5 %', '7 Bereiche'],
+    stats: [
+      { k: 'Varianten', v: '304' },
+      { k: 'Schritte', v: '10,3k' },
+      { k: 'Offene Fehler', v: '12' },
+    ],
+    qualityGate: 'Quality Gate',
+    gates: ['DoR / DoD', 'Regressionstest', 'Cutover-Probe', 'Freigabe ausstehend'],
+    nextMilestone: 'Nächster Meilenstein',
+    milestone: 'Go-Live-Bereitschaft · Kalenderwoche 38',
+  },
+  en: {
+    board: 'Program control · S/4HANA Cutover · Wave 2',
+    live: 'Live',
+    workstreams: 'Workstreams',
+    navigation: ['Overview', 'Test execution', 'Defects', 'Cutover', 'Governance'],
+    chips: ['QG-3 passed', 'Coverage 87.5%', '7 streams'],
+    stats: [
+      { k: 'Variants', v: '304' },
+      { k: 'Steps', v: '10.3k' },
+      { k: 'Open defects', v: '12' },
+    ],
+    qualityGate: 'Quality gate',
+    gates: ['DoR / DoD', 'Regression pack', 'Cutover rehearsal', 'Sign-off pending'],
+    nextMilestone: 'Next milestone',
+    milestone: 'Go-live readiness · Calendar week 38',
+  },
+} as const;
 
+/** Product-style program board using only Quantiva service context. */
+export default function ForgeCanvasVisual({ locale }: { locale: ForgeLocale }) {
+  const copy = COPY[locale];
   return (
-    <div ref={ref} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      <div className="forge-grid-bg absolute inset-0 opacity-40" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(217,255,128,0.08),transparent_55%)]" />
-      <motion.div style={{ scale, y, opacity }} className="absolute inset-x-0 bottom-0 top-[28%] md:top-[22%]">
-        <div className="mx-auto h-full w-[min(100%,1100px)] px-4 md:px-8">
-          <div className="relative h-full overflow-hidden rounded-t-[1.25rem] border border-[var(--forge-line)] border-b-0 bg-[var(--forge-bg-elevated)] shadow-[0_-40px_120px_rgba(0,0,0,0.55)]">
-            <div className="flex items-center gap-2 border-b border-[var(--forge-line)] px-4 py-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--forge-faint)]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--forge-faint)]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--forge-signal)]/70" />
-              <span className="ml-3 forge-meta">workspace · sap-cutover · live</span>
+    <div
+      className="forge-panel pointer-events-none relative min-h-[25rem] overflow-hidden shadow-[0_40px_120px_rgba(0,0,0,0.45)]"
+      role="img"
+      aria-label={
+        locale === 'de'
+          ? 'Beispiel einer S/4HANA-Test- und Cutover-Steuerung'
+          : 'Example of S/4HANA test and cutover control'
+      }
+    >
+            <div className="flex items-center justify-between gap-4 border-b border-[var(--forge-line)] px-4 py-3 md:px-5">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-white/15" />
+                  <span className="h-2 w-2 rounded-full bg-white/15" />
+                  <span className="h-2 w-2 rounded-full bg-[var(--forge-signal)]/80" />
+                </div>
+                <p className="truncate text-[0.7rem] font-medium tracking-wide text-[var(--forge-muted)]">
+                  {copy.board}
+                </p>
+              </div>
+              <span className="forge-chip forge-chip-live shrink-0">{copy.live}</span>
             </div>
-            <div className="grid h-[calc(100%-2.75rem)] grid-cols-[4.5rem_1fr] md:grid-cols-[13rem_1fr_16rem]">
-              <div className="border-r border-[var(--forge-line)] p-3 md:p-4">
+
+            <div className="grid min-h-[22rem] grid-cols-1 md:grid-cols-[13rem_minmax(0,1fr)_13rem] lg:grid-cols-[15rem_minmax(0,1fr)_14.5rem]">
+              <aside className="hidden border-r border-[var(--forge-line)] p-4 md:block">
+                <p className="forge-meta mb-4">{copy.workstreams}</p>
+                <div className="space-y-1.5">
+                  {copy.navigation.map((label, i) => (
+                      <div
+                        key={label}
+                        className={`rounded-lg px-3 py-2.5 text-[0.8rem] ${
+                          i === 1
+                            ? 'bg-[rgba(79,143,255,0.1)] text-[var(--forge-signal)]'
+                            : 'text-[var(--forge-faint)]'
+                        }`}
+                      >
+                        {label}
+                      </div>
+                    ))}
+                </div>
+              </aside>
+
+              <div className="min-w-0 p-4 md:p-5">
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                  {copy.chips.map((chip) => (
+                    <span key={chip} className="forge-chip">
+                      {chip}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mb-4 grid grid-cols-3 gap-2 md:gap-3">
+                  {copy.stats.map((stat) => (
+                    <div
+                      key={stat.k}
+                      className="rounded-xl border border-[var(--forge-line)] bg-[rgba(255,255,255,0.02)] px-3 py-3"
+                    >
+                      <p className="text-[0.6rem] uppercase leading-tight tracking-[0.1em] text-[var(--forge-faint)] sm:text-[0.65rem] sm:tracking-[0.12em]">
+                        {stat.k}
+                      </p>
+                      <p className="mt-1 text-xl font-medium tracking-tight text-[var(--forge-ink)] md:text-2xl">
+                        {stat.v}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-2.5">
+                  {STREAMS.map((stream) => (
+                    <div key={stream.id} className="rounded-xl border border-[var(--forge-line)] px-3 py-2.5">
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <span className="text-[0.8rem] font-medium text-[var(--forge-ink)]">
+                          {stream.id}
+                        </span>
+                        <span className="text-[0.7rem] text-[var(--forge-faint)]">{stream.status}</span>
+                      </div>
+                      <div className="h-1 overflow-hidden rounded-full bg-white/5">
+                        <div
+                          className="h-full rounded-full bg-[var(--forge-signal)]"
+                          style={{ width: `${stream.pct}%`, opacity: 0.85 }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <aside className="hidden border-l border-[var(--forge-line)] p-4 md:block">
+                <p className="forge-meta mb-4">{copy.qualityGate}</p>
                 <div className="space-y-2">
-                  {['Home', 'Routes', 'Agents', 'Ship'].map((label, i) => (
+                  {copy.gates.map((label, index) => (
                     <div
                       key={label}
-                      className={`rounded-md px-2 py-2 text-[10px] uppercase tracking-[0.12em] md:text-xs ${
-                        i === 1
-                          ? 'bg-[rgba(217,255,128,0.12)] text-[var(--forge-signal)]'
-                          : 'text-[var(--forge-faint)]'
-                      }`}
+                      className="flex items-center justify-between rounded-lg border border-[var(--forge-line)] px-3 py-2.5"
                     >
-                      <span className="hidden md:inline">{label}</span>
-                      <span className="md:hidden">{label.slice(0, 1)}</span>
+                      <span className="text-[0.78rem] text-[var(--forge-muted)]">{label}</span>
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          index < 2 ? 'bg-[var(--forge-signal)]' : 'bg-white/20'
+                        }`}
+                      />
                     </div>
                   ))}
                 </div>
-              </div>
-              <div className="relative p-4 md:p-6">
-                <div className="mb-4 flex flex-wrap gap-2">
-                  <span className="forge-chip">/home</span>
-                  <span className="forge-chip">/services/sap</span>
-                  <span className="forge-chip">/cutover</span>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {[0, 1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="h-24 rounded-lg border border-[var(--forge-line)] bg-[var(--forge-bg-soft)] md:h-28"
-                      style={{ opacity: 1 - i * 0.12 }}
-                    />
-                  ))}
-                </div>
-                <div className="absolute bottom-6 right-6 hidden max-w-[14rem] rounded-xl border border-[var(--forge-line)] bg-[var(--forge-bg)] p-3 md:block">
-                  <p className="forge-meta mb-2">Agent · Claude</p>
-                  <p className="text-xs leading-relaxed text-[var(--forge-muted)]">
-                    Quality gate passed. Promoting release train to preview.
+                <div className="mt-4 rounded-xl border border-[rgba(79,143,255,0.24)] bg-[rgba(79,143,255,0.07)] p-3">
+                  <p className="text-[0.65rem] uppercase tracking-[0.14em] text-[var(--forge-signal)]">
+                    {copy.nextMilestone}
+                  </p>
+                  <p className="mt-2 text-[0.85rem] leading-snug text-[var(--forge-ink)]">
+                    {copy.milestone}
                   </p>
                 </div>
-              </div>
-              <div className="hidden border-l border-[var(--forge-line)] p-4 md:block">
-                <p className="forge-meta mb-3">Inspector</p>
-                <div className="space-y-2">
-                  {['Frame 1440', 'Easing · out', 'Signal #d9ff80'].map((row) => (
-                    <div
-                      key={row}
-                      className="rounded-md border border-[var(--forge-line)] px-3 py-2 text-xs text-[var(--forge-muted)]"
-                    >
-                      {row}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </aside>
             </div>
-          </div>
-        </div>
-      </motion.div>
     </div>
   );
 }

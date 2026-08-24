@@ -1,14 +1,21 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Navigation from '../../components/Navigation';
 import { Linkedin, Mail, Award, Users, Target, TrendingUp, Volume2, VolumeX, ChevronRight, Lightbulb, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
+import {
+  FADE_UP_50,
+  MOTION_VIEWPORT,
+  STATIC_FINAL,
+  STAGGER_CONTAINER,
+} from '../../components/motion/presets';
 
 // Animation Components
 function AnimatedParticles() {
   const [isClient, setIsClient] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     setIsClient(true);
@@ -28,14 +35,14 @@ function AnimatedParticles() {
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
           }}
-          animate={{
+          animate={shouldReduceMotion ? undefined : {
             y: [0, -30, 0],
             opacity: [0.2, 1, 0.2],
             scale: [1, 1.5, 1],
           }}
           transition={{
             duration: 3 + Math.random() * 2,
-            repeat: Infinity,
+            repeat: shouldReduceMotion ? 0 : Infinity,
             delay: Math.random() * 2,
             ease: "easeInOut",
           }}
@@ -45,12 +52,13 @@ function AnimatedParticles() {
   );
 }
 
-function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number }) {
+function SlideIn({ children, direction = 'up', delay = 0, className = '' }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; className?: string }) {
+  const shouldReduceMotion = useReducedMotion();
   const variants = {
     hidden: {
       opacity: 0,
       x: direction === 'left' ? -50 : direction === 'right' ? 50 : 0,
-      y: direction === 'up' ? 50 : direction === 'down' ? -50 : 0,
+      y: direction === 'up' ? 30 : direction === 'down' ? -30 : 0,
     },
     visible: {
       opacity: 1,
@@ -61,11 +69,12 @@ function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.Re
 
   return (
     <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
+      initial={shouldReduceMotion ? false : "hidden"}
+      whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
+      viewport={MOTION_VIEWPORT}
       variants={variants}
-      transition={{ duration: 0.6, delay }}
+      transition={{ duration: 0.8, delay, ease: 'easeOut' }}
+      className={className}
     >
       {children}
     </motion.div>
@@ -73,6 +82,7 @@ function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.Re
 }
 
 export default function TeamPage() {
+  const shouldReduceMotion = useReducedMotion();
   const lang = 'de';
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
@@ -291,7 +301,7 @@ export default function TeamPage() {
             )}
             {isMusicPlaying && (
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-teal-500"></span>
               </span>
             )}
@@ -348,7 +358,7 @@ export default function TeamPage() {
                   <div key={member.id} className="w-full flex-shrink-0">
                     <div className="grid lg:grid-cols-2 gap-12 items-center p-8">
                       {/* Left: Member Image */}
-                      <SlideIn direction="left" delay={index * 0.2}>
+                      <SlideIn direction={index % 2 === 0 ? "left" : "right"} delay={index * 0.2} className={index % 2 === 1 ? 'lg:order-2' : ''}>
                         <div className="relative group">
                           <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-3xl blur-3xl"></div>
                           <div className="relative rounded-3xl overflow-hidden">
@@ -357,7 +367,7 @@ export default function TeamPage() {
                               alt={member.name}
                               width={600}
                               height={600}
-                              className="w-full h-[600px] object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                              className="w-full h-[600px] object-cover object-center group-hover:scale-105 transition-transform duration-500"
                               style={{ 
                                 objectPosition: member.id === 1 ? 'center 30%' : 'center 25%'
                               }}
@@ -374,7 +384,7 @@ export default function TeamPage() {
                       </SlideIn>
 
                       {/* Right: Member Details */}
-                      <SlideIn direction="right" delay={index * 0.2 + 0.1}>
+                      <SlideIn direction={index % 2 === 0 ? "right" : "left"} delay={index * 0.2 + 0.1} className={index % 2 === 1 ? 'lg:order-1' : ''}>
                         <div className="space-y-8">
                           <div>
                             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -478,7 +488,13 @@ export default function TeamPage() {
             </div>
           </SlideIn>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
+            viewport={MOTION_VIEWPORT}
+            variants={STAGGER_CONTAINER}
+          >
             {t.values.items.map((value, index) => {
               const Icon = value.icon;
               const colors = [
@@ -490,7 +506,7 @@ export default function TeamPage() {
               const color = colors[index % colors.length];
 
               return (
-                <SlideIn key={index} direction="up" delay={index * 0.1}>
+                <motion.div key={index} variants={FADE_UP_50}>
                   <motion.div
                     className="group relative h-64 [perspective:1000px]"
                     whileHover={{ scale: 1.05 }}
@@ -499,12 +515,12 @@ export default function TeamPage() {
                     {/* Glow Effect */}
                     <motion.div
                       className={`absolute -inset-1 bg-gradient-to-r ${color.from} ${color.to} rounded-3xl blur-xl opacity-0 group-hover:opacity-75 transition-opacity duration-500`}
-                      animate={{
+                      animate={shouldReduceMotion ? undefined : {
                         scale: [1, 1.1, 1],
                       }}
                       transition={{
                         duration: 2,
-                        repeat: Infinity,
+                        repeat: shouldReduceMotion ? 0 : Infinity,
                       }}
                     />
 
@@ -516,95 +532,26 @@ export default function TeamPage() {
                           {/* Animated Icon with Unique 3D Animations */}
                           <motion.div
                             className={`w-20 h-20 rounded-full bg-gradient-to-br ${color.from} ${color.to} flex items-center justify-center mb-6 relative overflow-hidden`}
-                            animate={
-                              index === 0 ? {
-                                // Innovation First - Pulsing Lightbulb
-                                rotateY: [0, 180, 360],
-                                scale: [1, 1.2, 1],
-                                boxShadow: [
-                                  '0 0 20px rgba(20, 184, 166, 0.5)',
-                                  '0 0 40px rgba(20, 184, 166, 0.8)',
-                                  '0 0 20px rgba(20, 184, 166, 0.5)'
-                                ]
-                              } : index === 1 ? {
-                                // Teamwork - Floating People
-                                y: [-5, 5, -5],
-                                rotateZ: [-5, 5, -5],
-                                scale: [1, 1.1, 1],
-                                boxShadow: [
-                                  '0 0 20px rgba(168, 85, 247, 0.5)',
-                                  '0 0 40px rgba(168, 85, 247, 0.8)',
-                                  '0 0 20px rgba(168, 85, 247, 0.5)'
-                                ]
-                              } : index === 2 ? {
-                                // Learning Culture - Spinning Graduation Cap
-                                rotate: [0, 360],
-                                scaleX: [1, -1, 1],
-                                y: [0, -10, 0],
-                                boxShadow: [
-                                  '0 0 20px rgba(249, 115, 22, 0.5)',
-                                  '0 0 40px rgba(249, 115, 22, 0.8)',
-                                  '0 0 20px rgba(249, 115, 22, 0.5)'
-                                ]
-                              } : {
-                                // Growth - Expanding Circle
-                                scale: [1, 1.3, 1],
-                                rotate: [0, 180, 360],
-                                borderRadius: ['50%', '30%', '50%'],
-                                boxShadow: [
-                                  '0 0 20px rgba(59, 130, 246, 0.5)',
-                                  '0 0 40px rgba(59, 130, 246, 0.8)',
-                                  '0 0 20px rgba(59, 130, 246, 0.5)'
-                                ]
-                              }
-                            }
-                            transition={{
-                              duration: 3,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                              delay: index * 0.5
-                            }}
+                            whileHover={shouldReduceMotion ? undefined : { rotateY: 360, scale: 1.1 }}
+                            transition={{ duration: 0.6 }}
                           >
                             {/* Inner Glow Effect */}
                             <motion.div
                               className="absolute inset-2 rounded-full bg-white/20"
-                              animate={{
+                              animate={shouldReduceMotion ? undefined : {
                                 scale: [0.8, 1.2, 0.8],
                                 opacity: [0.3, 0.7, 0.3]
                               }}
                               transition={{
                                 duration: 2,
-                                repeat: Infinity,
+                                repeat: shouldReduceMotion ? 0 : Infinity,
                                 ease: "easeInOut"
                               }}
                             />
                             
                             {/* Icon with Individual Animation */}
                             <motion.div
-                              animate={
-                                index === 0 ? {
-                                  // Lightbulb - Flickering Effect
-                                  scale: [1, 1.1, 1],
-                                  rotate: [0, 5, -5, 0]
-                                } : index === 1 ? {
-                                  // People - Bouncing Effect
-                                  y: [-2, 2, -2],
-                                  rotate: [-2, 2, -2]
-                                } : index === 2 ? {
-                                  // Graduation Cap - Tassel Swing
-                                  rotate: [0, 10, -10, 0],
-                                  scale: [1, 1.05, 1]
-                                } : {
-                                  // Growth - Pulsing Effect
-                                  scale: [1, 1.2, 1],
-                                  rotate: [0, 180, 360]
-                                }
-                              }
-                              transition={{
-                                duration: 2,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                              }}
+                              transition={{ duration: 0.6 }}
                             >
                               <Icon className="h-10 w-10 text-white relative z-10" />
                             </motion.div>
@@ -625,39 +572,8 @@ export default function TeamPage() {
                           {/* Back Side Animated Icon */}
                           <motion.div
                             className="relative mb-4"
-                            animate={
-                              index === 0 ? {
-                                // Innovation - Glowing Pulse
-                                scale: [1, 1.3, 1],
-                                rotate: [0, 180, 360],
-                                filter: [
-                                  'brightness(1) drop-shadow(0 0 10px rgba(255,255,255,0.5))',
-                                  'brightness(1.5) drop-shadow(0 0 20px rgba(255,255,255,0.8))',
-                                  'brightness(1) drop-shadow(0 0 10px rgba(255,255,255,0.5))'
-                                ]
-                              } : index === 1 ? {
-                                // Teamwork - Floating Motion
-                                y: [-8, 8, -8],
-                                rotate: [-10, 10, -10],
-                                scale: [1, 1.2, 1]
-                              } : index === 2 ? {
-                                // Learning - Spinning with Scale
-                                rotate: [0, 360],
-                                scale: [1, 1.4, 1],
-                                y: [0, -15, 0]
-                              } : {
-                                // Growth - Expanding Spiral
-                                scale: [1, 1.5, 1],
-                                rotate: [0, 360],
-                                borderRadius: ['50%', '20%', '50%']
-                              }
-                            }
-                            transition={{
-                              duration: 4,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                              delay: index * 0.3
-                            }}
+                            whileHover={shouldReduceMotion ? undefined : { rotateY: 360, scale: 1.1 }}
+                            transition={{ duration: 0.6 }}
                           >
                             <Icon className="h-12 w-12 text-white opacity-90" />
                           </motion.div>
@@ -686,10 +602,10 @@ export default function TeamPage() {
                       </div>
                     </div>
                   </motion.div>
-                </SlideIn>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -708,7 +624,13 @@ export default function TeamPage() {
           </SlideIn>
 
           {/* Team Members Grid - Floating Bubbles */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            initial={shouldReduceMotion ? false : "hidden"}
+            whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
+            viewport={MOTION_VIEWPORT}
+            variants={STAGGER_CONTAINER}
+          >
             {teamMembers.map((member, index) => {
               // Random animation values for natural floating effect
               const floatDuration = 3 + (index % 3) * 0.5; // 3-4.5 seconds
@@ -716,16 +638,16 @@ export default function TeamPage() {
               const rotateAngle = (index % 2 === 0 ? 1 : -1) * (2 + index % 3); // -5 to 5 degrees
               
               return (
-                <SlideIn key={index} direction="up" delay={index * 0.05}>
+                <motion.div key={index} variants={FADE_UP_50}>
                   <motion.div
                     className="group text-center"
-                    animate={{
+                    animate={shouldReduceMotion ? undefined : {
                       y: [-floatDistance, floatDistance, -floatDistance],
                       rotate: [-rotateAngle, rotateAngle, -rotateAngle],
                     }}
                     transition={{
                       duration: floatDuration,
-                      repeat: Infinity,
+                      repeat: shouldReduceMotion ? 0 : Infinity,
                       ease: "easeInOut",
                       delay: index * 0.2, // Stagger start times
                     }}
@@ -740,29 +662,29 @@ export default function TeamPage() {
                     <div className="relative mb-4">
                       <motion.div
                         className="absolute inset-0 bg-gradient-to-br from-orange-500/30 to-yellow-500/30 rounded-full blur-xl group-hover:blur-2xl"
-                        animate={{
+                        animate={shouldReduceMotion ? undefined : {
                           scale: [1, 1.1, 1],
                           opacity: [0.3, 0.5, 0.3],
                         }}
                         transition={{
                           duration: floatDuration,
-                          repeat: Infinity,
+                          repeat: shouldReduceMotion ? 0 : Infinity,
                           ease: "easeInOut",
                         }}
                       />
-                      <div className="relative w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-orange-500/30 group-hover:border-orange-400/60 transition-all duration-300">
+                      <div className="relative w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-orange-500/30 group-hover:border-orange-400/60 transition-all duration-500">
                         <Image
                           src={member.image}
                           alt={member.name}
                           width={160}
                           height={160}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>
                       {/* LinkedIn Icon */}
                       <a
                         href={member.linkedin}
-                        className="absolute bottom-2 right-1/2 translate-x-1/2 w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-orange-600 transition-all duration-300 transform group-hover:translate-y-0 translate-y-2"
+                        className="absolute bottom-2 right-1/2 translate-x-1/2 w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-orange-600 transition-all duration-500 transform group-hover:translate-y-0 translate-y-2"
                       >
                         <Linkedin className="h-5 w-5 text-white" />
                       </a>
@@ -779,10 +701,10 @@ export default function TeamPage() {
                       {member.department}
                     </p>
                   </motion.div>
-                </SlideIn>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 

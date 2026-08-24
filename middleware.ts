@@ -46,6 +46,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Parallel variants live under /v2 and /v3 — do not wrap with /de|/en
+  if (
+    pathname === '/v2' ||
+    pathname.startsWith('/v2/') ||
+    pathname === '/v3' ||
+    pathname.startsWith('/v3/')
+  ) {
+    return NextResponse.next();
+  }
+
   // Check if pathname already has a locale
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`

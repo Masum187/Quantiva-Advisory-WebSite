@@ -1,5 +1,51 @@
 # RESKIN_REPORT: Quantiva Advisory Valmax-Reskin
 
+## Update 2026-06-14: Fidelity-Durchgang 3
+
+Ziel dieses Durchgangs war die sektionweise Nachschaerfung gegen die live erneut gemessenen Valmax-Proportionen. Grundlage waren `https://digital-culture.valmax.dev/`, Capability-/Industry-/Insights-/Contact-Referenzen sowie die Live-CSS-Werte aus `style.min.css`.
+
+### Neu nachgeschaerft
+
+- `docs/valmax-fidelity-gap.md`: Von "Soll/Ist vor Durchgang" auf gemessene Sollwerte, erreichten Stand und bewussten Rest-Gap umgestellt.
+- `app/components/QuantivaWebsite.tsx`:
+  - Gemeinsame Valmax-Skala ergaenzt: Section-Padding `5.625rem`, H1 `4.375rem`, H2 `3.375rem`, Manifest `5.0625rem`.
+  - Header von dunkler Gesamtbar auf Valmax-naehere getrennte Desktop-Pills umgebaut: Logo, weisse Nav-Pill, CTA/Language, `top: 10px`, Mega-Panel separat dunkel.
+  - Mobile-Menue von flachem Accordion auf Root-/Sublevel-Panel mit Back-Button umgestellt; Ticker bleibt erhalten.
+  - Hero auf gemessene Spalten und Frame-Proportionen gezogen: `24.375rem / 231:328 Frame / 23.125rem`, Gap `1.75rem`, Frame max `40svh`.
+  - Social Proof auf outer green + inner violet umgestellt; Title/CTA sitzen nun auf der violetten Flaeche, Badges bleiben Quantiva-eigene Signale.
+  - Brand Manifest von dunklem Bildband auf helle Mask-Anmutung mit Quantiva-Media als Textfuellung geaendert.
+  - Capabilities auf dunklen Section-Hintergrund, linke Media-Fläche und rechtes `37rem` Info-Panel mit `4.375rem` Link-Rows nachgezogen.
+  - Industries-Liste auf Valmax-Linklisten-Proportionen reduziert: rechte Liste max `40.3125rem`, Link-Font bis `3.125rem`, aktive grüne Zeile und Media-Swap.
+  - At-a-glance von grüner Vollfläche auf helle Fläche mit violetten Ringen und kompakteren violet Stat-Blocks umgestellt.
+  - Testimonials auf Valmax-naehere Komposition umgebaut: Titel/Nav links, große runde aktive Slide rechts, Quote im Kreis, wechselnde green/lavender Backgrounds und grosse Wortmarke.
+  - Insights-Galerie von vertikalem Phone-Frame auf horizontale `35.25rem x 21.1875rem`-Proportion geändert.
+  - FAQ-Spalten, sticky Headline, Item-Hoehe `6.625rem`, Lavender-Cards und Antwortabstand nachgemessen angepasst.
+  - Contact-Hero-H2 auf Valmax-Skala reduziert; Formular bleibt zentriert mit `37.125rem` Breite.
+  - Meeting-/Footer-Skala weiter an die neue H2-/Spacing-Konstante angeglichen.
+
+### Bewusst nicht 1:1
+
+- Keine Valmax-Texte, Claims, Kundenlogos, Bilder, Videos, SVG-Masken oder Logo-Dateien wurden kopiert.
+- Hero-/Insights-Masken sind daher Quantiva-eigene visuelle Approximationen, nicht die Valmax-Originalmasken.
+- Kein GSAP, Lenis oder Swiper wurde nachinstalliert; Slider-/Reveal-/Ticker-Verhalten bleibt mit vorhandenen React/Framer-Motion-Mitteln umgesetzt.
+- Footer-Newsletter wurde weiterhin nicht als Fake-Funktion gebaut, weil kein Quantiva-Newsletter-Backend vorhanden ist.
+- ContactForm, Honeypot, reCAPTCHA, `/api/contact`, Calendly, Analytics, CMS/API-Routen und Locale-Routing wurden nicht funktional veraendert.
+
+### Verifikation
+
+- `npm run build`: erfolgreich.
+- Next.js generierte 65 Routen; `postbuild` lief mit `generate:sitemap`, `generate:og` und `validate:cases:strict` durch.
+- Bestehende Hinweise bleiben: `baseline-browser-mapping`/`caniuse-lite` veraltet und Cloudinary-URLs im OG-Skript werden uebersprungen. Keine neuen TypeScript- oder Build-Fehler.
+- Kein Dev-Server wurde gestartet.
+- Externe Playwright-Computed-Style-Messung wurde versucht, Chromium konnte in der macOS-Sandbox aber nicht starten (`MachPortRendezvousServer: Permission denied`). Die Messwerte stammen daher aus Live-HTML/CSS-Fetch.
+
+### Browser-Pruefpunkte
+
+- `/de` und `/en`: Header-Pills, Mega-Menues, Mobile-Root/Sublevel-Menue, Hero-Frame, Social-Proof-Farbwechsel, Manifest-Mask-Anmutung.
+- `/de` und `/en`: Capability-Prev/Next + Hover, Industry-Hover-Media, Testimonial-Prev/Next + Background-Wechsel, Insight-Buttons/Galerie, FAQ-More-Button.
+- `/de` und `/en`: ContactForm-Layout und Submit in Zielumgebung mit echter reCAPTCHA-Konfiguration, Calendly-Widget, Footer-Scroll-to-top.
+- Mobile Breakpoints: lange deutsche Service-/Industry-Titel, Sublevel-Menue-Hoehe, Hero-Umbrueche und Testimonial-Quote im Kreis.
+
 ## Update 2026-06-14: Fidelity-Durchgang 2
 
 Ziel dieses Durchgangs war nicht ein weiterer grober Re-Skin, sondern eine deutlich engere Nachbildung von Valmax-Struktur und -Verhalten mit Quantiva-eigenen Inhalten.

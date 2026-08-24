@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -17,14 +17,16 @@ import {
   Shield
 } from 'lucide-react';
 import IndustriesSection from '../../components/sections/IndustriesSection';
+import { MOTION_VIEWPORT, STATIC_FINAL } from '../../components/motion/presets';
 
 // Animation Component
 function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number }) {
+  const shouldReduceMotion = useReducedMotion();
   const variants = {
     hidden: {
       opacity: 0,
       x: direction === 'left' ? -50 : direction === 'right' ? 50 : 0,
-      y: direction === 'up' ? 50 : direction === 'down' ? -50 : 0,
+      y: direction === 'up' ? 30 : direction === 'down' ? -30 : 0,
     },
     visible: {
       opacity: 1,
@@ -35,11 +37,18 @@ function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.Re
 
   return (
     <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
+      initial={shouldReduceMotion ? false : "hidden"}
+      whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
+      viewport={MOTION_VIEWPORT}
       variants={variants}
-      transition={{ duration: 0.6, delay }}
+      transition={{
+        duration: 0.8,
+        delay,
+        ease: 'easeOut',
+        ...(direction === 'left' || direction === 'right'
+          ? { type: 'spring' as const, stiffness: 100, damping: 18 }
+          : {}),
+      }}
     >
       {children}
     </motion.div>
@@ -89,6 +98,7 @@ function ExpandableSection({ title, icon: Icon, children, defaultOpen = false }:
 }
 
 export default function AboutPage() {
+  const shouldReduceMotion = useReducedMotion();
   const stats = [
     { value: '15+', label: 'Years of Experience', icon: Award },
     { value: '200+', label: 'Successful Projects', icon: Target },
@@ -132,8 +142,8 @@ export default function AboutPage() {
         </div>
 
         {/* Animated Gradient Orbs */}
-        <div className="absolute top-20 right-20 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl opacity-15 animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-20 right-20 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl opacity-20 motion-safe:animate-pulse" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl opacity-15 motion-safe:animate-pulse" style={{ animationDelay: '1s' }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -188,24 +198,24 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-teal-500/20 rounded-3xl blur-3xl"></div>
                 
                 {/* Main Image */}
-                <div className="relative rounded-3xl overflow-hidden border border-purple-500/20">
+                <div className="relative group rounded-3xl overflow-hidden border border-purple-500/20">
                   <Image
       src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop&auto=format&q=80"
       alt="Team Collaboration"
       width={800}
       height={600}
-      className="w-full h-[500px] object-cover"
+      className="w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
     />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                   
                   {/* Floating Stats */}
                   <motion.div
-                    animate={{
+                    animate={shouldReduceMotion ? undefined : {
                       y: [-10, 10, -10],
                     }}
                     transition={{
                       duration: 4,
-                      repeat: Infinity,
+                      repeat: shouldReduceMotion ? 0 : Infinity,
                       ease: "easeInOut",
                     }}
                     className="absolute top-8 right-8 bg-black/80 backdrop-blur-md border border-purple-500/30 rounded-2xl p-6"
@@ -406,7 +416,7 @@ export default function AboutPage() {
       alt="Gülnur Patan - CEO"
       width={800}
       height={600}
-      className="relative rounded-3xl w-full h-[600px] object-cover border border-purple-500/20"
+      className="relative rounded-3xl w-full h-[600px] object-cover border border-purple-500/20 transition-transform duration-500 hover:scale-105"
     />
               </div>
             </SlideIn>
@@ -441,7 +451,7 @@ export default function AboutPage() {
               className="text-4xl md:text-6xl font-bold text-white mb-8"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={MOTION_VIEWPORT}
             >
               Let&apos;s{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-teal-400">

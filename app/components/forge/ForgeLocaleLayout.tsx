@@ -1,5 +1,7 @@
-import { Instrument_Serif, Manrope } from 'next/font/google';
+import { Geist, Instrument_Serif } from 'next/font/google';
 import ForgeShell from '../../components/forge/ForgeShell';
+import NoiseOverlay from '../../components/forge/NoiseOverlay';
+import SmoothScroll from '../../components/forge/SmoothScroll';
 import { ContentProvider } from '../../lib/contexts/ContentContext';
 import type { ForgeLocale } from '../../lib/data/forge-content';
 
@@ -10,7 +12,7 @@ const display = Instrument_Serif({
   display: 'swap',
 });
 
-const sans = Manrope({
+const sans = Geist({
   subsets: ['latin'],
   variable: '--font-forge-sans',
   display: 'swap',
@@ -25,9 +27,12 @@ export default function ForgeLocaleLayout({
 }) {
   return (
     <div className={`${display.variable} ${sans.variable}`}>
-      <ContentProvider>
-        <ForgeShell locale={locale}>{children}</ForgeShell>
-      </ContentProvider>
+      <SmoothScroll>
+        <NoiseOverlay />
+        <ContentProvider>
+          <ForgeShell locale={locale}>{children}</ForgeShell>
+        </ContentProvider>
+      </SmoothScroll>
     </div>
   );
 }

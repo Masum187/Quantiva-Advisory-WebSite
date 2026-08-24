@@ -1,4 +1,5 @@
 @import './forge.css';
+@import './v3.css';
 
 @tailwind base;
 @tailwind components;

@@ -2,10 +2,16 @@ import type { Metadata } from 'next';
 import ForgeHome from '../../components/forge/ForgeHome';
 
 export const metadata: Metadata = {
-  title: 'Quantiva Advisory — Forge',
+  title: 'S/4HANA-Transformation & Testmanagement | Quantiva Advisory',
   description:
-    'SAP, Cloud und KI für den Mittelstand. Forge-Variante der Quantiva Advisory Website.',
-  alternates: { canonical: '/v2/de' },
+    'Beratung für S/4HANA-Migrationen, SIT- und UAT-Testmanagement sowie kontrollierte Cutover-Steuerung.',
+  alternates: {
+    canonical: 'https://quantiva-advisory.vercel.app/v2/de',
+    languages: {
+      'de-DE': 'https://quantiva-advisory.vercel.app/v2/de',
+      'en-US': 'https://quantiva-advisory.vercel.app/v2/en',
+    },
+  },
 };
 
 export default function V2DeHomePage() {

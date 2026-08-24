@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import casesData from '../../lib/data/cases.json';
 import Link from 'next/link';
 import Image from 'next/image';
+import { MotionItem, MotionReveal, MotionStagger } from '../../components/motion/Reveal';
+import { FADE_LEFT_20, FADE_UP_20, FADE_UP_50 } from '../../components/motion/presets';
 
 export const metadata: Metadata = {
   title: 'References & Cases – Quantiva Advisory',
@@ -20,7 +22,7 @@ export default function CasesPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-teal-600 to-teal-700 text-white py-20">
-        <div className="max-w-7xl mx-auto px-6">
+        <MotionReveal className="max-w-7xl mx-auto px-6" variants={FADE_UP_20}>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             References & Success Stories
           </h1>
@@ -28,18 +30,18 @@ export default function CasesPage() {
             Success stories from various industries and technologies.
             Discover how we help our clients achieve digital excellence.
           </p>
-        </div>
+        </MotionReveal>
       </section>
 
       {/* Cases Grid */}
       <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <MotionStagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {casesData.map((caseItem) => (
-            <Link
-              key={caseItem.slug}
-              href={`/en/cases/${caseItem.slug}`}
-              className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-            >
+            <MotionItem key={caseItem.slug} variants={FADE_LEFT_20}>
+              <Link
+                href={`/en/cases/${caseItem.slug}`}
+                className="group block h-full bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+              >
               {/* Image */}
               {caseItem.heroImage && (
                 <div className="relative h-48 bg-gradient-to-br from-teal-500 to-teal-600 overflow-hidden">
@@ -91,14 +93,15 @@ export default function CasesPage() {
                   </div>
                 )}
               </div>
-            </Link>
+              </Link>
+            </MotionItem>
           ))}
-        </div>
+        </MotionStagger>
       </section>
 
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-teal-600 to-teal-700 text-white py-16">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+        <MotionReveal className="max-w-4xl mx-auto px-6 text-center" variants={FADE_UP_50}>
           <h2 className="text-3xl font-bold mb-4">
             Let&apos;s write your success story together
           </h2>
@@ -111,7 +114,7 @@ export default function CasesPage() {
           >
             Get in touch now
           </Link>
-        </div>
+        </MotionReveal>
       </section>
     </div>
   );
