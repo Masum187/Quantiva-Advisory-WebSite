@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Navigation from '../Navigation';
 import {
   ChevronRight, ArrowRight, Users, Heart, TrendingUp,
@@ -15,16 +15,9 @@ import { getJobListings, submitJobPosting, JobListing } from '../../lib/utils/jo
 import ContactForm from '../ContactForm';
 import { AnimatePresence } from 'framer-motion';
 import Script from 'next/script';
-import {
-  FADE_UP_50,
-  MOTION_VIEWPORT,
-  STATIC_FINAL,
-  STAGGER_CONTAINER,
-} from '../motion/presets';
 
 // Animation Components
 function SlideIn({ children, direction = 'up', delay = 0, className = '' }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; className?: string }) {
-  const shouldReduceMotion = useReducedMotion();
   const variants = {
     hidden: {
       opacity: 0,
@@ -40,10 +33,10 @@ function SlideIn({ children, direction = 'up', delay = 0, className = '' }: { ch
 
   return (
     <motion.div
-      initial={shouldReduceMotion ? false : "hidden"}
-      whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
-      viewport={MOTION_VIEWPORT}
-      transition={{ duration: 0.8, delay, ease: "easeOut" }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, delay, ease: "easeOut" }}
       variants={variants}
       className={className}
     >
@@ -53,23 +46,22 @@ function SlideIn({ children, direction = 'up', delay = 0, className = '' }: { ch
 }
 
 function StaggerSlideIn({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const shouldReduceMotion = useReducedMotion();
   return (
     <motion.div
       className={className}
-      initial={shouldReduceMotion ? false : "hidden"}
-      whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
-      viewport={MOTION_VIEWPORT}
-      variants={STAGGER_CONTAINER}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ staggerChildren: 0.1 }}
     >
       {React.Children.map(children, (child, index) => (
         <motion.div
           key={index}
           variants={{
-            hidden: { opacity: 0, y: 50 },
+            hidden: { opacity: 0, y: 20 },
             visible: { opacity: 1, y: 0 },
           }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 0.5 }}
         >
           {child}
         </motion.div>
@@ -80,7 +72,6 @@ function StaggerSlideIn({ children, className = "" }: { children: React.ReactNod
 
 // Career Levels Carousel Component with Swipe Support
 function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string }) {
-  const shouldReduceMotion = useReducedMotion();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -128,7 +119,7 @@ function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string })
 
   // Auto-rotate effect
   React.useEffect(() => {
-    if (isHovered || shouldReduceMotion) {
+    if (isHovered) {
       setProgress(0);
       return;
     }
@@ -148,7 +139,7 @@ function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string })
     }, interval);
 
     return () => clearInterval(progressTimer);
-  }, [currentIndex, isHovered, carouselData.length, shouldReduceMotion]);
+  }, [currentIndex, isHovered, carouselData.length]);
 
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
@@ -244,7 +235,7 @@ function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string })
           src={currentCard.image}
           alt={currentLevel.title}
           className="absolute inset-0 w-full h-full object-cover"
-          initial={shouldReduceMotion ? false : {
+          initial={{ 
             x: direction === 'right' ? 100 : -100,
             scale: 1.1, 
             opacity: 0 
@@ -254,12 +245,12 @@ function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string })
             scale: 1, 
             opacity: 1 
           }}
-          exit={shouldReduceMotion ? undefined : {
+          exit={{ 
             x: direction === 'right' ? -100 : 100,
             scale: 0.9,
             opacity: 0 
           }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: 'easeInOut' }}
+          transition={{ duration: 0.6, ease: 'easeInOut' }}
         />
         <div className={`absolute inset-0 bg-gradient-to-r ${currentCard.gradient}`}></div>
 
@@ -267,7 +258,7 @@ function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string })
         <motion.div
           key={`content-${currentIndex}`}
           className="relative h-full flex flex-col justify-end p-8 md:p-12"
-          initial={shouldReduceMotion ? false : {
+          initial={{ 
             opacity: 0, 
             x: direction === 'right' ? 50 : -50 
           }}
@@ -275,7 +266,7 @@ function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string })
             opacity: 1, 
             x: 0 
           }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.5, delay: shouldReduceMotion ? 0 : 0.2, ease: 'easeOut' }}
+          transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
         >
           <div className="mb-6">
             <div className={`w-16 h-16 rounded-full ${currentCard.iconBg} backdrop-blur-sm flex items-center justify-center mb-6`}>
@@ -311,7 +302,7 @@ function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string })
             aria-label={`Go to slide ${index + 1}`}
           >
             {index === currentIndex && (
-              <div className="absolute inset-0 rounded-full bg-white/50 motion-safe:animate-pulse"></div>
+              <div className="absolute inset-0 rounded-full bg-white/50 animate-pulse"></div>
             )}
           </button>
         ))}
@@ -342,7 +333,6 @@ const ELEVENLABS_VOICES = {
 };
 
 export default function CareerPage() {
-  const shouldReduceMotion = useReducedMotion();
   const { lang, localePath } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [jobListings, setJobListings] = useState<JobListing[]>([]);
@@ -995,14 +985,7 @@ export default function CareerPage() {
       </div>
 
       {/* Hero Section - Simple Background */}
-      <motion.div
-        className="relative z-10 h-screen w-full overflow-hidden"
-        style={{
-          opacity: shouldReduceMotion ? 1 : heroOpacity,
-          scale: shouldReduceMotion ? 1 : heroScale,
-          transformOrigin: 'top center',
-        }}
-      >
+      <div className="relative z-10 h-screen w-full overflow-hidden">
         
         
         {/* Video Overlay */}
@@ -1030,7 +1013,7 @@ export default function CareerPage() {
             </SlideIn>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Main Content - Seamless Flow */}
       <div className="relative z-10 bg-black min-h-screen">
@@ -1195,17 +1178,11 @@ export default function CareerPage() {
           </div>
 
         {/* Stats Section */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24"
-          initial={shouldReduceMotion ? false : "hidden"}
-          whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
-          viewport={MOTION_VIEWPORT}
-          variants={STAGGER_CONTAINER}
-        >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <motion.div key={stat.label} variants={FADE_UP_50}>
+              <SlideIn key={stat.label} direction="up" delay={index * 0.1}>
                 <div className="text-center group">
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-teal-500/20 to-purple-500/20 border border-teal-500/30 flex items-center justify-center group-hover:border-teal-400/60 transition-all">
                     <Icon className="w-8 h-8 text-teal-400" />
@@ -1213,10 +1190,10 @@ export default function CareerPage() {
                   <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
                   <div className="text-gray-400 text-sm">{stat.label}</div>
                 </div>
-              </motion.div>
+              </SlideIn>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Benefits Section - Modern 3D Design */}
         <div className="mb-24">
@@ -1249,33 +1226,21 @@ export default function CareerPage() {
             </div>
           </SlideIn>
 
-          <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
-            initial={shouldReduceMotion ? false : "hidden"}
-            whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
-            viewport={MOTION_VIEWPORT}
-            variants={STAGGER_CONTAINER}
-          >
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {benefits.map((benefit, index) => {
               const Icon = benefit.icon;
               return (
                 <motion.div
                   key={benefit.title}
-                  variants={{
-                    hidden: { opacity: 0, y: 50, rotateX: -15 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      rotateX: 0,
-                      transition: { duration: 0.8, type: "spring", stiffness: 100 },
-                    },
-                  }}
+                  initial={{ opacity: 0, y: 50, rotateX: -15 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                   transition={{ 
-                    duration: 0.8,
+                    duration: 0.6, 
+                    delay: index * 0.1,
                     type: "spring",
                     stiffness: 100
                   }}
-                  whileHover={shouldReduceMotion ? undefined : {
+                  whileHover={{ 
                     y: -10, 
                     rotateY: 5, 
                     rotateX: 5,
@@ -1293,7 +1258,7 @@ export default function CareerPage() {
                     <div className="absolute inset-0 overflow-hidden rounded-3xl">
                       <motion.div
                         className="absolute w-2 h-2 bg-teal-400/30 rounded-full"
-                        animate={shouldReduceMotion ? undefined : {
+                        animate={{
                           x: [0, 100, 0],
                           y: [0, -50, 0],
                           opacity: [0, 1, 0],
@@ -1301,14 +1266,14 @@ export default function CareerPage() {
                         }}
                         transition={{
                           duration: 3,
-                          repeat: shouldReduceMotion ? 0 : Infinity,
+                          repeat: Infinity,
                           delay: index * 0.5
                         }}
                         style={{ top: '20%', left: '10%' }}
                       />
                       <motion.div
                         className="absolute w-1 h-1 bg-purple-400/40 rounded-full"
-                        animate={shouldReduceMotion ? undefined : {
+                        animate={{
                           x: [0, -80, 0],
                           y: [0, 60, 0],
                           opacity: [0, 1, 0],
@@ -1316,7 +1281,7 @@ export default function CareerPage() {
                         }}
                         transition={{
                           duration: 4,
-                          repeat: shouldReduceMotion ? 0 : Infinity,
+                          repeat: Infinity,
                           delay: index * 0.7
                         }}
                         style={{ top: '60%', right: '15%' }}
@@ -1327,7 +1292,7 @@ export default function CareerPage() {
                       {/* 3D Icon Container */}
                       <motion.div 
                         className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${benefit.color}/20 border border-white/20 flex items-center justify-center group-hover:border-teal-400/50 backdrop-blur-sm relative overflow-hidden`}
-                        whileHover={shouldReduceMotion ? undefined : {
+                        whileHover={{ 
                           rotateY: 360,
                           scale: 1.1,
                           transition: { duration: 0.6 }
@@ -1355,8 +1320,8 @@ export default function CareerPage() {
                       {/* Hover Arrow */}
                       <motion.div
                         className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        animate={shouldReduceMotion ? undefined : { x: [0, 5, 0] }}
-                        transition={{ duration: 1.5, repeat: shouldReduceMotion ? 0 : Infinity }}
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
                       >
                         <ArrowRight className="w-5 h-5 text-teal-400" />
                       </motion.div>
@@ -1365,7 +1330,7 @@ export default function CareerPage() {
                 </motion.div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
 
         {/* Open Positions */}
@@ -1603,7 +1568,7 @@ export default function CareerPage() {
                   <div className="flex items-start gap-4">
                     <motion.div 
                       className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/30 to-teal-600/20 border border-teal-400/40 flex items-center justify-center flex-shrink-0 relative overflow-hidden"
-                      animate={shouldReduceMotion ? undefined : {
+                      animate={{
                         rotateY: [0, 180, 360],
                         scale: [1, 1.2, 1],
                         boxShadow: [
@@ -1614,33 +1579,33 @@ export default function CareerPage() {
                       }}
                       transition={{
                         duration: 3,
-                        repeat: shouldReduceMotion ? 0 : Infinity,
+                        repeat: Infinity,
                         ease: "easeInOut"
                       }}
                     >
                       {/* Inner Glow Effect */}
                       <motion.div
                         className="absolute inset-1 rounded-xl bg-white/20"
-                        animate={shouldReduceMotion ? undefined : {
+                        animate={{
                           scale: [0.8, 1.2, 0.8],
                           opacity: [0.3, 0.7, 0.3]
                         }}
                         transition={{
                           duration: 2,
-                          repeat: shouldReduceMotion ? 0 : Infinity,
+                          repeat: Infinity,
                           ease: "easeInOut"
                         }}
                       />
                       
                       {/* Icon with Flickering Effect */}
                       <motion.div
-                        animate={shouldReduceMotion ? undefined : {
+                        animate={{
                           scale: [1, 1.1, 1],
                           rotate: [0, 5, -5, 0]
                         }}
                         transition={{
                           duration: 2,
-                          repeat: shouldReduceMotion ? 0 : Infinity,
+                          repeat: Infinity,
                           ease: "easeInOut"
                         }}
                       >
@@ -1657,7 +1622,7 @@ export default function CareerPage() {
                   <div className="flex items-start gap-4">
                     <motion.div 
                       className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/30 to-purple-600/20 border border-purple-400/40 flex items-center justify-center flex-shrink-0 relative overflow-hidden"
-                      animate={shouldReduceMotion ? undefined : {
+                      animate={{
                         y: [-5, 5, -5],
                         rotateZ: [-5, 5, -5],
                         scale: [1, 1.1, 1],
@@ -1669,7 +1634,7 @@ export default function CareerPage() {
                       }}
                       transition={{
                         duration: 3,
-                        repeat: shouldReduceMotion ? 0 : Infinity,
+                        repeat: Infinity,
                         ease: "easeInOut",
                         delay: 0.5
                       }}
@@ -1677,13 +1642,13 @@ export default function CareerPage() {
                       {/* Inner Glow Effect */}
                       <motion.div
                         className="absolute inset-1 rounded-xl bg-white/20"
-                        animate={shouldReduceMotion ? undefined : {
+                        animate={{
                           scale: [0.8, 1.2, 0.8],
                           opacity: [0.3, 0.7, 0.3]
                         }}
                         transition={{
                           duration: 2,
-                          repeat: shouldReduceMotion ? 0 : Infinity,
+                          repeat: Infinity,
                           ease: "easeInOut",
                           delay: 0.3
                         }}
@@ -1691,13 +1656,13 @@ export default function CareerPage() {
                       
                       {/* Icon with Bouncing Effect */}
                       <motion.div
-                        animate={shouldReduceMotion ? undefined : {
+                        animate={{
                           y: [-2, 2, -2],
                           rotate: [-2, 2, -2]
                         }}
                         transition={{
                           duration: 2,
-                          repeat: shouldReduceMotion ? 0 : Infinity,
+                          repeat: Infinity,
                           ease: "easeInOut",
                           delay: 0.2
                         }}
@@ -1715,7 +1680,7 @@ export default function CareerPage() {
                   <div className="flex items-start gap-4">
                     <motion.div 
                       className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/30 to-blue-600/20 border border-blue-400/40 flex items-center justify-center flex-shrink-0 relative overflow-hidden"
-                      animate={shouldReduceMotion ? undefined : {
+                      animate={{
                         rotate: [0, 360],
                         scaleX: [1, -1, 1],
                         y: [0, -10, 0],
@@ -1727,7 +1692,7 @@ export default function CareerPage() {
                       }}
                       transition={{
                         duration: 3,
-                        repeat: shouldReduceMotion ? 0 : Infinity,
+                        repeat: Infinity,
                         ease: "easeInOut",
                         delay: 1
                       }}
@@ -1735,13 +1700,13 @@ export default function CareerPage() {
                       {/* Inner Glow Effect */}
                       <motion.div
                         className="absolute inset-1 rounded-xl bg-white/20"
-                        animate={shouldReduceMotion ? undefined : {
+                        animate={{
                           scale: [0.8, 1.2, 0.8],
                           opacity: [0.3, 0.7, 0.3]
                         }}
                         transition={{
                           duration: 2,
-                          repeat: shouldReduceMotion ? 0 : Infinity,
+                          repeat: Infinity,
                           ease: "easeInOut",
                           delay: 0.6
                         }}
@@ -1749,13 +1714,13 @@ export default function CareerPage() {
                       
                       {/* Icon with Tassel Swing */}
                       <motion.div
-                        animate={shouldReduceMotion ? undefined : {
+                        animate={{
                           rotate: [0, 10, -10, 0],
                           scale: [1, 1.05, 1]
                         }}
                         transition={{
                           duration: 2,
-                          repeat: shouldReduceMotion ? 0 : Infinity,
+                          repeat: Infinity,
                           ease: "easeInOut",
                           delay: 0.4
                         }}

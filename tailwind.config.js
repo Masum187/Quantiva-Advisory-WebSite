@@ -49,13 +49,6 @@ module.exports = {
           'Helvetica Neue',
           'sans-serif',
         ],
-        sans: [
-          'Inter',
-          'Helvetica Neue',
-          'Arial',
-          'Helvetica',
-          'sans-serif',
-        ],
       },
       spacing: {
         'forge-1': '0.5rem',

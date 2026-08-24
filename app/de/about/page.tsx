@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '../../components/Navigation';
@@ -24,11 +24,9 @@ import {
   CheckCircle
 } from 'lucide-react';
 import IndustriesSection from '../../components/sections/IndustriesSection';
-import { MOTION_VIEWPORT, STATIC_FINAL } from '../../components/motion/presets';
 
 // Animation Component
 function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number }) {
-  const shouldReduceMotion = useReducedMotion();
   const variants = {
     hidden: {
       opacity: 0,
@@ -44,17 +42,14 @@ function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.Re
 
   return (
     <motion.div
-      initial={shouldReduceMotion ? false : "hidden"}
-      whileInView={shouldReduceMotion ? STATIC_FINAL : "visible"}
-      viewport={MOTION_VIEWPORT}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
       variants={variants}
       transition={{
         delay,
-        duration: 0.8,
+        duration: 0.6,
         ease: "easeOut",
-        ...(direction === 'left' || direction === 'right'
-          ? { type: 'spring' as const, stiffness: 100, damping: 18 }
-          : {}),
       }}
     >
       {children}
@@ -63,7 +58,6 @@ function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.Re
 }
 
 export default function AboutPage() {
-  const shouldReduceMotion = useReducedMotion();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [showAvatar, setShowAvatar] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -172,14 +166,14 @@ export default function AboutPage() {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
               }}
-              animate={shouldReduceMotion ? undefined : {
+              animate={{
                 y: [0, -30, 0],
                 opacity: [0.2, 1, 0.2],
                 scale: [1, 1.5, 1],
               }}
               transition={{
                 duration: 3 + Math.random() * 2,
-                repeat: shouldReduceMotion ? 0 : Infinity,
+                repeat: Infinity,
                 delay: Math.random() * 2,
               }}
             />
@@ -429,7 +423,7 @@ export default function AboutPage() {
                     alt={leadershipQuote.author}
                     width={64}
                     height={64}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="text-left">
@@ -501,7 +495,7 @@ export default function AboutPage() {
                   alt="Gülnur Patan"
                   width={128}
                   height={128}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">Gülnur Patan</h3>

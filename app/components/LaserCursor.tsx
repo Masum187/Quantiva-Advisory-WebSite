@@ -2,20 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { useReducedMotion } from 'framer-motion';
 
 // Laser Cursor Component
 function LaserCursor() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const pathname = usePathname();
-  const shouldReduceMotion = useReducedMotion();
 
   // Don't show laser cursor on main pages
   const isMainPage = pathname === '/de' || pathname === '/en' || pathname === '/';
 
   useEffect(() => {
-    if (isMainPage || shouldReduceMotion) return;
+    if (isMainPage) return;
 
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -33,11 +31,11 @@ function LaserCursor() {
       window.removeEventListener('mousemove', updateMousePosition);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [isMainPage, shouldReduceMotion]);
+  }, [isMainPage]);
 
   // Add/remove laser cursor page class
   useEffect(() => {
-    if (isMainPage || shouldReduceMotion) {
+    if (isMainPage) {
       document.body.classList.remove('laser-cursor-page');
     } else {
       document.body.classList.add('laser-cursor-page');
@@ -46,9 +44,9 @@ function LaserCursor() {
     return () => {
       document.body.classList.remove('laser-cursor-page');
     };
-  }, [isMainPage, shouldReduceMotion]);
+  }, [isMainPage]);
 
-  if (isMainPage || shouldReduceMotion || !isVisible) return null;
+  if (isMainPage || !isVisible) return null;
 
   return (
     <div 

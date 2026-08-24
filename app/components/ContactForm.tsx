@@ -132,17 +132,13 @@ export default function ContactForm({ lang }: ContactFormProps) {
     }
   };
 
-  const inputClass =
-    'w-full rounded-[10px] border border-black/10 bg-[#f7f6ff] px-4 py-4 text-black outline-none transition placeholder:text-black/35 focus:border-[#5241d4] focus:ring-2 focus:ring-[#d9ff80] disabled:cursor-not-allowed disabled:bg-black/5';
-  const labelClass = 'mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-black/55';
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Name Field */}
       <div>
         <label
           htmlFor="name"
-          className={labelClass}
+          className="block text-sm font-medium text-gray-700 mb-2"
         >
           {t[lang].name}
         </label>
@@ -154,7 +150,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
           minLength={2}
           maxLength={100}
           disabled={status === 'loading'}
-          className={inputClass}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
         />
       </div>
 
@@ -162,7 +158,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
       <div>
         <label
           htmlFor="email"
-          className={labelClass}
+          className="block text-sm font-medium text-gray-700 mb-2"
         >
           {t[lang].email}
         </label>
@@ -172,7 +168,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
           name="email"
           required
           disabled={status === 'loading'}
-          className={inputClass}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
         />
       </div>
 
@@ -180,7 +176,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
       <div>
         <label
           htmlFor="message"
-          className={labelClass}
+          className="block text-sm font-medium text-gray-700 mb-2"
         >
           {t[lang].message}
         </label>
@@ -192,7 +188,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
           maxLength={5000}
           rows={6}
           disabled={status === 'loading'}
-          className={`${inputClass} resize-y`}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors resize-y"
         />
       </div>
 
@@ -215,7 +211,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="group flex w-full items-center justify-center rounded-[10px] bg-black px-6 py-4 font-semibold uppercase text-white transition hover:bg-[#d9ff80] hover:text-black disabled:cursor-not-allowed disabled:bg-black/35 disabled:text-white"
+        className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
         {status === 'loading' ? t[lang].sending : t[lang].submit}
       </button>
@@ -225,7 +221,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg border border-[#d9ff80]/60 bg-[#f0f7e0] p-4 text-black"
+          className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800"
           role="status"
           aria-live="polite"
         >
@@ -238,7 +234,7 @@ export default function ContactForm({ lang }: ContactFormProps) {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800"
+          className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800"
           role="alert"
         >
           {error || t[lang].errorGeneric}
@@ -247,6 +243,8 @@ export default function ContactForm({ lang }: ContactFormProps) {
     </form>
   );
 }
+
+
 
 
 

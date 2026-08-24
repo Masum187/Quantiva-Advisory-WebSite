@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { Zap, Brain, Target, Users, Bot, ArrowRight, Sparkles, Lock, CheckCircle2, ClipboardList, Database } from 'lucide-react';
 import './ProjectRoadmap.css';
 
 const ProjectRoadmap = () => {
-  const shouldReduceMotion = useReducedMotion();
   const [openedIndex, setOpenedIndex] = useState<number | null>(null);
   const [cardHovered, setCardHovered] = useState(false);
   const [visibleProjects, setVisibleProjects] = useState(0);
@@ -273,11 +272,6 @@ const ProjectRoadmap = () => {
 
   useEffect(() => {
      if (!circularInView) return;
-
-     if (shouldReduceMotion) {
-       setVisibleProjects(totalProjects);
-       return;
-     }
  
      setVisibleProjects(0);
      let current = 0;
@@ -296,7 +290,7 @@ const ProjectRoadmap = () => {
     }, 350);
  
      return () => clearInterval(timer);
-  }, [circularInView, shouldReduceMotion, totalProjects]);
+  }, [circularInView, totalProjects]);
 
   return (
     <div className="roadmap-wrapper">
@@ -451,11 +445,11 @@ const ProjectRoadmap = () => {
                         <motion.li 
                           key={idx} 
                           className="focus-area-feature"
-                          initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
+                          initial={{ opacity: 0, x: -20 }}
                           animate={focusAreasInView ? { 
                             opacity: 1, 
                             x: 0,
-                            transition: { delay: 0.15 + (index * area.features.length + idx) * 0.12 }
+                            transition: { delay: 0.5 + index * 0.15 + idx * 0.1 }
                           } : {}}
                           whileHover={{ x: 10, scale: 1.02 }}
                         >
@@ -538,11 +532,11 @@ const ProjectRoadmap = () => {
                       <motion.li 
                         key={idx} 
                         className="timeline-item"
-                        initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
+                        initial={{ opacity: 0, x: -20 }}
                         animate={timelineInView ? { 
                           opacity: 1, 
                           x: 0,
-                          transition: { delay: 0.15 + (index * timeline.items.length + idx) * 0.12 }
+                          transition: { delay: 0.5 + index * 0.2 + idx * 0.1 }
                         } : {}}
                         whileHover={{ x: 10, scale: 1.05 }}
                       >
@@ -640,7 +634,7 @@ const ProjectRoadmap = () => {
         {/* Header Section */}
         <div className="roadmap-header" ref={headerRef}>
           <motion.h1
-            initial={shouldReduceMotion ? false : { opacity: 0, x: -200 }}
+            initial={{ opacity: 0, x: -200 }}
             animate={headerInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -200 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="roadmap-title"
@@ -697,7 +691,7 @@ const ProjectRoadmap = () => {
         <motion.div
           className="circular-roadmap-container"
           ref={circularRef}
-          initial={shouldReduceMotion ? false : { opacity: 0, x: -250, scale: 0.85 }}
+          initial={{ opacity: 0, x: -250, scale: 0.85 }}
           animate={
             circularInView
               ? { opacity: 1, x: 0, scale: 1 }
@@ -709,11 +703,11 @@ const ProjectRoadmap = () => {
           <motion.div
             className="rotating-wrapper"
             animate={{
-              rotate: shouldReduceMotion || openedIndex !== null ? 0 : [0, 360]
+              rotate: openedIndex !== null ? 0 : [0, 360]
             }}
             transition={{
               duration: 60,
-              repeat: shouldReduceMotion || openedIndex !== null ? 0 : Infinity,
+              repeat: openedIndex !== null ? 0 : Infinity,
               ease: 'linear'
             }}
           >
@@ -727,9 +721,9 @@ const ProjectRoadmap = () => {
                   key={milestone.id}
                   className={`milestone-wrapper ${isVisible ? 'visible' : ''} ${openedIndex === index ? 'active' : ''}`}
                   style={{ '--icon-angle': `${angle}deg` } as React.CSSProperties}
-                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.3 }}
+                  initial={{ opacity: 0, scale: 0.3 }}
                   animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.3 }}
-                  transition={{ duration: 0.8, delay: 0.15 + index * 0.12, ease: 'easeOut' }}
+                  transition={{ duration: 0.6, delay: index * 0.12 }}
                   onClick={() => setOpenedIndex(openedIndex === index ? null : index)}
                 >
                   <span className="milestone-connector" />
@@ -756,9 +750,9 @@ const ProjectRoadmap = () => {
           {/* Center Slogan - outside rotating wrapper so it stays fixed */}
           <div className="center-slogan">
             <motion.h2
-              initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, delay: 1.5 }}
+              transition={{ duration: 1, delay: 1.5 }}
               className="slogan-text"
             >
               AI-Powered
@@ -872,9 +866,9 @@ const ProjectRoadmap = () => {
         {/* Bottom CTA Section */}
         <motion.div 
           className="roadmap-footer"
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.8, delay: 1 }}
+          transition={{ duration: 0.8, delay: 1 }}
         >
           <div className="footer-content">
             <h2>Bereit, Teil dieser Journey zu sein?</h2>

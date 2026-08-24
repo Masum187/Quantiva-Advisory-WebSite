@@ -18,18 +18,9 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
-  --primary-teal: #d9ff80;
-  --primary-teal-light: #f0f7e0;
-  --primary-teal-dark: #111111;
-  --qa-ink: #050505;
-  --qa-ink-soft: #111111;
-  --qa-paper: #ffffff;
-  --qa-paper-soft: #f7f6ff;
-  --qa-signal: #d9ff80;
-  --qa-violet: #5241d4;
-  --qa-line-dark: rgba(17, 17, 17, 0.14);
-  --qa-line-light: rgba(255, 255, 255, 0.18);
-  --qa-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --primary-teal: #0f766e;
+  --primary-teal-light: #14b8a6;
+  --primary-teal-dark: #0d5850;
 }
 
 * {
@@ -46,9 +37,12 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: var(--qa-paper);
-  font-family: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif;
-  letter-spacing: 0;
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
 a {
@@ -71,58 +65,12 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--qa-ink-soft);
+  background: var(--primary-teal);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--qa-signal);
-}
-
-::selection {
-  background: var(--qa-signal);
-  color: var(--qa-ink);
-}
-
-.valmax-reskin {
-  background: var(--qa-ink);
-}
-
-.valmax-reskin body {
-  background: var(--qa-ink);
-}
-
-.valmax-section {
-  padding: clamp(4rem, 8vw, 8rem) 1rem;
-}
-
-.valmax-container {
-  width: min(100% - 2rem, 1440px);
-  margin-inline: auto;
-}
-
-.valmax-hairline-dark {
-  border-color: var(--qa-line-dark);
-}
-
-.valmax-hairline-light {
-  border-color: var(--qa-line-light);
-}
-
-.valmax-focus:focus-visible {
-  outline: 2px solid var(--qa-signal);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
+  background: var(--primary-teal-dark);
 }
 
 /* Animations */
@@ -313,4 +261,5 @@ html {
   opacity: 0.8;
   pointer-events: none;
 }
+
 
