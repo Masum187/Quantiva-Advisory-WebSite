@@ -845,22 +845,30 @@ export default function QuantivaWebsite() {
                     className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-teal-500/30 bg-slate-950/70 shadow-[0_35px_80px_-40px_rgba(45,212,191,0.45)] transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/70"
                   >
                     <div className="relative h-64 w-full overflow-hidden">
-                      <div
-                        className="absolute inset-0 scale-105 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 group-focus-visible:scale-110"
-                        style={{ backgroundImage: `url(${(service as any).image})` }}
+                      <Image
+                        src={(service as any).image}
+                        alt={(service as any).imageAlt ?? service.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover object-center transition-transform duration-700 group-hover:scale-105 group-focus-visible:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/40 transition-opacity duration-500 group-hover:opacity-80 group-focus-visible:opacity-80" />
+                      {/* Left + bottom gradients keep the overlaid title readable on any motif (WCAG >= 4.5:1) */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/95 via-black/70 to-transparent" />
+                      <div className="absolute inset-0 flex flex-col justify-end p-6">
+                        <h3 className="max-w-[85%] text-[clamp(1.3rem,1rem+1.2vw,1.75rem)] font-semibold leading-tight tracking-tight text-white">
+                          {service.title}
+                        </h3>
+                        {(service as any).tagline ? (
+                          <p className="mt-1 max-w-[85%] text-sm text-gray-200">
+                            {(service as any).tagline}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
 
                     <div className="relative flex flex-1 flex-col justify-end p-6">
-                      <div className="flex items-center justify-between gap-4">
-                        <h3 className="text-2xl font-semibold tracking-tight text-white drop-shadow-2xl md:text-3xl">
-                          {service.title}
-                        </h3>
-                        <ChevronRight className="h-6 w-6 text-teal-300 transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
-                      </div>
-
-                      <p className="mt-5 max-w-sm text-base text-gray-200 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
+                      <p className="max-w-sm text-base text-gray-200">
                         {service.description}
                       </p>
 

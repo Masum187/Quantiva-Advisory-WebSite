@@ -51,42 +51,54 @@
           "title": "SAP Services",
           "description": "Expertise in S/4HANA, BTP, Fiori und SAP-Integration. Von der Strategie bis zur Implementierung.",
           "icon": "Database",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391831/Gemini_Generated_Image_ut9hsjut9hsjut9h_1_e4l49q.png"
+          "image": "/assets/services/sap.jpg",
+          "tagline": "Prozesse unternehmensweit optimieren",
+          "imageAlt": "Abstrakte 3D-Illustration zu SAP Services: vernetzte Prozessmodule um einen zentralen Chip"
         },
         {
           "id": "cloud",
           "title": "Cloud Solutions",
           "description": "AWS, Azure, GCP - Multi-Cloud-Strategien, Migration und Optimierung Ihrer Cloud-Infrastruktur.",
           "icon": "Cloud",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391831/Gemini_Generated_Image_ut9hsjut9hsjut9h_wtyhw5.png"
+          "image": "/assets/services/cloud.jpg",
+          "tagline": "Zukunftssichere digitale Infrastruktur",
+          "imageAlt": "Abstrakte 3D-Illustration zu Cloud Solutions: leuchtende Cloud mit vernetzten Dashboards"
         },
         {
           "id": "ai",
           "title": "AI & Machine Learning",
           "description": "Intelligente Automatisierung, Predictive Analytics und KI-gestützte Geschäftsprozesse.",
           "icon": "Brain",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391831/Gemini_Generated_Image_uzht6ouzht6ouzht_1_rbxdpf.png"
+          "image": "/assets/services/ai.jpg",
+          "tagline": "Intelligenz in jedem Prozess",
+          "imageAlt": "Abstrakte 3D-Illustration zu AI & Machine Learning: leuchtendes neuronales Gehirn mit Datenpanels"
         },
         {
           "id": "integration",
           "title": "System Integration",
           "description": "API-First Architekturen, Microservices und nahtlose Systemintegration.",
           "icon": "Boxes",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391833/Gemini_Generated_Image_t1pc2tt1pc2tt1pc_fpmr5s.png"
+          "image": "/assets/services/integration.jpg",
+          "tagline": "Nahtlos vernetzte Systeme",
+          "imageAlt": "Abstrakte 3D-Illustration zu System Integration: zentraler Chip mit verbundenen Schnittstellen-Panels"
         },
         {
           "id": "security",
           "title": "Cyber Security",
           "description": "Ganzheitliche Sicherheitskonzepte, Compliance und Risikomanagement.",
           "icon": "Shield",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391831/Gemini_Generated_Image_7vidz87vidz87vid_v39svo.png"
+          "image": "/assets/services/security.jpg",
+          "tagline": "Schutz für Ihre digitale Wertschöpfung",
+          "imageAlt": "Abstrakte 3D-Illustration zu Cyber Security: leuchtendes Schild mit Schloss und Sicherheits-Panels"
         },
         {
           "id": "enablement",
           "title": "New Work",
           "description": "Agilität und Zusammenarbeit freisetzen. Digitaler Arbeitsplatz, moderne Arbeitsweise und Kultur für produktive Teams.",
           "icon": "Users",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391833/Gemini_Generated_Image_y4jlczy4jlczy4jl_uc0kat.png"
+          "image": "/assets/services/new-work.jpg",
+          "tagline": "Moderne Arbeitswelt, produktive Teams",
+          "imageAlt": "Abstrakte 3D-Illustration zu New Work: vernetzte Team- und Collaboration-Symbole"
         }
       ]
     },
@@ -99,42 +111,54 @@
           "title": "SAP Services",
           "description": "Expertise in S/4HANA, BTP, Fiori and SAP integration. From strategy to implementation.",
           "icon": "Database",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391831/Gemini_Generated_Image_ut9hsjut9hsjut9h_1_e4l49q.png"
+          "image": "/assets/services/sap.jpg",
+          "tagline": "Optimizing enterprise processes",
+          "imageAlt": "Abstract 3D illustration for SAP services: connected process modules around a central chip"
         },
         {
           "id": "cloud",
           "title": "Cloud Solutions",
           "description": "AWS, Azure, GCP - Multi-cloud strategies, migration and optimization of your cloud infrastructure.",
           "icon": "Cloud",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391831/Gemini_Generated_Image_ut9hsjut9hsjut9h_wtyhw5.png"
+          "image": "/assets/services/cloud.jpg",
+          "tagline": "Future-proofing your digital infrastructure",
+          "imageAlt": "Abstract 3D illustration for cloud solutions: glowing cloud with connected dashboards"
         },
         {
           "id": "ai",
           "title": "AI & Machine Learning",
           "description": "Intelligent automation, predictive analytics and AI-powered business processes.",
           "icon": "Brain",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391831/Gemini_Generated_Image_uzht6ouzht6ouzht_1_rbxdpf.png"
+          "image": "/assets/services/ai.jpg",
+          "tagline": "Intelligence in every process",
+          "imageAlt": "Abstract 3D illustration for AI and machine learning: glowing neural brain with data panels"
         },
         {
           "id": "integration",
           "title": "System Integration",
           "description": "API-first architectures, microservices and seamless system integration.",
           "icon": "Boxes",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391833/Gemini_Generated_Image_t1pc2tt1pc2tt1pc_fpmr5s.png"
+          "image": "/assets/services/integration.jpg",
+          "tagline": "Seamlessly connected systems",
+          "imageAlt": "Abstract 3D illustration for system integration: central chip with connected interface panels"
         },
         {
           "id": "security",
           "title": "Cyber Security",
           "description": "Holistic security concepts, compliance and risk management.",
           "icon": "Shield",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391831/Gemini_Generated_Image_7vidz87vidz87vid_v39svo.png"
+          "image": "/assets/services/security.jpg",
+          "tagline": "Protecting your digital value chain",
+          "imageAlt": "Abstract 3D illustration for cyber security: glowing shield with lock and security panels"
         },
         {
           "id": "enablement",
           "title": "New Work",
           "description": "Unlock agility and collaboration. Digital workplace, modern work methods and culture for productive teams.",
           "icon": "Users",
-          "image": "https://res.cloudinary.com/dbrisux8i/image/upload/v1761391833/Gemini_Generated_Image_y4jlczy4jlczy4jl_uc0kat.png"
+          "image": "/assets/services/new-work.jpg",
+          "tagline": "Modern workplace, productive teams",
+          "imageAlt": "Abstract 3D illustration for new work: connected team and collaboration symbols"
         }
       ]
     }
