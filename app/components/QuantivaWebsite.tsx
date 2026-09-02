@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useInView } from "framer-motion";
 import dynamic from 'next/dynamic';
+import HeroDataCanvas from './HeroDataCanvas';
 import {
   Menu, X, ChevronRight,
   Shield, Mail, Phone, ArrowRight,
@@ -691,6 +692,8 @@ export default function QuantivaWebsite() {
           {/* Readability overlay: darker on the left where the headline sits */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/30" />
           <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/80 to-transparent" />
+          {/* Live particle network on top of the still image */}
+          <HeroDataCanvas />
         </div>
 
         <div className="container mx-auto px-6 lg:px-12 py-20 relative z-10 max-w-7xl">
