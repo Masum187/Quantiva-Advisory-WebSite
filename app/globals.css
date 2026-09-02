@@ -262,4 +262,33 @@ html {
   pointer-events: none;
 }
 
+/* Animated hero background: slow Ken-Burns drift over the data landscape */
+.hero-data-bg {
+  background-image: url('/assets/hero-data-landscape.jpg');
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.08);
+  will-change: transform;
+  animation: hero-data-drift 40s ease-in-out infinite alternate;
+}
+
+@keyframes hero-data-drift {
+  0% {
+    transform: scale(1.08) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.16) translate3d(-2.2%, 1.4%, 0);
+  }
+  100% {
+    transform: scale(1.1) translate3d(2%, -1.2%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-data-bg {
+    animation: none;
+    transform: scale(1.08);
+  }
+}
+
 

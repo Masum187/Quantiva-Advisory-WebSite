@@ -685,9 +685,12 @@ export default function QuantivaWebsite() {
 
       {/* Hero - Accenture Style */}
       <section id="hero" className="relative min-h-screen flex items-center overflow-hidden bg-black">
-        {/* Subtle Texture Background */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIiAvPjwvc3ZnPg==')]"></div>
+        {/* Animated data-landscape background */}
+        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+          <div className="hero-data-bg absolute inset-0" />
+          {/* Readability overlay: darker on the left where the headline sits */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/30" />
+          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/80 to-transparent" />
         </div>
 
         <div className="container mx-auto px-6 lg:px-12 py-20 relative z-10 max-w-7xl">
