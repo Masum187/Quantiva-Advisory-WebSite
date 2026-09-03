@@ -3,10 +3,22 @@ export type IndustryShowcase = {
   title: string;
   description: string;
   image: string;
+  /** Looping background clip shown in the card (muted, autoplay). */
+  video?: string;
   projects: number;
 };
 
-export const industriesDe: IndustryShowcase[] = [
+const industryVideos: Record<string, string> = {
+  'financial-services': '/assets/industries/finance.mp4',
+  manufacturing: '/assets/industries/automotive.mp4',
+  'health-life-sciences': '/assets/industries/health.mp4',
+  'retail-ecommerce': '/assets/industries/retail.mp4',
+};
+
+const withVideos = (list: IndustryShowcase[]): IndustryShowcase[] =>
+  list.map((industry) => ({ ...industry, video: industryVideos[industry.slug] }));
+
+export const industriesDe: IndustryShowcase[] = withVideos([
   {
     slug: 'financial-services',
     title: 'Finanzdienstleistungen',
@@ -35,9 +47,9 @@ export const industriesDe: IndustryShowcase[] = [
     image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=400&auto=format&fit=crop',
     projects: 38,
   },
-];
+]);
 
-export const industriesEn: IndustryShowcase[] = [
+export const industriesEn: IndustryShowcase[] = withVideos([
   {
     slug: 'financial-services',
     title: 'Financial Services',
@@ -66,4 +78,4 @@ export const industriesEn: IndustryShowcase[] = [
     image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=400&auto=format&fit=crop',
     projects: 38,
   },
-];
+]);

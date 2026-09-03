@@ -1,12 +1,82 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Briefcase } from 'lucide-react';
 import { industriesDe, industriesEn } from '../../lib/data/industries';
 import Link from 'next/link';
 import { useLanguage } from '../QuantivaWebsite';
+
+/**
+ * Card media: plays a looping, muted video when the card is in the viewport.
+ * Falls back to the still image while the video loads and whenever the user
+ * prefers reduced motion.
+ */
+function IndustryCardMedia({
+  image,
+  video,
+  alt,
+}: {
+  image: string;
+  video?: string;
+  alt: string;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduceMotion(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || reduceMotion) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.play().catch(() => {});
+        } else {
+          el.pause();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduceMotion]);
+
+  if (!video || reduceMotion) {
+    return (
+      <Image
+        src={image}
+        alt={alt}
+        width={400}
+        height={256}
+        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+      />
+    );
+  }
+
+  return (
+    <video
+      ref={videoRef}
+      src={video}
+      poster={image}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      aria-label={alt}
+      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+    />
+  );
+}
 
 interface IndustriesSectionProps {
   lang: 'de' | 'en';
@@ -71,12 +141,10 @@ export default function IndustriesSection({ lang }: IndustriesSectionProps) {
                 className="group relative block h-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-900/60 backdrop-blur transition-transform duration-500 hover:-translate-y-1"
               >
                 <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={industry.image}
+                  <IndustryCardMedia
+                    image={industry.image}
+                    video={industry.video}
                     alt={industry.title}
-                    width={400}
-                    height={256}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                 </div>
