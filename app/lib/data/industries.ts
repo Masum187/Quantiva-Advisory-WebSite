@@ -25,7 +25,7 @@ const industryVideos: Record<
       '/assets/industries/retail-store.mp4',
       '/assets/industries/retail-online.mp4',
     ],
-    playbackRate: 1.3,
+    playbackRate: 0.9,
   },
 };
 
