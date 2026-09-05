@@ -5,18 +5,32 @@ export type IndustryShowcase = {
   image: string;
   /** Looping background clip shown in the card (muted, autoplay). */
   video?: string;
+  /** Two clips shown side by side as a split screen (overrides `video`). */
+  splitVideos?: [string, string];
+  /** Playback speed for the card videos (default 1). */
+  playbackRate?: number;
   projects: number;
 };
 
-const industryVideos: Record<string, string> = {
-  'financial-services': '/assets/industries/finance.mp4',
-  manufacturing: '/assets/industries/automotive.mp4',
-  'health-life-sciences': '/assets/industries/health.mp4',
-  'retail-ecommerce': '/assets/industries/retail.mp4',
+const industryVideos: Record<
+  string,
+  Pick<IndustryShowcase, 'video' | 'splitVideos' | 'playbackRate'>
+> = {
+  'financial-services': { video: '/assets/industries/finance.mp4' },
+  manufacturing: { video: '/assets/industries/automotive.mp4' },
+  'health-life-sciences': { video: '/assets/industries/health.mp4' },
+  'retail-ecommerce': {
+    // Left: crowd of shoppers in a busy street; right: ordering from a webshop
+    splitVideos: [
+      '/assets/industries/retail-store.mp4',
+      '/assets/industries/retail-online.mp4',
+    ],
+    playbackRate: 1.3,
+  },
 };
 
 const withVideos = (list: IndustryShowcase[]): IndustryShowcase[] =>
-  list.map((industry) => ({ ...industry, video: industryVideos[industry.slug] }));
+  list.map((industry) => ({ ...industry, ...industryVideos[industry.slug] }));
 
 export const industriesDe: IndustryShowcase[] = withVideos([
   {

@@ -9,20 +9,24 @@ import Link from 'next/link';
 import { useLanguage } from '../QuantivaWebsite';
 
 /**
- * Card media: plays a looping, muted video when the card is in the viewport.
- * Falls back to the still image while the video loads and whenever the user
- * prefers reduced motion.
+ * Card media: plays looping, muted video(s) when the card is in the viewport.
+ * Supports a single clip or two clips as a split screen. Falls back to the
+ * still image whenever the user prefers reduced motion.
  */
 function IndustryCardMedia({
   image,
   video,
+  splitVideos,
+  playbackRate = 1,
   alt,
 }: {
   image: string;
   video?: string;
+  splitVideos?: [string, string];
+  playbackRate?: number;
   alt: string;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
@@ -34,24 +38,33 @@ function IndustryCardMedia({
   }, []);
 
   useEffect(() => {
-    const el = videoRef.current;
-    if (!el || reduceMotion) return;
+    const wrapper = wrapperRef.current;
+    if (!wrapper || reduceMotion) return;
+
+    const videos = Array.from(wrapper.querySelectorAll('video'));
+    videos.forEach((v) => {
+      v.playbackRate = playbackRate;
+    });
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          el.play().catch(() => {});
-        } else {
-          el.pause();
-        }
+        videos.forEach((v) => {
+          if (entry.isIntersecting) {
+            v.play().catch(() => {});
+          } else {
+            v.pause();
+          }
+        });
       },
       { threshold: 0.2 }
     );
-    io.observe(el);
+    io.observe(wrapper);
     return () => io.disconnect();
-  }, [reduceMotion]);
+  }, [reduceMotion, playbackRate]);
 
-  if (!video || reduceMotion) {
+  const sources = splitVideos ?? (video ? [video] : []);
+
+  if (sources.length === 0 || reduceMotion) {
     return (
       <Image
         src={image}
@@ -64,17 +77,20 @@ function IndustryCardMedia({
   }
 
   return (
-    <video
-      ref={videoRef}
-      src={video}
-      poster={image}
-      muted
-      loop
-      playsInline
-      preload="metadata"
-      aria-label={alt}
-      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-    />
+    <div ref={wrapperRef} className="flex h-full w-full" aria-label={alt}>
+      {sources.map((src) => (
+        <video
+          key={src}
+          src={src}
+          poster={sources.length === 1 ? image : undefined}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="h-full min-w-0 flex-1 object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+      ))}
+    </div>
   );
 }
 
@@ -144,6 +160,8 @@ export default function IndustriesSection({ lang }: IndustriesSectionProps) {
                   <IndustryCardMedia
                     image={industry.image}
                     video={industry.video}
+                    splitVideos={industry.splitVideos}
+                    playbackRate={industry.playbackRate}
                     alt={industry.title}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
