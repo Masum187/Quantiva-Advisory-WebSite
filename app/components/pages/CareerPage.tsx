@@ -1075,7 +1075,13 @@ export default function CareerPage() {
                   <div className="relative h-full flex flex-col justify-end p-8">
                     <h3 className="text-2xl font-bold text-white mb-3">{t.areas[1].title}</h3>
                     <p className="text-gray-200 text-sm leading-relaxed">{t.areas[1].description}</p>
-                    <ArrowRight className="mt-4 h-6 w-6 text-teal-400 group-hover:translate-x-2 transition-transform duration-300" />
+                    <a 
+                      href={localePath('/career/technology-engineering')}
+                      className="mt-4 inline-flex items-center gap-2 text-teal-400 hover:text-teal-300 transition-colors duration-300"
+                    >
+                      <span className="text-sm font-semibold">{lang === 'de' ? 'Mehr erfahren' : 'Learn more'}</span>
+                      <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                    </a>
                   </div>
                 </div>
               </SlideIn>
@@ -1094,7 +1100,13 @@ export default function CareerPage() {
                   <div className="relative h-full flex flex-col justify-end p-8">
                     <h3 className="text-2xl font-bold text-white mb-3">{t.areas[2].title}</h3>
                     <p className="text-gray-200 text-sm leading-relaxed">{t.areas[2].description}</p>
-                    <ArrowRight className="mt-4 h-6 w-6 text-teal-400 group-hover:translate-x-2 transition-transform duration-300" />
+                    <a 
+                      href={localePath('/career/sap-solutions')}
+                      className="mt-4 inline-flex items-center gap-2 text-teal-400 hover:text-teal-300 transition-colors duration-300"
+                    >
+                      <span className="text-sm font-semibold">{lang === 'de' ? 'Mehr erfahren' : 'Learn more'}</span>
+                      <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                    </a>
                   </div>
                 </div>
               </SlideIn>
@@ -1113,7 +1125,13 @@ export default function CareerPage() {
                   <div className="relative h-full flex flex-col justify-end p-8">
                     <h3 className="text-2xl font-bold text-white mb-3">{t.areas[3].title}</h3>
                     <p className="text-gray-200 text-sm leading-relaxed">{t.areas[3].description}</p>
-                    <ArrowRight className="mt-4 h-6 w-6 text-teal-400 group-hover:translate-x-2 transition-transform duration-300" />
+                    <a 
+                      href={localePath('/career/cloud-infrastructure')}
+                      className="mt-4 inline-flex items-center gap-2 text-teal-400 hover:text-teal-300 transition-colors duration-300"
+                    >
+                      <span className="text-sm font-semibold">{lang === 'de' ? 'Mehr erfahren' : 'Learn more'}</span>
+                      <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                    </a>
                   </div>
                 </div>
               </SlideIn>
@@ -1132,7 +1150,13 @@ export default function CareerPage() {
                   <div className="relative h-full flex flex-col justify-end p-8">
                     <h3 className="text-2xl font-bold text-white mb-3">{t.areas[4].title}</h3>
                     <p className="text-gray-200 text-sm leading-relaxed">{t.areas[4].description}</p>
-                    <ArrowRight className="mt-4 h-6 w-6 text-teal-400 group-hover:translate-x-2 transition-transform duration-300" />
+                    <a 
+                      href={localePath('/career/cyber-security')}
+                      className="mt-4 inline-flex items-center gap-2 text-teal-400 hover:text-teal-300 transition-colors duration-300"
+                    >
+                      <span className="text-sm font-semibold">{lang === 'de' ? 'Mehr erfahren' : 'Learn more'}</span>
+                      <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                    </a>
                   </div>
                 </div>
               </SlideIn>
@@ -1151,7 +1175,13 @@ export default function CareerPage() {
                   <div className="relative h-full flex flex-col justify-end p-8">
                     <h3 className="text-2xl font-bold text-white mb-3">{t.areas[5].title}</h3>
                     <p className="text-gray-200 text-sm leading-relaxed">{t.areas[5].description}</p>
-                    <ArrowRight className="mt-4 h-6 w-6 text-white group-hover:translate-x-2 transition-transform duration-300" />
+                    <a 
+                      href={localePath('/career/artificial-intelligence')}
+                      className="mt-4 inline-flex items-center gap-2 text-teal-400 hover:text-teal-300 transition-colors duration-300"
+                    >
+                      <span className="text-sm font-semibold">{lang === 'de' ? 'Mehr erfahren' : 'Learn more'}</span>
+                      <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                    </a>
                   </div>
                 </div>
               </SlideIn>
