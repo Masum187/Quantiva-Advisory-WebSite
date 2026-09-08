@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
+import CareerCardMedia from '../CareerCardMedia';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Navigation from '../Navigation';
 import {
@@ -1039,12 +1040,10 @@ export default function CareerPage() {
               {/* Strategy & Consulting */}
               <SlideIn direction="left" delay={0.2}>
                 <div className="group relative h-full min-h-[400px] rounded-2xl overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop"
+                  <CareerCardMedia
+                    image="/assets/career/strategy-consulting.jpg"
+                    video="/assets/career/strategy-consulting.mp4"
                     alt="Strategy & Consulting"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
                   <div className="relative h-full flex flex-col justify-end p-8">
@@ -1064,12 +1063,10 @@ export default function CareerPage() {
               {/* Technology & Engineering */}
               <SlideIn direction="up" delay={0.3}>
                 <div className="group relative h-full min-h-[400px] rounded-2xl overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?q=80&w=800&auto=format&fit=crop"
+                  <CareerCardMedia
+                    image="/assets/career/technology-engineering.jpg"
+                    video="/assets/career/technology-engineering.mp4"
                     alt="Technology & Engineering"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-teal-900/90 via-teal-800/60 to-transparent"></div>
                   <div className="relative h-full flex flex-col justify-end p-8">
@@ -1089,12 +1086,10 @@ export default function CareerPage() {
               {/* SAP Solutions */}
               <SlideIn direction="right" delay={0.4}>
                 <div className="group relative h-full min-h-[400px] rounded-2xl overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop"
+                  <CareerCardMedia
+                    image="/assets/career/sap-solutions.jpg"
+                    video="/assets/career/sap-solutions.mp4"
                     alt="SAP Solutions"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-800/60 to-transparent"></div>
                   <div className="relative h-full flex flex-col justify-end p-8">
@@ -1114,12 +1109,10 @@ export default function CareerPage() {
               {/* Cloud & Infrastructure */}
               <SlideIn direction="left" delay={0.5}>
                 <div className="group relative h-full min-h-[400px] rounded-2xl overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop"
+                  <CareerCardMedia
+                    image="/assets/career/cloud-infrastructure.jpg"
+                    video="/assets/career/cloud-infrastructure.mp4"
                     alt="Cloud & Infrastructure"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-800/60 to-transparent"></div>
                   <div className="relative h-full flex flex-col justify-end p-8">
@@ -1139,12 +1132,10 @@ export default function CareerPage() {
               {/* Cyber Security */}
               <SlideIn direction="up" delay={0.6}>
                 <div className="group relative h-full min-h-[400px] rounded-2xl overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=800&auto=format&fit=crop"
+                  <CareerCardMedia
+                    image="/assets/career/cyber-security.jpg"
+                    video="/assets/career/cyber-security.mp4"
                     alt="Cyber Security"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
                   <div className="relative h-full flex flex-col justify-end p-8">
@@ -1164,12 +1155,10 @@ export default function CareerPage() {
               {/* Artificial Intelligence */}
               <SlideIn direction="right" delay={0.7}>
                 <div className="group relative h-full min-h-[400px] rounded-2xl overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=800&auto=format&fit=crop"
+                  <CareerCardMedia
+                    image="/assets/career/artificial-intelligence.jpg"
+                    video="/assets/career/artificial-intelligence.mp4"
                     alt="Artificial Intelligence"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-800/60 to-black/20"></div>
                   <div className="relative h-full flex flex-col justify-end p-8">
