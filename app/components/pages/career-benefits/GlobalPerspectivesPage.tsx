@@ -14,6 +14,14 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import {
+  AuroraBlob,
+  FadeUp,
+  MarqueeBand,
+  MaskedTextReveal,
+  ScrollZoom,
+  useHeroChoreography,
+} from './motion';
 
 /**
  * "Night Atlas" – global-perspectives theme: deep night-blue canvas with a
@@ -24,6 +32,7 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const benefit = careerBenefits['global-perspectives'];
   const content = benefit[lang];
@@ -56,9 +65,19 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
           backgroundSize: '28px 28px',
         }}
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-56 right-0 w-[700px] h-[700px] rounded-full bg-indigo-600/15 blur-3xl"
+      <AuroraBlob
+        className="-top-56 right-0 w-[700px] h-[700px] bg-indigo-600/15 blur-3xl"
+        duration={28}
+      />
+      <AuroraBlob
+        className="top-[46rem] -left-48 w-[520px] h-[520px] bg-sky-500/10 blur-3xl"
+        duration={24}
+        delay={6}
+      />
+      <AuroraBlob
+        className="bottom-16 right-1/4 w-[440px] h-[440px] bg-indigo-500/10 blur-3xl"
+        duration={20}
+        delay={11}
       />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -72,24 +91,28 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero with dotted globe */}
-        <div className="relative mb-28 md:mb-36 grid lg:grid-cols-[1.3fr_1fr] gap-12 items-center">
-          <div>
+        {/* Hero with dotted globe + scroll choreography */}
+        <div
+          ref={heroRef}
+          className="relative mb-28 md:mb-36 grid lg:grid-cols-[1.3fr_1fr] gap-12 items-center"
+        >
+          <motion.div style={textStyle}>
             <motion.p {...reveal} className={`${eyebrow} mb-6 flex items-center gap-2`}>
               <Globe2 className="w-4 h-4" aria-hidden="true" />
               {content.badge}
             </motion.p>
 
-            <motion.h1
-              {...zoomIn(0.1)}
+            <MaskedTextReveal
+              as="h1"
+              mode="mount"
+              delay={0.1}
+              text={content.title}
               className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.02] mb-8"
-            >
-              {content.title}
-            </motion.h1>
+            />
 
             <motion.p
               {...reveal}
-              transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+              transition={{ duration: 0.7, delay: 0.45, ease: 'easeOut' }}
               className="text-lg md:text-2xl text-sky-50/80 max-w-2xl leading-relaxed mb-10"
             >
               {content.subtitle}
@@ -97,7 +120,7 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
 
             <motion.div
               {...reveal}
-              transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.7, delay: 0.6, ease: 'easeOut' }}
               className="flex flex-col sm:flex-row gap-4"
             >
               <motion.a
@@ -118,11 +141,12 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
                 {ui.ctaPositions}
               </motion.a>
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* Dotted globe with orbiting plane */}
-          <div
+          {/* Dotted globe with orbiting plane – zooms while the hero scrolls out */}
+          <motion.div
             aria-hidden="true"
+            style={bgStyle}
             className="pointer-events-none relative hidden lg:block w-80 h-80 mx-auto"
           >
             <div
@@ -144,7 +168,7 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
                 <Plane className="w-5 h-5 rotate-45" />
               </span>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Intro */}
@@ -156,35 +180,50 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
           </div>
         </motion.div>
 
-        {/* Facts */}
-        <motion.div
-          variants={popContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-28"
-        >
-          {content.facts.map((fact) => (
-            <motion.div
-              key={fact.label}
-              variants={popItem}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-center hover:border-sky-400/40 transition-colors duration-300"
-            >
-              <p className="text-4xl md:text-5xl font-bold text-sky-400 mb-2">{fact.value}</p>
-              <p className="text-sm text-sky-50/70 leading-snug">{fact.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* Facts – zoom in on scroll */}
+        <ScrollZoom className="mb-28">
+          <motion.div
+            variants={popContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+          >
+            {content.facts.map((fact) => (
+              <motion.div
+                key={fact.label}
+                variants={popItem}
+                className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-center hover:border-sky-400/40 transition-colors duration-300"
+              >
+                <p className="text-4xl md:text-5xl font-bold text-sky-400 mb-2">{fact.value}</p>
+                <p className="text-sm text-sky-50/70 leading-snug">{fact.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </ScrollZoom>
+
+        {/* Marquee divider */}
+        <MarqueeBand
+          phrases={content.marquee}
+          className="rounded-full border border-sky-400/20 bg-sky-400/[0.05] py-5 md:py-7 mb-28"
+          textClassName="text-3xl md:text-5xl font-bold tracking-tight text-sky-200/90"
+        />
 
         {/* Benefit items */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <p className={`${eyebrow} mb-4`}>{content.badge}</p>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.itemsTitle}
-            </h2>
-            <p className="text-lg text-sky-50/70">{content.itemsSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <FadeUp>
+              <p className={`${eyebrow} mb-4`}>{content.badge}</p>
+            </FadeUp>
+            <MaskedTextReveal
+              as="h2"
+              text={content.itemsTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-sky-50/70">{content.itemsSubtitle}</p>
+            </FadeUp>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {content.items.map((item, index) => (
@@ -207,17 +246,21 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
           </div>
         </div>
 
-        {/* Feature: locations & timezone strip */}
+        {/* Feature: locations & timezone strip – zooms in on scroll */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.featureTitle}
-            </h2>
-            <p className="text-lg text-sky-50/70">{content.featureSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <MaskedTextReveal
+              as="h2"
+              text={content.featureTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-sky-50/70">{content.featureSubtitle}</p>
+            </FadeUp>
+          </div>
 
           {/* Connecting dotted line */}
-          <div className="relative">
+          <ScrollZoom className="relative">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute left-0 right-0 top-9 hidden lg:block border-t-2 border-dotted border-sky-400/30"
@@ -246,18 +289,22 @@ export default function GlobalPerspectivesPage({ lang }: CareerThemeProps) {
                 </motion.div>
               ))}
             </div>
-          </div>
+          </ScrollZoom>
         </div>
 
         {/* FAQ */}
         {content.faq && (
           <div className="mb-28 max-w-3xl">
-            <motion.div {...reveal} className="mb-10">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                {ui.faqTitle}
-              </h2>
-              <p className="text-lg text-sky-50/70">{ui.faqSubtitle}</p>
-            </motion.div>
+            <div className="mb-10">
+              <MaskedTextReveal
+                as="h2"
+                text={ui.faqTitle}
+                className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+              />
+              <FadeUp delay={0.25}>
+                <p className="text-lg text-sky-50/70">{ui.faqSubtitle}</p>
+              </FadeUp>
+            </div>
 
             <div className="space-y-4">
               {content.faq.map((entry, index) => (

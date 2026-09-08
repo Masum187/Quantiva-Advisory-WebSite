@@ -41,6 +41,8 @@ export interface CareerBenefitContent {
   title: string;
   /** Hero subline (also used as meta description) */
   subtitle: string;
+  /** Theme phrases for the looping marquee band (section divider) */
+  marquee: string[];
   /** 2–4 sentences: what this means at Quantiva */
   intro: string;
   itemsTitle: string;
@@ -69,6 +71,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     de: {
       badge: 'Wohlbefinden',
       title: 'Mental Health',
+      marquee: ['Klarer Kopf', 'Echte Pausen', 'Nachhaltige Leistung', 'Kein Kalender-Tetris'],
       subtitle:
         'Gute Beratung braucht einen klaren Kopf – wir nehmen mentale Gesundheit genauso ernst wie Projektziele.',
       intro:
@@ -167,6 +170,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     en: {
       badge: 'Wellbeing',
       title: 'Mental Health',
+      marquee: ['Clear Head', 'Real Breaks', 'Sustainable Performance', 'No Calendar Tetris'],
       subtitle:
         'Good consulting needs a clear head – we take mental health as seriously as project goals.',
       intro:
@@ -269,6 +273,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     de: {
       badge: 'Miteinander',
       title: 'Beziehungsorientiert',
+      marquee: ['Echtes Miteinander', 'Buddy ab Tag 1', 'Remote-inklusiv', 'Ein Team'],
       subtitle:
         'Beratung ist Teamsport – wir sorgen dafür, dass du nie allein auf dem Spielfeld stehst.',
       intro:
@@ -362,6 +367,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     en: {
       badge: 'Togetherness',
       title: 'Relationship-oriented',
+      marquee: ['Real Togetherness', 'Buddy from Day 1', 'Remote-inclusive', 'One Team'],
       subtitle:
         'Consulting is a team sport – we make sure you are never alone on the pitch.',
       intro:
@@ -459,6 +465,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     de: {
       badge: 'Energie',
       title: 'Körperliche Gesundheit',
+      marquee: ['Stark bleiben', 'Gemeinsam bewegen', 'Volle Energie', 'Gesund arbeiten'],
       subtitle:
         'Dein Körper trägt dich durch jedes Projekt – wir sorgen dafür, dass er dabei stark bleibt.',
       intro:
@@ -540,6 +547,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     en: {
       badge: 'Energy',
       title: 'Physical Health',
+      marquee: ['Stay Strong', 'Move Together', 'Full Energy', 'Work Healthy'],
       subtitle:
         'Your body carries you through every project – we make sure it stays strong along the way.',
       intro:
@@ -625,6 +633,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     de: {
       badge: 'Sinn & Richtung',
       title: 'Zielgerichtet',
+      marquee: ['Klarheit vor Buzzwords', 'Wirkung vor Auslastung', 'Werte mit Konsequenz', 'Ziele mit Sinn'],
       subtitle:
         'Du willst wissen, wofür du morgens arbeitest – wir geben dir Ziele, die diesen Namen verdienen.',
       intro:
@@ -723,6 +732,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     en: {
       badge: 'Meaning & direction',
       title: 'Purpose-driven',
+      marquee: ['Clarity over Buzzwords', 'Impact over Utilization', 'Values with Consequences', 'Goals with Meaning'],
       subtitle:
         'You want to know what you get up for in the morning – we give you goals worthy of the name.',
       intro:
@@ -825,6 +835,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     de: {
       badge: 'Wachstum',
       title: 'Bereit für deine Karriere',
+      marquee: ['Dein Tempo', 'Echtes Budget', 'Klarer Pfad', 'Nächstes Level'],
       subtitle:
         'Vom ersten Projekt bis zur Principal-Rolle – mit Budget, Mentoring und einem Pfad, den du selbst steuerst.',
       intro:
@@ -929,6 +940,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     en: {
       badge: 'Growth',
       title: 'Career Ready',
+      marquee: ['Your Pace', 'Real Budget', 'Clear Path', 'Next Level'],
       subtitle:
         'From your first project to a principal role – with budget, mentoring and a path you steer yourself.',
       intro:
@@ -1037,6 +1049,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     de: {
       badge: 'Über Grenzen hinaus',
       title: 'Globale Perspektiven',
+      marquee: ['Über Grenzen hinaus', 'Workation inklusive', '12 Nationen', 'Ein Netzwerk'],
       subtitle:
         'Mittelstand heißt nicht Provinz – arbeite an internationalen Rollouts, aus dem Land deiner Wahl.',
       intro:
@@ -1141,6 +1154,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     en: {
       badge: 'Beyond borders',
       title: 'Global Perspectives',
+      marquee: ['Beyond Borders', 'Workation Included', '12 Nationalities', 'One Network'],
       subtitle:
         'Mittelstand does not mean provincial – work on international rollouts, from the country of your choice.',
       intro:
@@ -1249,6 +1263,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     de: {
       badge: 'Fair & transparent',
       title: 'Finanzielle Vergütung',
+      marquee: ['Fair bezahlt', 'Transparente Bänder', 'Planbarer Bonus', 'Echte Vorsorge'],
       subtitle:
         'Gute Arbeit verdient ein gutes Paket – transparent, planbar und ohne Verhandlungspoker.',
       intro:
@@ -1353,6 +1368,7 @@ export const careerBenefits: Record<CareerBenefitSlug, CareerBenefit> = {
     en: {
       badge: 'Fair & transparent',
       title: 'Financial Rewards',
+      marquee: ['Fairly Paid', 'Transparent Bands', 'Predictable Bonus', 'Real Pension'],
       subtitle:
         'Good work deserves a good package – transparent, predictable and free of negotiation games.',
       intro:

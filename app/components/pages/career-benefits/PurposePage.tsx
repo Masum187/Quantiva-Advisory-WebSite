@@ -14,6 +14,14 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import {
+  AuroraBlob,
+  FadeUp,
+  MarqueeBand,
+  MaskedTextReveal,
+  ScrollZoom,
+  useHeroChoreography,
+} from './motion';
 
 /** Sticky-note accent palette for the values timeline (light section). */
 const stickyStyles = [
@@ -32,6 +40,7 @@ export default function PurposePage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const benefit = careerBenefits['purpose'];
   const content = benefit[lang];
@@ -47,9 +56,20 @@ export default function PurposePage({ lang }: CareerThemeProps) {
     <div className="min-h-screen bg-[#0d0a14] text-white relative overflow-hidden">
       <Navigation lang={lang} items={navigationItems} />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/3 w-[560px] h-[560px] rounded-full bg-purple-600/10 blur-3xl"
+      {/* Drifting aurora background */}
+      <AuroraBlob
+        className="-top-40 left-1/3 w-[560px] h-[560px] bg-purple-600/10 blur-3xl"
+        duration={26}
+      />
+      <AuroraBlob
+        className="top-[40rem] -right-40 w-[480px] h-[480px] bg-purple-400/[0.07] blur-3xl"
+        duration={30}
+        delay={6}
+      />
+      <AuroraBlob
+        className="bottom-20 -left-32 w-[420px] h-[420px] bg-violet-600/[0.08] blur-3xl"
+        duration={22}
+        delay={10}
       />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24">
@@ -63,26 +83,41 @@ export default function PurposePage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Editorial hero */}
-        <div className="mb-28 md:mb-32">
+        {/* Editorial hero with scroll choreography */}
+        <div ref={heroRef} className="relative mb-28 md:mb-32">
+          {/* Hero glow zooms while the hero scrolls out */}
+          <motion.div
+            aria-hidden="true"
+            style={bgStyle}
+            className="pointer-events-none absolute -inset-x-8 -inset-y-12 bg-[radial-gradient(ellipse_at_20%_30%,rgba(168,85,247,0.10),transparent_60%)]"
+          />
+
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
           <motion.p {...reveal} className={`${eyebrow} mb-6 flex items-center gap-2`}>
             <Compass className="w-4 h-4" aria-hidden="true" />
             {content.badge}
           </motion.p>
 
-          <motion.h1
-            {...zoomIn(0.1)}
-            className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-8 max-w-4xl"
+          <MaskedTextReveal
+            as="h1"
+            mode="mount"
+            delay={0.1}
+            text={content.title}
+            className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-4 max-w-4xl"
+          />
+
+          <motion.p
+            {...reveal}
+            transition={{ duration: 0.7, delay: 0.45, ease: 'easeOut' }}
+            className="text-2xl md:text-4xl font-normal italic text-purple-200/80 tracking-normal mb-8 max-w-4xl"
           >
-            {content.title}
-            <span className="block mt-3 text-2xl md:text-4xl font-normal italic text-purple-200/80 tracking-normal">
-              {content.subtitle}
-            </span>
-          </motion.h1>
+            {content.subtitle}
+          </motion.p>
 
           <motion.div
             {...reveal}
-            transition={{ duration: 0.7, delay: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.7, delay: 0.6, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row gap-4"
           >
             <motion.a
@@ -103,6 +138,7 @@ export default function PurposePage({ lang }: CareerThemeProps) {
               {ui.ctaPositions}
             </motion.a>
           </motion.div>
+          </motion.div>
         </div>
 
         {/* Intro – editorial two-column layout with drop-cap feel */}
@@ -115,13 +151,14 @@ export default function PurposePage({ lang }: CareerThemeProps) {
           </p>
         </motion.div>
 
-        {/* Facts – editorial rule lines */}
+        {/* Facts – editorial rule lines, zoom in on scroll */}
+        <ScrollZoom className="mb-28">
         <motion.div
           variants={popContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
-          className="grid grid-cols-2 lg:grid-cols-4 mb-28 border-t border-white/15"
+          className="grid grid-cols-2 lg:grid-cols-4 border-t border-white/15"
         >
           {content.facts.map((fact) => (
             <motion.div
@@ -136,16 +173,30 @@ export default function PurposePage({ lang }: CareerThemeProps) {
             </motion.div>
           ))}
         </motion.div>
+        </ScrollZoom>
+
+        {/* Marquee divider */}
+        <MarqueeBand
+          phrases={content.marquee}
+          className="border-y border-purple-300/25 py-6 md:py-8 mb-28"
+          textClassName="text-3xl md:text-5xl font-bold tracking-tight text-purple-200/90"
+        />
 
         {/* Benefit items */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <p className={`${eyebrow} mb-4`}>{content.badge}</p>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.itemsTitle}
-            </h2>
-            <p className="text-lg text-purple-50/60">{content.itemsSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <FadeUp>
+              <p className={`${eyebrow} mb-4`}>{content.badge}</p>
+            </FadeUp>
+            <MaskedTextReveal
+              as="h2"
+              text={content.itemsTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-purple-50/60">{content.itemsSubtitle}</p>
+            </FadeUp>
+          </div>
 
           <div className="border-t border-white/10">
             {content.items.map((item, index) => (
@@ -172,15 +223,21 @@ export default function PurposePage({ lang }: CareerThemeProps) {
       {/* LIGHT editorial section: values timeline with sticky notes */}
       <section className="relative bg-[#f6f3ec] text-gray-900 py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...reveal} className="mb-16 max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-purple-700 mb-4">
-              {lang === 'de' ? 'Unsere Werte' : 'Our values'}
-            </p>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-gray-900">
-              {content.featureTitle}
-            </h2>
-            <p className="text-lg text-gray-600">{content.featureSubtitle}</p>
-          </motion.div>
+          <div className="mb-16 max-w-2xl">
+            <FadeUp>
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-purple-700 mb-4">
+                {lang === 'de' ? 'Unsere Werte' : 'Our values'}
+              </p>
+            </FadeUp>
+            <MaskedTextReveal
+              as="h2"
+              text={content.featureTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-gray-900"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-gray-600">{content.featureSubtitle}</p>
+            </FadeUp>
+          </div>
 
           {/* Vertical timeline */}
           <div className="relative pl-8 md:pl-0">
@@ -228,12 +285,16 @@ export default function PurposePage({ lang }: CareerThemeProps) {
         {/* FAQ */}
         {content.faq && (
           <div className="mb-28 max-w-3xl">
-            <motion.div {...reveal} className="mb-10">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                {ui.faqTitle}
-              </h2>
-              <p className="text-lg text-purple-50/60">{ui.faqSubtitle}</p>
-            </motion.div>
+            <div className="mb-10">
+              <MaskedTextReveal
+                as="h2"
+                text={ui.faqTitle}
+                className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+              />
+              <FadeUp delay={0.25}>
+                <p className="text-lg text-purple-50/60">{ui.faqSubtitle}</p>
+              </FadeUp>
+            </div>
 
             <div className="divide-y divide-white/10 border-y border-white/10">
               {content.faq.map((entry, index) => (

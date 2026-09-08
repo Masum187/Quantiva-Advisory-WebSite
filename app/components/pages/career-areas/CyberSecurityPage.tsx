@@ -15,6 +15,11 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import {
+  AuroraBlob,
+  MaskedTextReveal,
+  useHeroChoreography,
+} from '../career-benefits/motion';
 
 /**
  * "Terminal" – pure black security aesthetic: mono labels throughout,
@@ -25,6 +30,7 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const area = careerAreas['cyber-security'];
   const content = area[lang];
@@ -59,6 +65,22 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       <Navigation lang={lang} items={navigationItems} />
 
+      {/* Faint green aurora drifting behind the terminal */}
+      <AuroraBlob
+        className="-top-40 -right-40 w-[560px] h-[560px] bg-green-500/[0.07] blur-3xl"
+        duration={26}
+      />
+      <AuroraBlob
+        className="top-1/2 -left-48 w-[480px] h-[480px] bg-emerald-600/[0.06] blur-3xl"
+        duration={30}
+        delay={6}
+      />
+      <AuroraBlob
+        className="bottom-10 right-1/4 w-[400px] h-[400px] bg-green-400/[0.05] blur-3xl"
+        duration={21}
+        delay={11}
+      />
+
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         {/* Back link */}
         <motion.a
@@ -70,31 +92,39 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero with scanlines */}
-        <div className="relative mb-28">
-          <div
+        {/* Hero with scanlines + scroll choreography */}
+        <div ref={heroRef} className="relative mb-28">
+          {/* Scanlines zoom 1 → 1.15 while the hero scrolls out */}
+          <motion.div
             aria-hidden="true"
+            style={bgStyle}
             className="pointer-events-none absolute -inset-x-8 -inset-y-10"
-            style={{
-              backgroundImage:
-                'repeating-linear-gradient(0deg, rgba(34,197,94,0.05) 0px, rgba(34,197,94,0.05) 1px, transparent 1px, transparent 4px)',
-            }}
-          />
-          <div className="relative">
+          >
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(0deg, rgba(34,197,94,0.05) 0px, rgba(34,197,94,0.05) 1px, transparent 1px, transparent 4px)',
+              }}
+            />
+          </motion.div>
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
             <motion.p {...reveal} className="font-mono text-sm md:text-base text-green-500 mb-6">
               &gt; security_clearance: granted{cursor}
             </motion.p>
 
-            <motion.h1
-              {...zoomIn(0.1)}
+            <MaskedTextReveal
+              as="h1"
+              mode="mount"
+              delay={0.1}
+              text={content.title}
               className="text-5xl sm:text-6xl md:text-8xl font-bold uppercase tracking-tight leading-[0.95] mb-8"
-            >
-              {content.title}
-            </motion.h1>
+            />
 
             <motion.p
               {...reveal}
-              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              transition={{ duration: 0.6, delay: 0.45, ease: 'easeOut' }}
               className="font-mono text-base md:text-lg text-gray-300 max-w-2xl leading-relaxed mb-6"
             >
               {content.subtitle}
@@ -102,7 +132,7 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
 
             <motion.p
               {...reveal}
-              transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
+              transition={{ duration: 0.6, delay: 0.55, ease: 'easeOut' }}
               className="font-mono text-xs uppercase tracking-[0.3em] text-red-500/80 mb-10 flex items-center gap-2"
             >
               <ShieldAlert className="w-4 h-4" aria-hidden="true" />
@@ -111,7 +141,7 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
 
             <motion.div
               {...reveal}
-              transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.6, delay: 0.65, ease: 'easeOut' }}
               className="flex flex-col sm:flex-row gap-4"
             >
               <motion.a
@@ -132,7 +162,7 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
                 {ui.ctaApply}
               </motion.a>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Intro – terminal window */}
@@ -153,13 +183,23 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
 
         {/* Topics – terminal boxes */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12">
-            <p className={`${sectionLabel} mb-4`}>&gt; ls ./missions</p>
-            <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tight mb-4">
-              {ui.topicsTitle}
-            </h2>
-            <p className="text-lg text-gray-400 max-w-2xl">{ui.topicsSubtitle}</p>
-          </motion.div>
+          <div className="mb-12">
+            <motion.p {...reveal} className={`${sectionLabel} mb-4`}>
+              &gt; ls ./missions
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.topicsTitle}
+              className="text-4xl md:text-6xl font-bold uppercase tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg text-gray-400 max-w-2xl"
+            >
+              {ui.topicsSubtitle}
+            </motion.p>
+          </div>
 
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {content.topics.map((topic, index) => (
@@ -189,12 +229,16 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
 
         {/* Tech stack */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-10">
-            <p className={`${sectionLabel} mb-4`}>&gt; which --all tools</p>
-            <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tight">
-              {ui.stackTitle}
-            </h2>
-          </motion.div>
+          <div className="mb-10">
+            <motion.p {...reveal} className={`${sectionLabel} mb-4`}>
+              &gt; which --all tools
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.stackTitle}
+              className="text-4xl md:text-6xl font-bold uppercase tracking-tight"
+            />
+          </div>
 
           <motion.div
             variants={popContainer}
@@ -218,13 +262,23 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
 
         {/* Roles */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-10">
-            <p className={`${sectionLabel} mb-4`}>&gt; whoami --future</p>
-            <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tight mb-4">
-              {ui.rolesTitle}
-            </h2>
-            <p className="text-lg text-gray-400">{ui.rolesSubtitle}</p>
-          </motion.div>
+          <div className="mb-10">
+            <motion.p {...reveal} className={`${sectionLabel} mb-4`}>
+              &gt; whoami --future
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.rolesTitle}
+              className="text-4xl md:text-6xl font-bold uppercase tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg text-gray-400"
+            >
+              {ui.rolesSubtitle}
+            </motion.p>
+          </div>
 
           <div className="space-y-4 max-w-3xl">
             {content.roles.map((role, index) => (
@@ -249,13 +303,23 @@ export default function CyberSecurityPage({ lang }: CareerThemeProps) {
 
         {/* Application process */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-14">
-            <p className={`${sectionLabel} mb-4`}>&gt; run ./application_pipeline</p>
-            <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tight mb-4">
-              {ui.processTitle}
-            </h2>
-            <p className="text-lg text-gray-400 max-w-2xl">{ui.processSubtitle}</p>
-          </motion.div>
+          <div className="mb-14">
+            <motion.p {...reveal} className={`${sectionLabel} mb-4`}>
+              &gt; run ./application_pipeline
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.processTitle}
+              className="text-4xl md:text-6xl font-bold uppercase tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg text-gray-400 max-w-2xl"
+            >
+              {ui.processSubtitle}
+            </motion.p>
+          </div>
 
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {processSteps.map((step, index) => {

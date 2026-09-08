@@ -15,6 +15,14 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import {
+  AuroraBlob,
+  FadeUp,
+  MarqueeBand,
+  MaskedTextReveal,
+  ScrollZoom,
+  useHeroChoreography,
+} from './motion';
 
 const SKILL_CHIPS = [
   'SAP S/4HANA',
@@ -47,6 +55,7 @@ export default function CareerDevelopmentPage({ lang }: CareerThemeProps) {
   const navigationItems = getNavigationItems(lang);
 
   const itemDirs: Dir[] = ['up', 'left', 'right', 'up', 'left', 'right'];
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   // Progress line that draws on scroll along the career path
   const pathRef = useRef<HTMLDivElement>(null);
@@ -63,14 +72,20 @@ export default function CareerDevelopmentPage({ lang }: CareerThemeProps) {
     <div className="min-h-screen bg-[#040a18] text-white relative overflow-hidden">
       <Navigation lang={lang} items={navigationItems} />
 
-      {/* Blue depth glows */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 -right-32 w-[620px] h-[620px] rounded-full bg-cyan-500/10 blur-3xl"
+      {/* Blue depth glows – slow aurora drift */}
+      <AuroraBlob
+        className="-top-40 -right-32 w-[620px] h-[620px] bg-cyan-500/10 blur-3xl"
+        duration={26}
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 -left-40 w-[520px] h-[520px] rounded-full bg-blue-600/10 blur-3xl"
+      <AuroraBlob
+        className="top-1/2 -left-40 w-[520px] h-[520px] bg-blue-600/10 blur-3xl"
+        duration={30}
+        delay={5}
+      />
+      <AuroraBlob
+        className="bottom-10 right-1/4 w-[440px] h-[440px] bg-cyan-400/[0.06] blur-3xl"
+        duration={21}
+        delay={9}
       />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -84,33 +99,38 @@ export default function CareerDevelopmentPage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero */}
-        <div className="mb-28 md:mb-36">
+        {/* Hero with scroll choreography */}
+        <div ref={heroRef} className="relative mb-28 md:mb-36">
+          {/* Hero glow zooms while the hero scrolls out */}
+          <motion.div
+            aria-hidden="true"
+            style={bgStyle}
+            className="pointer-events-none absolute -inset-x-10 -inset-y-14 bg-[radial-gradient(ellipse_at_25%_25%,rgba(34,211,238,0.10),transparent_60%)]"
+          />
+
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
           <motion.p {...reveal} className={`${eyebrow} mb-6 flex items-center gap-2`}>
             <GraduationCap className="w-4 h-4" aria-hidden="true" />
             {content.badge}
           </motion.p>
 
-          <motion.h1
-            {...zoomIn(0.1)}
+          <MaskedTextReveal
+            as="h1"
+            mode="mount"
+            delay={0.1}
+            text={content.title}
+            wordClassName={(_word, index, total) =>
+              index === total - 1
+                ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400'
+                : undefined
+            }
             className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.02] mb-8 max-w-3xl"
-          >
-            {content.title.split(' ').map((word, i, arr) => (
-              <span key={`${word}-${i}`}>
-                {i === arr.length - 1 ? (
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                    {word}
-                  </span>
-                ) : (
-                  `${word} `
-                )}
-              </span>
-            ))}
-          </motion.h1>
+          />
 
           <motion.p
             {...reveal}
-            transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+            transition={{ duration: 0.7, delay: 0.5, ease: 'easeOut' }}
             className="text-lg md:text-2xl text-blue-50/80 max-w-2xl leading-relaxed mb-10"
           >
             {content.subtitle}
@@ -118,7 +138,7 @@ export default function CareerDevelopmentPage({ lang }: CareerThemeProps) {
 
           <motion.div
             {...reveal}
-            transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.7, delay: 0.65, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row gap-4"
           >
             <motion.a
@@ -139,6 +159,7 @@ export default function CareerDevelopmentPage({ lang }: CareerThemeProps) {
               {ui.ctaPositions}
             </motion.a>
           </motion.div>
+          </motion.div>
         </div>
 
         {/* Intro */}
@@ -150,35 +171,50 @@ export default function CareerDevelopmentPage({ lang }: CareerThemeProps) {
           </div>
         </motion.div>
 
-        {/* Facts */}
-        <motion.div
-          variants={popContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-28"
-        >
-          {content.facts.map((fact) => (
-            <motion.div
-              key={fact.label}
-              variants={popItem}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 hover:border-cyan-400/40 transition-colors duration-300"
-            >
-              <p className="text-4xl md:text-5xl font-bold text-cyan-400 mb-2">{fact.value}</p>
-              <p className="text-sm text-blue-50/70 leading-snug">{fact.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* Facts – zoom in on scroll */}
+        <ScrollZoom className="mb-28">
+          <motion.div
+            variants={popContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+          >
+            {content.facts.map((fact) => (
+              <motion.div
+                key={fact.label}
+                variants={popItem}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 hover:border-cyan-400/40 transition-colors duration-300"
+              >
+                <p className="text-4xl md:text-5xl font-bold text-cyan-400 mb-2">{fact.value}</p>
+                <p className="text-sm text-blue-50/70 leading-snug">{fact.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </ScrollZoom>
+
+        {/* Marquee divider */}
+        <MarqueeBand
+          phrases={content.marquee}
+          className="rounded-2xl border border-cyan-400/20 bg-cyan-400/[0.05] py-6 md:py-8 mb-28"
+          textClassName="text-3xl md:text-5xl font-bold tracking-tight text-cyan-200/90"
+        />
 
         {/* Benefit items */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <p className={`${eyebrow} mb-4`}>{content.badge}</p>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.itemsTitle}
-            </h2>
-            <p className="text-lg text-blue-50/70">{content.itemsSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <FadeUp>
+              <p className={`${eyebrow} mb-4`}>{content.badge}</p>
+            </FadeUp>
+            <MaskedTextReveal
+              as="h2"
+              text={content.itemsTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-blue-50/70">{content.itemsSubtitle}</p>
+            </FadeUp>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {content.items.map((item, index) => (
@@ -231,12 +267,16 @@ export default function CareerDevelopmentPage({ lang }: CareerThemeProps) {
 
         {/* Feature: career path with scroll-drawn progress line */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-14 max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.featureTitle}
-            </h2>
-            <p className="text-lg text-blue-50/70">{content.featureSubtitle}</p>
-          </motion.div>
+          <div className="mb-14 max-w-2xl">
+            <MaskedTextReveal
+              as="h2"
+              text={content.featureTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-blue-50/70">{content.featureSubtitle}</p>
+            </FadeUp>
+          </div>
 
           <div ref={pathRef} className="relative pl-12 md:pl-20">
             {/* Static track */}
@@ -280,12 +320,16 @@ export default function CareerDevelopmentPage({ lang }: CareerThemeProps) {
         {/* FAQ */}
         {content.faq && (
           <div className="mb-28 max-w-3xl">
-            <motion.div {...reveal} className="mb-10">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                {ui.faqTitle}
-              </h2>
-              <p className="text-lg text-blue-50/70">{ui.faqSubtitle}</p>
-            </motion.div>
+            <div className="mb-10">
+              <MaskedTextReveal
+                as="h2"
+                text={ui.faqTitle}
+                className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+              />
+              <FadeUp delay={0.25}>
+                <p className="text-lg text-blue-50/70">{ui.faqSubtitle}</p>
+              </FadeUp>
+            </div>
 
             <div className="space-y-4">
               {content.faq.map((entry, index) => (

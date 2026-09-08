@@ -1,12 +1,7 @@
 'use client';
 
-import React, { useRef } from 'react';
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from 'framer-motion';
+import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, Cloud } from 'lucide-react';
 import Navigation from '../../Navigation';
 import { careerAreas } from '../../../lib/data/careerAreas';
@@ -20,6 +15,7 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import { MaskedTextReveal, useHeroChoreography } from '../career-benefits/motion';
 
 /**
  * "Sky Gradient" – deep indigo/blue climate instead of teal/purple:
@@ -37,14 +33,8 @@ export default function CloudInfrastructurePage({ lang }: CareerThemeProps) {
   const processSteps = getProcessSteps(lang);
   const navigationItems = getNavigationItems(lang);
 
-  // Hero parallax: the headline scrolls slower than the rest
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  });
-  const headlineY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const headlineOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0.35]);
+  // Hero scroll choreography: text lifts & fades, background glow zooms
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const topicDirs: Dir[] = ['left', 'up', 'right', 'down', 'left', 'right'];
 
@@ -104,28 +94,38 @@ export default function CloudInfrastructurePage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero with parallax headline */}
-        <div ref={heroRef} className="text-center mb-28">
+        {/* Hero with scroll choreography */}
+        <div ref={heroRef} className="relative text-center mb-28">
+          {/* Hero glow zooms 1 → 1.15 while the hero scrolls out */}
           <motion.div
-            style={prefersReducedMotion ? undefined : { y: headlineY, opacity: headlineOpacity }}
-          >
-            <motion.div {...zoomIn()}>
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-indigo-500/15 border border-indigo-400/30 backdrop-blur-sm mb-8">
-                <Cloud className="w-5 h-5 text-cyan-300" />
-                <span className="font-semibold text-indigo-100">{content.title}</span>
-              </div>
+            aria-hidden="true"
+            style={bgStyle}
+            className="pointer-events-none absolute -inset-x-16 -inset-y-12 bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.14),transparent_65%)]"
+          />
 
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6">
-                <span className="bg-gradient-to-r from-indigo-300 via-blue-300 to-cyan-300 bg-clip-text text-transparent">
-                  {content.title}
-                </span>
-              </h1>
-            </motion.div>
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
+          <motion.div {...zoomIn()}>
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-indigo-500/15 border border-indigo-400/30 backdrop-blur-sm mb-8">
+              <Cloud className="w-5 h-5 text-cyan-300" />
+              <span className="font-semibold text-indigo-100">{content.title}</span>
+            </div>
           </motion.div>
+
+          <MaskedTextReveal
+            as="h1"
+            mode="mount"
+            delay={0.15}
+            text={content.title}
+            wordClassName={() =>
+              'bg-gradient-to-r from-indigo-300 via-blue-300 to-cyan-300 bg-clip-text text-transparent'
+            }
+            className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
+          />
 
           <motion.p
             {...reveal}
-            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+            transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
             className="text-xl md:text-2xl text-indigo-100/80 max-w-3xl mx-auto leading-relaxed mb-10"
           >
             {content.subtitle}
@@ -133,7 +133,7 @@ export default function CloudInfrastructurePage({ lang }: CareerThemeProps) {
 
           <motion.div
             {...reveal}
-            transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.6, delay: 0.65, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <motion.a
@@ -154,6 +154,7 @@ export default function CloudInfrastructurePage({ lang }: CareerThemeProps) {
               {ui.ctaApply}
             </motion.a>
           </motion.div>
+          </motion.div>
         </div>
 
         {/* Intro – glass panel */}
@@ -167,14 +168,23 @@ export default function CloudInfrastructurePage({ lang }: CareerThemeProps) {
 
         {/* Topics – staggered glass cards */}
         <div className="mb-28">
-          <motion.div {...reveal} className="text-center mb-14">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              <span className="bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-transparent">
-                {ui.topicsTitle}
-              </span>
-            </h2>
-            <p className="text-xl text-indigo-100/70 max-w-3xl mx-auto">{ui.topicsSubtitle}</p>
-          </motion.div>
+          <div className="text-center mb-14">
+            <MaskedTextReveal
+              as="h2"
+              text={ui.topicsTitle}
+              wordClassName={() =>
+                'bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-transparent'
+              }
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-xl text-indigo-100/70 max-w-3xl mx-auto"
+            >
+              {ui.topicsSubtitle}
+            </motion.p>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {content.topics.map((topic, index) => (
@@ -204,11 +214,14 @@ export default function CloudInfrastructurePage({ lang }: CareerThemeProps) {
 
         {/* Tech stack */}
         <div className="mb-28">
-          <motion.h2 {...reveal} className="text-4xl md:text-6xl font-bold tracking-tight mb-12 text-center">
-            <span className="bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-transparent">
-              {ui.stackTitle}
-            </span>
-          </motion.h2>
+          <MaskedTextReveal
+            as="h2"
+            text={ui.stackTitle}
+            wordClassName={() =>
+              'bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-transparent'
+            }
+            className="text-4xl md:text-6xl font-bold tracking-tight mb-12 text-center"
+          />
 
           <motion.div
             variants={popContainer}
@@ -232,14 +245,23 @@ export default function CloudInfrastructurePage({ lang }: CareerThemeProps) {
 
         {/* Roles */}
         <div className="mb-28 max-w-3xl mx-auto">
-          <motion.div {...reveal} className="text-center mb-12">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              <span className="bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-transparent">
-                {ui.rolesTitle}
-              </span>
-            </h2>
-            <p className="text-xl text-indigo-100/70">{ui.rolesSubtitle}</p>
-          </motion.div>
+          <div className="text-center mb-12">
+            <MaskedTextReveal
+              as="h2"
+              text={ui.rolesTitle}
+              wordClassName={() =>
+                'bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-transparent'
+              }
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-xl text-indigo-100/70"
+            >
+              {ui.rolesSubtitle}
+            </motion.p>
+          </div>
 
           <div className="space-y-4">
             {content.roles.map((role, index) => (
@@ -261,14 +283,23 @@ export default function CloudInfrastructurePage({ lang }: CareerThemeProps) {
 
         {/* Application process */}
         <div className="mb-28">
-          <motion.div {...reveal} className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              <span className="bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-transparent">
-                {ui.processTitle}
-              </span>
-            </h2>
-            <p className="text-xl text-indigo-100/70 max-w-3xl mx-auto">{ui.processSubtitle}</p>
-          </motion.div>
+          <div className="text-center mb-16">
+            <MaskedTextReveal
+              as="h2"
+              text={ui.processTitle}
+              wordClassName={() =>
+                'bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-transparent'
+              }
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-xl text-indigo-100/70 max-w-3xl mx-auto"
+            >
+              {ui.processSubtitle}
+            </motion.p>
+          </div>
 
           <div className="relative">
             <motion.div

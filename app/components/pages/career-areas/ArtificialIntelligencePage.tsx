@@ -15,6 +15,7 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import { MaskedTextReveal, useHeroChoreography } from '../career-benefits/motion';
 
 // Deterministic particle positions (percentages) so SSR and client match
 const PARTICLES = [
@@ -37,6 +38,7 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const area = careerAreas['artificial-intelligence'];
   const content = area[lang];
@@ -100,8 +102,17 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero */}
-        <div className="text-center mb-28">
+        {/* Hero with scroll choreography */}
+        <div ref={heroRef} className="relative text-center mb-28">
+          {/* Hero glow zooms 1 → 1.15 while the hero scrolls out */}
+          <motion.div
+            aria-hidden="true"
+            style={bgStyle}
+            className="pointer-events-none absolute -inset-x-16 -inset-y-12 bg-[radial-gradient(ellipse_at_center,rgba(236,72,153,0.10),transparent_65%)]"
+          />
+
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
           <motion.div {...zoomIn()}>
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/15 via-pink-500/15 to-amber-400/15 border border-purple-400/30 mb-8">
               <Sparkles className="w-5 h-5 text-pink-300" />
@@ -109,16 +120,18 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
             </div>
           </motion.div>
 
-          <motion.h1
-            {...zoomIn(0.1)}
+          <MaskedTextReveal
+            as="h1"
+            mode="mount"
+            delay={0.15}
+            text={content.title}
+            wordClassName={() => animatedGradientText}
             className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
-          >
-            <span className={animatedGradientText}>{content.title}</span>
-          </motion.h1>
+          />
 
           <motion.p
             {...reveal}
-            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+            transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
             className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10"
           >
             {content.subtitle}
@@ -126,7 +139,7 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
 
           <motion.div
             {...reveal}
-            transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.6, delay: 0.65, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <motion.a
@@ -147,6 +160,7 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
               {ui.ctaApply}
             </motion.a>
           </motion.div>
+          </motion.div>
         </div>
 
         {/* Intro – gradient border panel */}
@@ -160,12 +174,21 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
 
         {/* Topics – gradient border cards */}
         <div className="mb-28">
-          <motion.div {...reveal} className="text-center mb-14">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              <span className={gradientText}>{ui.topicsTitle}</span>
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">{ui.topicsSubtitle}</p>
-          </motion.div>
+          <div className="text-center mb-14">
+            <MaskedTextReveal
+              as="h2"
+              text={ui.topicsTitle}
+              wordClassName={() => gradientText}
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-xl text-gray-300 max-w-3xl mx-auto"
+            >
+              {ui.topicsSubtitle}
+            </motion.p>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {content.topics.map((topic, index) => (
@@ -202,9 +225,12 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
 
         {/* Tech stack */}
         <div className="mb-28">
-          <motion.h2 {...reveal} className="text-4xl md:text-6xl font-bold tracking-tight mb-12 text-center">
-            <span className={gradientText}>{ui.stackTitle}</span>
-          </motion.h2>
+          <MaskedTextReveal
+            as="h2"
+            text={ui.stackTitle}
+            wordClassName={() => gradientText}
+            className="text-4xl md:text-6xl font-bold tracking-tight mb-12 text-center"
+          />
 
           <motion.div
             variants={popContainer}
@@ -230,12 +256,21 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
 
         {/* Roles */}
         <div className="mb-28 max-w-3xl mx-auto">
-          <motion.div {...reveal} className="text-center mb-12">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              <span className={gradientText}>{ui.rolesTitle}</span>
-            </h2>
-            <p className="text-xl text-gray-300">{ui.rolesSubtitle}</p>
-          </motion.div>
+          <div className="text-center mb-12">
+            <MaskedTextReveal
+              as="h2"
+              text={ui.rolesTitle}
+              wordClassName={() => gradientText}
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-xl text-gray-300"
+            >
+              {ui.rolesSubtitle}
+            </motion.p>
+          </div>
 
           <div className="space-y-4">
             {content.roles.map((role, index) => (
@@ -259,12 +294,21 @@ export default function ArtificialIntelligencePage({ lang }: CareerThemeProps) {
 
         {/* Application process */}
         <div className="mb-28">
-          <motion.div {...reveal} className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              <span className={gradientText}>{ui.processTitle}</span>
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">{ui.processSubtitle}</p>
-          </motion.div>
+          <div className="text-center mb-16">
+            <MaskedTextReveal
+              as="h2"
+              text={ui.processTitle}
+              wordClassName={() => gradientText}
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-xl text-gray-300 max-w-3xl mx-auto"
+            >
+              {ui.processSubtitle}
+            </motion.p>
+          </div>
 
           <div className="relative">
             <motion.div

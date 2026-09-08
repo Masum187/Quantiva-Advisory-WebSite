@@ -14,6 +14,14 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import {
+  AuroraBlob,
+  FadeUp,
+  MarqueeBand,
+  MaskedTextReveal,
+  ScrollZoom,
+  useHeroChoreography,
+} from './motion';
 
 /**
  * "Orbit" – warm, people-centric community theme: deep warm-brown canvas,
@@ -24,6 +32,7 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const benefit = careerBenefits['community'];
   const content = benefit[lang];
@@ -47,14 +56,20 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
     <div className="min-h-screen bg-[#140d08] text-white relative overflow-hidden">
       <Navigation lang={lang} items={navigationItems} />
 
-      {/* Warm glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 right-0 w-[600px] h-[600px] rounded-full bg-amber-500/10 blur-3xl"
+      {/* Warm drifting aurora glow */}
+      <AuroraBlob
+        className="-top-40 right-0 w-[600px] h-[600px] bg-amber-500/10 blur-3xl"
+        duration={24}
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 -left-40 w-[500px] h-[500px] rounded-full bg-orange-600/10 blur-3xl"
+      <AuroraBlob
+        className="bottom-0 -left-40 w-[500px] h-[500px] bg-orange-600/10 blur-3xl"
+        duration={30}
+        delay={5}
+      />
+      <AuroraBlob
+        className="top-1/2 left-1/3 w-[420px] h-[420px] bg-amber-400/[0.06] blur-3xl"
+        duration={20}
+        delay={9}
       />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -68,24 +83,28 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero with orbit motif */}
-        <div className="relative mb-28 md:mb-36 grid lg:grid-cols-[1.3fr_1fr] gap-12 items-center">
-          <div>
+        {/* Hero with orbit motif + scroll choreography */}
+        <div
+          ref={heroRef}
+          className="relative mb-28 md:mb-36 grid lg:grid-cols-[1.3fr_1fr] gap-12 items-center"
+        >
+          <motion.div style={textStyle}>
             <motion.p {...reveal} className={`${eyebrow} mb-6 flex items-center gap-2`}>
               <HeartHandshake className="w-4 h-4" aria-hidden="true" />
               {content.badge}
             </motion.p>
 
-            <motion.h1
-              {...zoomIn(0.1)}
+            <MaskedTextReveal
+              as="h1"
+              mode="mount"
+              delay={0.1}
+              text={content.title}
               className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.02] mb-8"
-            >
-              {content.title}
-            </motion.h1>
+            />
 
             <motion.p
               {...reveal}
-              transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+              transition={{ duration: 0.7, delay: 0.45, ease: 'easeOut' }}
               className="text-lg md:text-2xl text-amber-50/80 max-w-2xl leading-relaxed mb-10"
             >
               {content.subtitle}
@@ -93,7 +112,7 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
 
             <motion.div
               {...reveal}
-              transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.7, delay: 0.6, ease: 'easeOut' }}
               className="flex flex-col sm:flex-row gap-4"
             >
               <motion.a
@@ -114,11 +133,12 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
                 {ui.ctaPositions}
               </motion.a>
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* Orbiting connection dots */}
-          <div
+          {/* Orbiting connection dots – zoom while the hero scrolls out */}
+          <motion.div
             aria-hidden="true"
+            style={bgStyle}
             className="pointer-events-none relative hidden lg:block w-80 h-80 mx-auto"
           >
             <div className="absolute inset-0 rounded-full border border-amber-400/20" />
@@ -136,7 +156,7 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
             <motion.div animate={spin(30)} className="absolute inset-20">
               <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-amber-200" />
             </motion.div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Intro */}
@@ -148,37 +168,52 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
           </div>
         </motion.div>
 
-        {/* Facts */}
-        <motion.div
-          variants={popContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-28"
-        >
-          {content.facts.map((fact) => (
-            <motion.div
-              key={fact.label}
-              variants={popItem}
-              className="rounded-2xl border border-amber-400/20 bg-gradient-to-b from-amber-400/[0.08] to-transparent p-6"
-            >
-              <p className="text-4xl md:text-5xl font-bold text-amber-300 mb-2">
-                {fact.value}
-              </p>
-              <p className="text-sm text-amber-50/70 leading-snug">{fact.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* Facts – zoom in on scroll */}
+        <ScrollZoom className="mb-28">
+          <motion.div
+            variants={popContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+          >
+            {content.facts.map((fact) => (
+              <motion.div
+                key={fact.label}
+                variants={popItem}
+                className="rounded-2xl border border-amber-400/20 bg-gradient-to-b from-amber-400/[0.08] to-transparent p-6"
+              >
+                <p className="text-4xl md:text-5xl font-bold text-amber-300 mb-2">
+                  {fact.value}
+                </p>
+                <p className="text-sm text-amber-50/70 leading-snug">{fact.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </ScrollZoom>
+
+        {/* Marquee divider */}
+        <MarqueeBand
+          phrases={content.marquee}
+          className="rounded-3xl border border-amber-400/20 bg-amber-400/[0.06] py-6 md:py-8 mb-28"
+          textClassName="text-3xl md:text-5xl font-bold tracking-tight text-amber-200/90"
+        />
 
         {/* Benefit items – staggered, offset people grid */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <p className={`${eyebrow} mb-4`}>{content.badge}</p>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.itemsTitle}
-            </h2>
-            <p className="text-lg text-amber-50/70">{content.itemsSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <FadeUp>
+              <p className={`${eyebrow} mb-4`}>{content.badge}</p>
+            </FadeUp>
+            <MaskedTextReveal
+              as="h2"
+              text={content.itemsTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-amber-50/70">{content.itemsSubtitle}</p>
+            </FadeUp>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {content.items.map((item, index) => (
@@ -207,16 +242,20 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
           </div>
         </div>
 
-        {/* Feature: rituals */}
+        {/* Feature: rituals – zooms in on scroll */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.featureTitle}
-            </h2>
-            <p className="text-lg text-amber-50/70">{content.featureSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <MaskedTextReveal
+              as="h2"
+              text={content.featureTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-amber-50/70">{content.featureSubtitle}</p>
+            </FadeUp>
+          </div>
 
-          <div className="space-y-4">
+          <ScrollZoom className="space-y-4">
             {content.featureItems.map((item, index) => (
               <motion.div
                 key={item.title}
@@ -232,18 +271,22 @@ export default function CommunityPage({ lang }: CareerThemeProps) {
                 <p className="text-amber-50/70 leading-relaxed">{item.description}</p>
               </motion.div>
             ))}
-          </div>
+          </ScrollZoom>
         </div>
 
         {/* FAQ */}
         {content.faq && (
           <div className="mb-28 max-w-3xl">
-            <motion.div {...reveal} className="mb-10">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                {ui.faqTitle}
-              </h2>
-              <p className="text-lg text-amber-50/70">{ui.faqSubtitle}</p>
-            </motion.div>
+            <div className="mb-10">
+              <MaskedTextReveal
+                as="h2"
+                text={ui.faqTitle}
+                className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+              />
+              <FadeUp delay={0.25}>
+                <p className="text-lg text-amber-50/70">{ui.faqSubtitle}</p>
+              </FadeUp>
+            </div>
 
             <div className="space-y-4">
               {content.faq.map((entry, index) => (

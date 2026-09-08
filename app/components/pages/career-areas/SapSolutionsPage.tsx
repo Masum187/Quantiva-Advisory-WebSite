@@ -14,6 +14,11 @@ import {
   makeMotionPresets,
   type CareerThemeProps,
 } from './shared';
+import {
+  AuroraBlob,
+  MaskedTextReveal,
+  useHeroChoreography,
+} from '../career-benefits/motion';
 
 const MARQUEE_ITEMS = ['S/4HANA', '*', 'Clean Core', '#', 'BTP', '™', 'Integration', '—'];
 
@@ -27,6 +32,7 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const area = careerAreas['sap-solutions'];
   const content = area[lang];
@@ -50,10 +56,21 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
   );
 
   return (
-    <div className="min-h-screen bg-[#f4f1ea] text-neutral-900">
+    <div className="min-h-screen bg-[#f4f1ea] text-neutral-900 relative overflow-hidden">
       <Navigation lang={lang} items={navigationItems} />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24">
+      {/* Warm paper aurora – barely-there drifting tints */}
+      <AuroraBlob
+        className="-top-40 -right-40 w-[640px] h-[640px] bg-amber-300/20 blur-3xl"
+        duration={28}
+      />
+      <AuroraBlob
+        className="top-[50rem] -left-48 w-[520px] h-[520px] bg-orange-200/25 blur-3xl"
+        duration={24}
+        delay={7}
+      />
+
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24">
         {/* Back link */}
         <motion.a
           href={localePath(lang, '/career')}
@@ -64,8 +81,17 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero */}
-        <div className="mb-24">
+        {/* Hero with scroll choreography */}
+        <div ref={heroRef} className="relative mb-24">
+          {/* Paper texture glow zooms while the hero scrolls out */}
+          <motion.div
+            aria-hidden="true"
+            style={bgStyle}
+            className="pointer-events-none absolute -inset-x-10 -inset-y-12 bg-[radial-gradient(ellipse_at_20%_20%,rgba(217,119,6,0.07),transparent_60%)]"
+          />
+
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
           <motion.div {...reveal} className="flex flex-wrap items-baseline justify-between gap-4 mb-8">
             <p className="text-lg md:text-xl font-medium">{eyebrow}</p>
             <p className="text-sm tracking-widest text-neutral-500">
@@ -73,14 +99,14 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
             </p>
           </motion.div>
 
-          <motion.h1
-            {...zoomIn(0.1)}
+          <MaskedTextReveal
+            as="h1"
+            mode="mount"
+            delay={0.1}
+            text={'SAP\nSolutions'}
+            suffix={<span className="align-top text-3xl md:text-5xl">®</span>}
             className="text-6xl sm:text-7xl md:text-[7.5rem] font-bold tracking-tighter leading-[0.9] mb-10"
-          >
-            SAP
-            <br />
-            Solutions<span className="align-top text-3xl md:text-5xl">®</span>
-          </motion.h1>
+          />
 
           <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
             <motion.p
@@ -115,6 +141,7 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
               </motion.a>
             </motion.div>
           </div>
+          </motion.div>
         </div>
 
         {/* Intro */}
@@ -131,7 +158,7 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
       </div>
 
       {/* Marquee band – full width, paused/static when reduced motion */}
-      <div className="bg-neutral-900 text-[#f4f1ea] py-6 md:py-8 overflow-hidden mb-24">
+      <div className="relative bg-neutral-900 text-[#f4f1ea] py-6 md:py-8 overflow-hidden mb-24">
         <div
           className={`flex whitespace-nowrap text-3xl md:text-6xl font-bold tracking-tight ${
             prefersReducedMotion ? '' : 'animate-marquee'
@@ -144,18 +171,26 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Topics as editorial index list */}
         <div className="mb-24">
-          <motion.div {...reveal} className="mb-12">
-            <p className="text-lg font-medium mb-4">
+          <div className="mb-12">
+            <motion.p {...reveal} className="text-lg font-medium mb-4">
               {lang === 'de' ? '(Arbeitsfelder)' : '(Fields of work)'}
-            </p>
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">
-              {ui.topicsTitle}
-            </h2>
-            <p className="text-lg md:text-xl text-neutral-600 max-w-2xl">{ui.topicsSubtitle}</p>
-          </motion.div>
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.topicsTitle}
+              className="text-5xl md:text-7xl font-bold tracking-tighter mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg md:text-xl text-neutral-600 max-w-2xl"
+            >
+              {ui.topicsSubtitle}
+            </motion.p>
+          </div>
 
           <div className="border-t border-neutral-900/20">
             {content.topics.map((topic, index) => (
@@ -186,10 +221,16 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
 
         {/* Tech stack */}
         <div className="mb-24">
-          <motion.div {...reveal} className="mb-10">
-            <p className="text-lg font-medium mb-4">{lang === 'de' ? '(Stack)' : '(Stack)'}</p>
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter">{ui.stackTitle}</h2>
-          </motion.div>
+          <div className="mb-10">
+            <motion.p {...reveal} className="text-lg font-medium mb-4">
+              {lang === 'de' ? '(Stack)' : '(Stack)'}
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.stackTitle}
+              className="text-5xl md:text-7xl font-bold tracking-tighter"
+            />
+          </div>
 
           <motion.div
             variants={popContainer}
@@ -213,13 +254,23 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
 
         {/* Roles */}
         <div className="mb-24">
-          <motion.div {...reveal} className="mb-10">
-            <p className="text-lg font-medium mb-4">{lang === 'de' ? '(Rollen)' : '(Roles)'}</p>
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">
-              {ui.rolesTitle}
-            </h2>
-            <p className="text-lg md:text-xl text-neutral-600">{ui.rolesSubtitle}</p>
-          </motion.div>
+          <div className="mb-10">
+            <motion.p {...reveal} className="text-lg font-medium mb-4">
+              {lang === 'de' ? '(Rollen)' : '(Roles)'}
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.rolesTitle}
+              className="text-5xl md:text-7xl font-bold tracking-tighter mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg md:text-xl text-neutral-600"
+            >
+              {ui.rolesSubtitle}
+            </motion.p>
+          </div>
 
           <div className="border-t border-neutral-900/20">
             {content.roles.map((role, index) => (
@@ -244,15 +295,23 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
 
         {/* Application process */}
         <div className="mb-24">
-          <motion.div {...reveal} className="mb-14">
-            <p className="text-lg font-medium mb-4">
+          <div className="mb-14">
+            <motion.p {...reveal} className="text-lg font-medium mb-4">
               {lang === 'de' ? '(Bewerbungsprozess)' : '(Application process)'}
-            </p>
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">
-              {ui.processTitle}
-            </h2>
-            <p className="text-lg md:text-xl text-neutral-600 max-w-2xl">{ui.processSubtitle}</p>
-          </motion.div>
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.processTitle}
+              className="text-5xl md:text-7xl font-bold tracking-tighter mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg md:text-xl text-neutral-600 max-w-2xl"
+            >
+              {ui.processSubtitle}
+            </motion.p>
+          </div>
 
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
             {processSteps.map((step, index) => {
@@ -287,14 +346,16 @@ export default function SapSolutionsPage({ lang }: CareerThemeProps) {
       </div>
 
       {/* Dark CTA panel as final contrast */}
-      <motion.div {...zoomIn()} className="bg-neutral-900 text-[#f4f1ea]">
+      <motion.div {...zoomIn()} className="relative bg-neutral-900 text-[#f4f1ea]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <p className="text-lg font-medium mb-6 text-[#f4f1ea]/70">
             {lang === 'de' ? '(Dein nächster Schritt)' : '(Your next step)'}
           </p>
-          <h2 className="text-4xl md:text-7xl font-bold tracking-tighter mb-6">
-            {ui.finalTitle}
-          </h2>
+          <MaskedTextReveal
+            as="h2"
+            text={ui.finalTitle}
+            className="text-4xl md:text-7xl font-bold tracking-tighter mb-6"
+          />
           <p className="text-xl md:text-2xl text-[#f4f1ea]/80 mb-10 max-w-3xl">
             {ui.finalSubtitle}
           </p>

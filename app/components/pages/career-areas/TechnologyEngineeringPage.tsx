@@ -15,6 +15,11 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import {
+  AuroraBlob,
+  MaskedTextReveal,
+  useHeroChoreography,
+} from '../career-benefits/motion';
 
 /**
  * "Engineering Grid" – Forge-inspired dark product-marketing look:
@@ -25,6 +30,7 @@ export default function TechnologyEngineeringPage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const area = careerAreas['technology-engineering'];
   const content = area[lang];
@@ -52,10 +58,20 @@ export default function TechnologyEngineeringPage({ lang }: CareerThemeProps) {
           backgroundSize: '64px 64px',
         }}
       />
-      {/* Soft cyan glow top-center */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl"
+      {/* Soft cyan glows – slow aurora drift */}
+      <AuroraBlob
+        className="-top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-cyan-500/10 blur-3xl"
+        duration={26}
+      />
+      <AuroraBlob
+        className="top-[44rem] -right-48 w-[480px] h-[480px] bg-cyan-400/[0.06] blur-3xl"
+        duration={30}
+        delay={6}
+      />
+      <AuroraBlob
+        className="bottom-20 -left-40 w-[420px] h-[420px] bg-sky-500/[0.06] blur-3xl"
+        duration={21}
+        delay={10}
       />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
@@ -69,28 +85,33 @@ export default function TechnologyEngineeringPage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero */}
-        <div className="mb-28">
+        {/* Hero with scroll choreography */}
+        <div ref={heroRef} className="relative mb-28">
+          {/* Hero glow zooms 1 → 1.15 while the hero scrolls out */}
+          <motion.div
+            aria-hidden="true"
+            style={bgStyle}
+            className="pointer-events-none absolute -inset-x-10 -inset-y-14 bg-[radial-gradient(ellipse_at_25%_20%,rgba(34,211,238,0.10),transparent_60%)]"
+          />
+
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
           <motion.p {...reveal} className={`${monoLabel} mb-6`}>
             {'// engineering'}
           </motion.p>
 
-          <motion.h1
-            {...zoomIn(0.1)}
+          <MaskedTextReveal
+            as="h1"
+            mode="mount"
+            delay={0.1}
+            text={content.title.replace(' & ', '\n& ')}
+            wordClassName={(word) => (word === '&' ? 'text-cyan-400' : undefined)}
             className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter leading-[0.95] mb-8"
-          >
-            {content.title.split(' & ').map((part, i, arr) => (
-              <React.Fragment key={part}>
-                {i > 0 && <span className="text-cyan-400"> &amp; </span>}
-                {part}
-                {i < arr.length - 1 && <br />}
-              </React.Fragment>
-            ))}
-          </motion.h1>
+          />
 
           <motion.p
             {...reveal}
-            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+            transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
             className="text-lg md:text-2xl text-gray-300 max-w-2xl leading-relaxed mb-8"
           >
             {content.subtitle}
@@ -138,6 +159,7 @@ export default function TechnologyEngineeringPage({ lang }: CareerThemeProps) {
               {ui.ctaApply}
             </motion.a>
           </motion.div>
+          </motion.div>
         </div>
 
         {/* Intro */}
@@ -152,13 +174,23 @@ export default function TechnologyEngineeringPage({ lang }: CareerThemeProps) {
 
         {/* Topics – numbered index rows instead of cards */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-10">
-            <p className={`${monoLabel} mb-4`}>{'// what_you_build'}</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              {ui.topicsTitle}
-            </h2>
-            <p className="text-lg text-gray-400 max-w-2xl">{ui.topicsSubtitle}</p>
-          </motion.div>
+          <div className="mb-10">
+            <motion.p {...reveal} className={`${monoLabel} mb-4`}>
+              {'// what_you_build'}
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.topicsTitle}
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg text-gray-400 max-w-2xl"
+            >
+              {ui.topicsSubtitle}
+            </motion.p>
+          </div>
 
           <div className="border-t border-white/10">
             {content.topics.map((topic, index) => (
@@ -183,10 +215,16 @@ export default function TechnologyEngineeringPage({ lang }: CareerThemeProps) {
 
         {/* Tech stack */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-10">
-            <p className={`${monoLabel} mb-4`}>{'// stack'}</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">{ui.stackTitle}</h2>
-          </motion.div>
+          <div className="mb-10">
+            <motion.p {...reveal} className={`${monoLabel} mb-4`}>
+              {'// stack'}
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.stackTitle}
+              className="text-4xl md:text-6xl font-bold tracking-tight"
+            />
+          </div>
 
           <motion.div
             variants={popContainer}
@@ -210,13 +248,23 @@ export default function TechnologyEngineeringPage({ lang }: CareerThemeProps) {
 
         {/* Roles */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-10">
-            <p className={`${monoLabel} mb-4`}>{'// roles'}</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              {ui.rolesTitle}
-            </h2>
-            <p className="text-lg text-gray-400">{ui.rolesSubtitle}</p>
-          </motion.div>
+          <div className="mb-10">
+            <motion.p {...reveal} className={`${monoLabel} mb-4`}>
+              {'// roles'}
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.rolesTitle}
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg text-gray-400"
+            >
+              {ui.rolesSubtitle}
+            </motion.p>
+          </div>
 
           <div className="border-t border-white/10">
             {content.roles.map((role, index) => (
@@ -243,13 +291,23 @@ export default function TechnologyEngineeringPage({ lang }: CareerThemeProps) {
 
         {/* Application process */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-14">
-            <p className={`${monoLabel} mb-4`}>{'// hiring_pipeline'}</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-              {ui.processTitle}
-            </h2>
-            <p className="text-lg text-gray-400 max-w-2xl">{ui.processSubtitle}</p>
-          </motion.div>
+          <div className="mb-14">
+            <motion.p {...reveal} className={`${monoLabel} mb-4`}>
+              {'// hiring_pipeline'}
+            </motion.p>
+            <MaskedTextReveal
+              as="h2"
+              text={ui.processTitle}
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-4"
+            />
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="text-lg text-gray-400 max-w-2xl"
+            >
+              {ui.processSubtitle}
+            </motion.p>
+          </div>
 
           <div className="grid gap-px bg-white/10 border border-white/10 md:grid-cols-2 lg:grid-cols-4">
             {processSteps.map((step, index) => {

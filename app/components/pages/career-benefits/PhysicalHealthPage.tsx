@@ -14,6 +14,14 @@ import {
   type CareerThemeProps,
   type Dir,
 } from './shared';
+import {
+  AuroraBlob,
+  FadeUp,
+  MarqueeBand,
+  MaskedTextReveal,
+  ScrollZoom,
+  useHeroChoreography,
+} from './motion';
 
 /**
  * "Kinetic" – high-energy physical-health theme: near-black canvas with
@@ -24,6 +32,7 @@ export default function PhysicalHealthPage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const benefit = careerBenefits['physical-health'];
   const content = benefit[lang];
@@ -55,14 +64,22 @@ export default function PhysicalHealthPage({ lang }: CareerThemeProps) {
     <div className="min-h-screen bg-[#0a050d] text-white relative overflow-hidden">
       <Navigation lang={lang} items={navigationItems} />
 
-      {/* Neon glows + diagonal energy stripe */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-32 left-1/4 w-[560px] h-[560px] rounded-full bg-fuchsia-600/15 blur-3xl"
+      {/* Neon drifting aurora + diagonal energy stripe */}
+      <AuroraBlob
+        className="-top-32 left-1/4 w-[560px] h-[560px] bg-fuchsia-600/15 blur-3xl"
+        duration={20}
+        drift={70}
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute top-2/3 -right-32 w-[480px] h-[480px] rounded-full bg-violet-600/15 blur-3xl"
+      <AuroraBlob
+        className="top-2/3 -right-32 w-[480px] h-[480px] bg-violet-600/15 blur-3xl"
+        duration={26}
+        delay={4}
+        drift={70}
+      />
+      <AuroraBlob
+        className="bottom-10 -left-24 w-[400px] h-[400px] bg-fuchsia-500/10 blur-3xl"
+        duration={23}
+        delay={8}
       />
       <div
         aria-hidden="true"
@@ -80,25 +97,36 @@ export default function PhysicalHealthPage({ lang }: CareerThemeProps) {
           <span className="skew-x-6">{ui.back}</span>
         </motion.a>
 
-        {/* Hero */}
-        <div className="mb-28 md:mb-36">
+        {/* Hero with scroll choreography */}
+        <div ref={heroRef} className="relative mb-28 md:mb-36">
+          {/* Hero glow zooms 1 → 1.15 while the hero scrolls out */}
+          <motion.div
+            aria-hidden="true"
+            style={bgStyle}
+            className="pointer-events-none absolute -inset-x-10 -inset-y-16 bg-[radial-gradient(ellipse_at_30%_20%,rgba(217,70,239,0.14),transparent_60%)]"
+          />
+
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
           <motion.p {...reveal} className={`${eyebrow} mb-6 flex items-center gap-2`}>
             <Zap className="w-4 h-4" aria-hidden="true" />
             {content.badge}
           </motion.p>
 
-          <motion.h1
-            {...zoomIn(0.05)}
+          <MaskedTextReveal
+            as="h1"
+            mode="mount"
+            delay={0.05}
+            text={content.title}
+            wordClassName={() =>
+              'bg-gradient-to-r from-fuchsia-400 via-fuchsia-300 to-violet-400 bg-clip-text text-transparent pr-[0.08em]'
+            }
             className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-tight leading-[0.95] mb-8 italic"
-          >
-            <span className="bg-gradient-to-r from-fuchsia-400 via-fuchsia-300 to-violet-400 bg-clip-text text-transparent">
-              {content.title}
-            </span>
-          </motion.h1>
+          />
 
           <motion.p
             {...reveal}
-            transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
+            transition={{ duration: 0.5, delay: 0.45, ease: 'easeOut' }}
             className="text-lg md:text-2xl text-gray-300 max-w-2xl leading-relaxed mb-10"
           >
             {content.subtitle}
@@ -106,7 +134,7 @@ export default function PhysicalHealthPage({ lang }: CareerThemeProps) {
 
           <motion.div
             {...reveal}
-            transition={{ duration: 0.5, delay: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.5, delay: 0.6, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row gap-4"
           >
             <motion.a
@@ -129,14 +157,15 @@ export default function PhysicalHealthPage({ lang }: CareerThemeProps) {
               <span className="skew-x-6">{ui.ctaPositions}</span>
             </motion.a>
           </motion.div>
+          </motion.div>
         </div>
 
-        {/* Bold stat numbers */}
+        {/* Bold stat numbers – zoom in on scroll */}
         <div className="mb-28">
           <motion.p {...reveal} className={`${eyebrow} mb-8`}>
             {ui.factsTitle}
           </motion.p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-fuchsia-500/20 border border-fuchsia-500/20">
+          <ScrollZoom className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-fuchsia-500/20 border border-fuchsia-500/20">
             {content.facts.map((fact, index) => (
               <motion.div
                 key={fact.label}
@@ -149,8 +178,15 @@ export default function PhysicalHealthPage({ lang }: CareerThemeProps) {
                 <p className="text-sm text-gray-400 leading-snug">{fact.label}</p>
               </motion.div>
             ))}
-          </div>
+          </ScrollZoom>
         </div>
+
+        {/* Marquee divider */}
+        <MarqueeBand
+          phrases={content.marquee}
+          className="border-y-2 border-fuchsia-500/25 bg-fuchsia-500/[0.06] py-6 md:py-8 mb-28 -skew-y-1"
+          textClassName="text-3xl md:text-6xl font-black uppercase italic tracking-tight text-fuchsia-300"
+        />
 
         {/* Intro */}
         <motion.div {...zoomIn()} className="mb-28">
@@ -163,13 +199,20 @@ export default function PhysicalHealthPage({ lang }: CareerThemeProps) {
 
         {/* Benefit items */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <p className={`${eyebrow} mb-4`}>{content.badge}</p>
-            <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tight mb-4">
-              {content.itemsTitle}
-            </h2>
-            <p className="text-lg text-gray-400">{content.itemsSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <FadeUp>
+              <p className={`${eyebrow} mb-4`}>{content.badge}</p>
+            </FadeUp>
+            <MaskedTextReveal
+              as="h2"
+              text={content.itemsTitle}
+              className="text-4xl md:text-6xl font-black uppercase italic tracking-tight mb-4"
+              wordClassName={() => 'pr-[0.08em]'}
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-gray-400">{content.itemsSubtitle}</p>
+            </FadeUp>
+          </div>
 
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {content.items.map((item, index) => (
@@ -199,12 +242,17 @@ export default function PhysicalHealthPage({ lang }: CareerThemeProps) {
 
         {/* Feature: sports communities strip */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tight mb-4">
-              {content.featureTitle}
-            </h2>
-            <p className="text-lg text-gray-400">{content.featureSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <MaskedTextReveal
+              as="h2"
+              text={content.featureTitle}
+              className="text-4xl md:text-6xl font-black uppercase italic tracking-tight mb-4"
+              wordClassName={() => 'pr-[0.08em]'}
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-gray-400">{content.featureSubtitle}</p>
+            </FadeUp>
+          </div>
 
           <motion.div
             variants={popContainer}

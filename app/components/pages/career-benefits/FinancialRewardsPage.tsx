@@ -16,6 +16,15 @@ import {
   type Dir,
   type Lang,
 } from './shared';
+import {
+  AuroraBlob,
+  FadeUp,
+  GrainOverlay,
+  MarqueeBand,
+  MaskedTextReveal,
+  ScrollZoom,
+  useHeroChoreography,
+} from './motion';
 
 /** Animated stat counter – counts up once when scrolled into view. */
 function StatCounter({
@@ -70,6 +79,7 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
   const prefersReducedMotion = !!useReducedMotion();
   const { reveal, slideZoom, zoomIn, popItem, popContainer } =
     makeMotionPresets(prefersReducedMotion);
+  const { heroRef, textStyle, bgStyle } = useHeroChoreography();
 
   const benefit = careerBenefits['financial-rewards'];
   const content = benefit[lang];
@@ -85,15 +95,22 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
     <div className="min-h-screen bg-[#0b0a08] text-white relative overflow-hidden">
       <Navigation lang={lang} items={navigationItems} />
 
-      {/* Gold & teal ambiance */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-48 left-1/4 w-[600px] h-[600px] rounded-full bg-amber-500/[0.07] blur-3xl"
+      {/* Gold & teal ambiance – slow aurora drift */}
+      <AuroraBlob
+        className="-top-48 left-1/4 w-[600px] h-[600px] bg-amber-500/[0.07] blur-3xl"
+        duration={28}
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 -right-40 w-[520px] h-[520px] rounded-full bg-teal-500/[0.07] blur-3xl"
+      <AuroraBlob
+        className="bottom-0 -right-40 w-[520px] h-[520px] bg-teal-500/[0.07] blur-3xl"
+        duration={24}
+        delay={6}
       />
+      <AuroraBlob
+        className="top-1/2 -left-40 w-[440px] h-[440px] bg-amber-400/[0.05] blur-3xl"
+        duration={20}
+        delay={10}
+      />
+      <GrainOverlay className="opacity-[0.05]" />
       {/* Fine diagonal hairlines */}
       <div
         aria-hidden="true"
@@ -115,8 +132,17 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
           {ui.back}
         </motion.a>
 
-        {/* Hero */}
-        <div className="mb-28 md:mb-36 text-center max-w-4xl mx-auto">
+        {/* Hero with scroll choreography */}
+        <div ref={heroRef} className="relative mb-28 md:mb-36 text-center max-w-4xl mx-auto">
+          {/* Hero glow zooms while the hero scrolls out */}
+          <motion.div
+            aria-hidden="true"
+            style={bgStyle}
+            className="pointer-events-none absolute -inset-x-16 -inset-y-12 bg-[radial-gradient(ellipse_at_center,rgba(251,191,36,0.08),transparent_65%)]"
+          />
+
+          {/* Hero text lifts & fades while scrolling past */}
+          <motion.div style={textStyle} className="relative">
           <motion.p
             {...reveal}
             className={`${eyebrow} mb-6 flex items-center justify-center gap-2`}
@@ -125,18 +151,20 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
             {content.badge}
           </motion.p>
 
-          <motion.h1
-            {...zoomIn(0.1)}
+          <MaskedTextReveal
+            as="h1"
+            mode="mount"
+            delay={0.1}
+            text={content.title}
+            wordClassName={() =>
+              'text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-300 to-teal-300'
+            }
             className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.02] mb-8"
-          >
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-300 to-teal-300">
-              {content.title}
-            </span>
-          </motion.h1>
+          />
 
           <motion.p
             {...reveal}
-            transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+            transition={{ duration: 0.7, delay: 0.5, ease: 'easeOut' }}
             className="text-lg md:text-2xl text-gray-300 leading-relaxed mb-10"
           >
             {content.subtitle}
@@ -144,7 +172,7 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
 
           <motion.div
             {...reveal}
-            transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.7, delay: 0.65, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <motion.a
@@ -165,14 +193,15 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
               {ui.ctaPositions}
             </motion.a>
           </motion.div>
+          </motion.div>
         </div>
 
-        {/* Animated stat counters */}
+        {/* Animated stat counters – zoom in on scroll */}
         <div className="mb-28">
           <motion.p {...reveal} className={`${eyebrow} mb-8 text-center`}>
             {ui.factsTitle}
           </motion.p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-amber-300/15 border border-amber-300/15">
+          <ScrollZoom className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-amber-300/15 border border-amber-300/15">
             {content.facts.map((fact, index) => (
               <motion.div
                 key={fact.label}
@@ -187,8 +216,15 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
                 <p className="text-sm text-gray-400 leading-snug">{fact.label}</p>
               </motion.div>
             ))}
-          </div>
+          </ScrollZoom>
         </div>
+
+        {/* Marquee divider */}
+        <MarqueeBand
+          phrases={content.marquee}
+          className="border-y border-amber-300/20 bg-amber-300/[0.03] py-6 md:py-8 mb-28"
+          textClassName="text-3xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-300 to-teal-300"
+        />
 
         {/* Intro */}
         <motion.div {...zoomIn()} className="mb-28">
@@ -209,13 +245,19 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
 
         {/* Benefit items */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <p className={`${eyebrow} mb-4`}>{content.badge}</p>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.itemsTitle}
-            </h2>
-            <p className="text-lg text-gray-400">{content.itemsSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <FadeUp>
+              <p className={`${eyebrow} mb-4`}>{content.badge}</p>
+            </FadeUp>
+            <MaskedTextReveal
+              as="h2"
+              text={content.itemsTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-gray-400">{content.itemsSubtitle}</p>
+            </FadeUp>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {content.items.map((item, index) => (
@@ -241,15 +283,20 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
           </div>
         </div>
 
-        {/* Feature: ledger-style package breakdown */}
+        {/* Feature: ledger-style package breakdown – zooms in on scroll */}
         <div className="mb-28">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {content.featureTitle}
-            </h2>
-            <p className="text-lg text-gray-400">{content.featureSubtitle}</p>
-          </motion.div>
+          <div className="mb-12 max-w-2xl">
+            <MaskedTextReveal
+              as="h2"
+              text={content.featureTitle}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            />
+            <FadeUp delay={0.25}>
+              <p className="text-lg text-gray-400">{content.featureSubtitle}</p>
+            </FadeUp>
+          </div>
 
+          <ScrollZoom>
           <motion.div
             variants={popContainer}
             initial="hidden"
@@ -276,17 +323,22 @@ export default function FinancialRewardsPage({ lang }: CareerThemeProps) {
               </motion.div>
             ))}
           </motion.div>
+          </ScrollZoom>
         </div>
 
         {/* FAQ */}
         {content.faq && (
           <div className="mb-28 max-w-3xl">
-            <motion.div {...reveal} className="mb-10">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                {ui.faqTitle}
-              </h2>
-              <p className="text-lg text-gray-400">{ui.faqSubtitle}</p>
-            </motion.div>
+            <div className="mb-10">
+              <MaskedTextReveal
+                as="h2"
+                text={ui.faqTitle}
+                className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+              />
+              <FadeUp delay={0.25}>
+                <p className="text-lg text-gray-400">{ui.faqSubtitle}</p>
+              </FadeUp>
+            </div>
 
             <div className="space-y-4">
               {content.faq.map((entry, index) => (
