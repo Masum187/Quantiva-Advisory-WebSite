@@ -11,7 +11,6 @@ import {
   Brain, Cloud, Code, Database, Globe, Zap, Menu, X, BriefcaseIcon
 } from 'lucide-react';
 import { useLanguage } from '../QuantivaWebsite';
-import VideoCard from '../VideoCard';
 import { getJobListings, submitJobPosting, JobListing } from '../../lib/utils/jobs';
 import ContactForm from '../ContactForm';
 import { AnimatePresence } from 'framer-motion';
@@ -968,53 +967,74 @@ export default function CareerPage() {
         <Navigation lang={lang} items={navigationItems} />
       </div>
 
-      {/* Video Card Section - Below Navigation */}
-      <div className="relative z-10 mt-8">
-        <VideoCard
-        videoUrl="https://res.cloudinary.com/dbrisux8i/video/upload/du_3.45/v1762015286/openart-video_b6992003_1761933215657_wgjmwh.mp4"
-        title={lang === 'de' ? 'Willkommen bei Quantiva Advisory!' : 'Welcome to Quantiva Advisory!'}
-        description={lang === 'de' 
-          ? 'Du bist derjenige, der dabei helfen kann, dieses Unternehmen zu gestalten. Zögere nicht so lange — bewirb dich jetzt!'
-          : 'You are the one who can help shape this company. Don\'t hesitate so long — please apply now!'
-        }
-        primaryButtonText={lang === 'de' ? 'Jetzt bewerben' : 'Apply now'}
-        primaryButtonLink={localePath('/#contact')}
-        secondaryButtonText={lang === 'de' ? 'Mehr erfahren' : 'Learn more'}
-        secondaryButtonLink={localePath('/about')}
-          className="py-8"
+      {/* Hero: full-bleed welcome video with headline and CTAs */}
+      <section className="relative z-10 bg-black">
+        <motion.div
+          style={{ opacity: heroOpacity, scale: heroScale }}
+          className="relative h-[100svh] min-h-[640px] w-full overflow-hidden"
+        >
+        {/* Full-screen background video */}
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          src="https://res.cloudinary.com/dbrisux8i/video/upload/du_3.45/v1762015286/openart-video_b6992003_1761933215657_wgjmwh.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
         />
-      </div>
 
-      {/* Hero Section - Simple Background */}
-      <div className="relative z-10 h-screen w-full overflow-hidden">
-        
-        
-        {/* Video Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-900/80 via-purple-900/60 to-black/80"></div>
-        
-        {/* Hero Content Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex items-end z-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 w-full">
+        {/* Readability overlays (left/bottom darker where the copy sits) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/25 to-transparent" />
+
+        {/* Hero content */}
+        <div className="relative z-10 flex h-full items-end">
+          <div className="mx-auto w-full max-w-7xl px-4 pb-24 sm:px-6 md:pb-32 lg:px-8">
             <SlideIn direction="up">
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 text-center">
+              <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-400/40 bg-teal-500/10 px-4 py-1.5 text-sm font-medium tracking-wide text-teal-300 backdrop-blur-sm">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                {lang === 'de'
+                  ? 'Willkommen bei Quantiva Advisory'
+                  : 'Welcome to Quantiva Advisory'}
+              </span>
+              <h1 className="mb-6 max-w-4xl text-5xl font-bold leading-[1.05] text-white md:text-7xl">
                 {t.heroTitle}
               </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8">
+              <p className="mb-10 max-w-2xl text-lg leading-relaxed text-gray-200 md:text-xl">
                 {t.heroSubtitle}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 <a
                   href={localePath('/#contact')}
-                  className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-teal-500 to-purple-500 text-white text-lg font-semibold rounded-xl hover:shadow-lg hover:shadow-teal-500/50 transition-all duration-300"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-teal-500 to-purple-500 text-white text-lg font-semibold rounded-xl hover:shadow-lg hover:shadow-teal-500/50 transition-all duration-300"
                 >
                   {t.heroCTA}
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+                </a>
+                <a
+                  href={localePath('/about')}
+                  className="inline-flex items-center justify-center px-8 py-4 bg-white/10 backdrop-blur-sm text-white text-lg font-semibold rounded-xl border border-white/25 hover:bg-white/20 transition-all duration-300"
+                >
+                  {lang === 'de' ? 'Mehr erfahren' : 'Learn more'}
                 </a>
               </div>
             </SlideIn>
           </div>
         </div>
-      </div>
+
+        {/* Scroll cue */}
+        <div className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 md:block" aria-hidden="true">
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            className="flex h-10 w-6 items-start justify-center rounded-full border border-white/30 p-1.5"
+          >
+            <div className="h-2 w-1 rounded-full bg-white/70" />
+          </motion.div>
+        </div>
+        </motion.div>
+      </section>
 
       {/* Main Content - Seamless Flow */}
       <div className="relative z-10 bg-black min-h-screen">
