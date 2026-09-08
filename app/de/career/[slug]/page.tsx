@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import CareerAreaPage from '../../../components/pages/CareerAreaPage';
+import CareerBenefitPage from '../../../components/pages/CareerBenefitPage';
 import { careerAreaSlugs, getCareerArea } from '../../../lib/data/careerAreas';
+import { careerBenefitSlugs, getCareerBenefit } from '../../../lib/data/careerBenefits';
 
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  return careerAreaSlugs.map((slug) => ({ slug }));
+  return [...careerAreaSlugs, ...careerBenefitSlugs].map((slug) => ({ slug }));
 }
 
 type PageParams = Promise<{ slug: string }>;
@@ -18,31 +20,38 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const area = getCareerArea(slug);
+  const benefit = area ? undefined : getCareerBenefit(slug);
+  const content = area?.de ?? benefit?.de;
 
-  if (!area) {
+  if (!content) {
     return {};
   }
 
   return {
-    title: `${area.de.title} – Karriere | Quantiva Advisory`,
-    description: area.de.subtitle,
+    title: `${content.title} – Karriere | Quantiva Advisory`,
+    description: content.subtitle,
     alternates: {
-      canonical: `/de/career/${area.slug}`,
+      canonical: `/de/career/${slug}`,
       languages: {
-        'de-DE': `/de/career/${area.slug}`,
-        'en-US': `/en/career/${area.slug}`,
+        'de-DE': `/de/career/${slug}`,
+        'en-US': `/en/career/${slug}`,
       },
     },
   };
 }
 
-export default async function CareerAreaDePage({ params }: { params: PageParams }) {
+export default async function CareerSlugDePage({ params }: { params: PageParams }) {
   const { slug } = await params;
-  const area = getCareerArea(slug);
 
-  if (!area) {
-    notFound();
+  const area = getCareerArea(slug);
+  if (area) {
+    return <CareerAreaPage lang="de" slug={area.slug} />;
   }
 
-  return <CareerAreaPage lang="de" slug={area.slug} />;
+  const benefit = getCareerBenefit(slug);
+  if (benefit) {
+    return <CareerBenefitPage lang="de" slug={benefit.slug} />;
+  }
+
+  notFound();
 }

@@ -1796,21 +1796,19 @@ export default function CareerPage() {
             {/* Large Featured Card - Mental Health (spans 2 rows on desktop) */}
             <SlideIn direction="left" delay={0.2} className="lg:row-span-2">
               <div className="group relative h-full min-h-[500px] rounded-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=800&auto=format&fit=crop"
+                <CareerCardMedia
+                  image="/assets/career/wellbeing/mental-health.jpg"
+                  video="/assets/career/wellbeing/mental-health.mp4"
                   alt="Mental Health"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
                 <div className="relative h-full flex flex-col justify-end p-8">
                   <h3 className="text-3xl font-bold text-white mb-4">{t.wellbeingAreas[0].title}</h3>
                   <p className="text-gray-200 mb-6 leading-relaxed">{t.wellbeingAreas[0].description}</p>
-                  <button className="self-start inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
+                  <a href={localePath('/career/mental-health')} className="self-start inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
                     {lang === 'de' ? 'Benefits ansehen' : 'View Benefits'}
                     <ChevronRight className="ml-2 h-5 w-5 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </SlideIn>
@@ -1818,21 +1816,20 @@ export default function CareerPage() {
             {/* Top-right Card - Relationship-oriented */}
             <SlideIn direction="up" delay={0.3} className="lg:col-span-2">
               <div className="group relative h-full min-h-[240px] rounded-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop"
+                <CareerCardMedia
+                  image="/assets/career/wellbeing/community.jpg"
+                  video="/assets/career/wellbeing/community.mp4"
                   alt="Team Collaboration"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 66vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-teal-900/80 via-teal-800/60 to-transparent"></div>
                 <div className="relative h-full flex flex-col justify-end p-8">
                   <h3 className="text-2xl font-bold text-white mb-3">{t.wellbeingAreas[1].title}</h3>
                   <p className="text-gray-100 mb-4 leading-relaxed max-w-xl">{t.wellbeingAreas[1].description}</p>
-                  <button className="self-start inline-flex items-center px-5 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
+                  <a href={localePath('/career/community')} className="self-start inline-flex items-center px-5 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
                     {lang === 'de' ? 'Communitys entdecken' : 'Discover Communities'}
                     <ChevronRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </SlideIn>
@@ -1840,21 +1837,19 @@ export default function CareerPage() {
             {/* Bottom-right Card - Physical Health */}
             <SlideIn direction="right" delay={0.4}>
               <div className="group relative h-full min-h-[240px] rounded-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop"
+                <CareerCardMedia
+                  image="/assets/career/wellbeing/physical-health.jpg"
+                  video="/assets/career/wellbeing/physical-health.mp4"
                   alt="Physical Health"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
                 <div className="relative h-full flex flex-col justify-end p-6">
                   <h3 className="text-xl font-bold text-white mb-2">{t.wellbeingAreas[2].title}</h3>
                   <p className="text-gray-200 text-sm mb-4 leading-relaxed">{t.wellbeingAreas[2].description}</p>
-                  <button className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
+                  <a href={localePath('/career/physical-health')} className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
                     {lang === 'de' ? 'Benefits ansehen' : 'View Benefits'}
                     <ChevronRight className="ml-1 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </SlideIn>
@@ -1862,21 +1857,19 @@ export default function CareerPage() {
             {/* Bottom-right Card 2 - Purpose-driven */}
             <SlideIn direction="right" delay={0.5}>
               <div className="group relative h-full min-h-[240px] rounded-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop"
+                <CareerCardMedia
+                  image="/assets/career/wellbeing/purpose.jpg"
+                  video="/assets/career/wellbeing/purpose.mp4"
                   alt="Purpose Driven"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
                 <div className="relative h-full flex flex-col justify-end p-6">
                   <h3 className="text-xl font-bold text-white mb-2">{t.wellbeingAreas[3].title}</h3>
                   <p className="text-gray-200 text-sm mb-4 leading-relaxed">{t.wellbeingAreas[3].description}</p>
-                  <button className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
+                  <a href={localePath('/career/purpose')} className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
                     {lang === 'de' ? 'Wovon wir überzeugt sind' : 'Our Beliefs'}
                     <ChevronRight className="ml-1 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </SlideIn>
@@ -1886,53 +1879,50 @@ export default function CareerPage() {
           <div className="grid gap-6 md:grid-cols-3 mt-6">
             <SlideIn direction="up" delay={0.6}>
               <div className="group relative h-full min-h-[280px] rounded-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop"
+                <CareerCardMedia
+                  image="/assets/career/wellbeing/career-development.jpg"
+                  video="/assets/career/wellbeing/career-development.mp4"
                   alt="Career Ready"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
                 <div className="relative h-full flex flex-col justify-end p-6">
                   <h3 className="text-xl font-bold text-white mb-2">{t.wellbeingAreas[4].title}</h3>
                   <p className="text-gray-200 text-sm mb-4 leading-relaxed">{t.wellbeingAreas[4].description}</p>
-                  <button className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
+                  <a href={localePath('/career/career-development')} className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
                     {lang === 'de' ? 'Trainings & Weiterbildung' : 'Training & Development'}
                     <ChevronRight className="ml-1 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </SlideIn>
 
             <SlideIn direction="up" delay={0.7}>
               <div className="group relative h-full min-h-[280px] rounded-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?q=80&w=800&auto=format&fit=crop"
+                <CareerCardMedia
+                  image="/assets/career/wellbeing/global-perspectives.jpg"
+                  video="/assets/career/wellbeing/global-perspectives.mp4"
                   alt="Global Perspectives"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
                 <div className="relative h-full flex flex-col justify-end p-6">
                   <h3 className="text-xl font-bold text-white mb-2">{t.wellbeingAreas[5].title}</h3>
                   <p className="text-gray-200 text-sm mb-4 leading-relaxed">{t.wellbeingAreas[5].description}</p>
-                  <button className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
+                  <a href={localePath('/career/global-perspectives')} className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
                     {lang === 'de' ? 'Benefits ansehen' : 'View Benefits'}
                     <ChevronRight className="ml-1 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </SlideIn>
 
             <SlideIn direction="up" delay={0.8}>
               <div className="group relative h-full min-h-[280px] rounded-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop"
+                <CareerCardMedia
+                  image="/assets/career/wellbeing/financial-rewards.jpg"
+                  video="/assets/career/wellbeing/financial-rewards.mp4"
                   alt="Financial Wellbeing"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-teal-900/90 via-teal-800/50 to-transparent"></div>
@@ -1943,10 +1933,10 @@ export default function CareerPage() {
                       ? 'Wir bieten Rewards- und Benefits-Pakete, die deinen Bedürfnissen entsprechen.' 
                       : 'We offer rewards and benefits packages that meet your needs.'}
                   </p>
-                  <button className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
+                  <a href={localePath('/career/financial-rewards')} className="self-start inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 group/btn">
                     {lang === 'de' ? 'Benefits ansehen' : 'View Benefits'}
                     <ChevronRight className="ml-1 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </SlideIn>
