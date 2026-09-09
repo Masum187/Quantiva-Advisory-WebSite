@@ -10,6 +10,9 @@ type ModelViewerAttributes = React.DetailedHTMLProps<
     'auto-rotate-delay'?: number;
     'rotation-per-second'?: string;
     'shadow-intensity'?: string;
+    'shadow-softness'?: string;
+    'environment-image'?: string;
+    'tone-mapping'?: string;
     'camera-orbit'?: string;
     'touch-action'?: string;
     'interaction-prompt'?: string;

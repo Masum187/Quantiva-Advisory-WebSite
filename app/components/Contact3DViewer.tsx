@@ -55,12 +55,15 @@ export default function Contact3DViewer({ model, image, alt }: Contact3DViewerPr
       camera-controls
       auto-rotate
       auto-rotate-delay={0}
-      rotation-per-second="25deg"
-      shadow-intensity="0.8"
-      camera-orbit="0deg 85deg 105%"
+      rotation-per-second="20deg"
+      environment-image="neutral"
+      shadow-intensity="1"
+      shadow-softness="0.9"
+      camera-orbit="0deg 88deg 100%"
       touch-action="pan-y"
       interaction-prompt="none"
-      exposure="1.1"
+      exposure="1.25"
+      tone-mapping="aces"
       loading="eager"
       style={{ width: '100%', height: '100%', backgroundColor: 'transparent' }}
     />
