@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { ArrowRight, ArrowUpRight, Phone } from 'lucide-react';
-import Contact3DViewer from '../../Contact3DViewer';
 import type { IndustryDetail } from '../../../lib/data/industryDetails';
 
 interface IndustryLandingPageProps {
@@ -20,15 +19,7 @@ const heroVideos: Record<string, string> = {
   'retail-ecommerce': '/assets/industries/retail-store.mp4',
 };
 
-/** Full-body 3D figures (GLB) of the industry contacts. */
-const contactModels: Record<string, string> = {
-  'financial-services': '/assets/contacts3d/financial-services.glb',
-  manufacturing: '/assets/contacts3d/manufacturing.glb',
-  'health-life-sciences': '/assets/contacts3d/health-life-sciences.glb',
-  'retail-ecommerce': '/assets/contacts3d/retail-ecommerce.glb',
-};
-
-/** Full-body poster images matching the 3D figures. */
+/** Full-body portraits of the industry contacts. */
 const contactPosters: Record<string, string> = {
   'financial-services': '/assets/contacts3d/financial-services.jpg',
   manufacturing: '/assets/contacts3d/manufacturing.jpg',
@@ -479,21 +470,14 @@ export default function IndustryLandingPage({ industry, lang }: IndustryLandingP
               transition={{ duration: 0.9, delay: 0.2, ease: easeOutExpo }}
               className="relative h-[480px] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-transparent"
             >
-              {contactModels[industry.slug] ? (
-                <Contact3DViewer
-                  model={contactModels[industry.slug]}
-                  image={contactPosters[industry.slug] ?? industry.contact.image}
-                  alt={industry.contact.name}
-                />
-              ) : (
-                <Image
-                  src={industry.contact.image}
-                  alt={industry.contact.name}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 360px"
-                  className="object-cover"
-                />
-              )}
+              <Image
+                src={contactPosters[industry.slug] ?? industry.contact.image}
+                alt={industry.contact.name}
+                fill
+                sizes="(max-width: 1024px) 100vw, 360px"
+                className="object-contain object-bottom"
+              />
+
               <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-6">
                 <p className="font-semibold text-white">{industry.contact.name}</p>
                 <p className="text-sm text-gray-300">{industry.contact.role}</p>
