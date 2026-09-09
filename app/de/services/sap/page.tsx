@@ -147,7 +147,7 @@ export default function SAPServicePage() {
       description: 'Umfassender Leitfaden für die S/4HANA-Transformation mit Best Practices, ROI-Berechnung und Migrationsstrategien.',
       topic: 'S/4HANA Transformation',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop',
+      image: '/assets/whitepapers/sap/s4hana.jpg',
       downloadUrl: '#'
     },
     {
@@ -155,7 +155,7 @@ export default function SAPServicePage() {
       description: 'Moderne Integrationsmuster und Best Practices für SAP Business Technology Platform mit Architektur-Entscheidungen.',
       topic: 'BTP Integration',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop',
+      image: '/assets/whitepapers/sap/btp.jpg',
       downloadUrl: '#'
     },
     {
@@ -163,7 +163,7 @@ export default function SAPServicePage() {
       description: 'Application Lifecycle Management für Cloud- und hybride SAP-Umgebungen mit praktischen Implementierungshilfen.',
       topic: 'Cloud ALM',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop',
+      image: '/assets/whitepapers/sap/cloud-alm.jpg',
       downloadUrl: '#'
     },
     {
@@ -171,7 +171,7 @@ export default function SAPServicePage() {
       description: 'Roadmap zur Integration von GenAI/Joule in SAP-Lösungen mit Best Practices und Implementierungsstrategien.',
       topic: 'KI & Joule Integration',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1200&auto=format&fit=crop',
+      image: '/assets/whitepapers/sap/ki-joule.jpg',
       downloadUrl: '#'
     },
     {
@@ -179,7 +179,7 @@ export default function SAPServicePage() {
       description: 'Neueste UX-Standards und Design-Prinzipien für SAP Fiori Anwendungen mit User Experience Best Practices.',
       topic: 'Fiori UX Design',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=1200&auto=format&fit=crop',
+      image: '/assets/whitepapers/sap/fiori-ux.jpg',
       downloadUrl: '#'
     },
     {
@@ -187,7 +187,7 @@ export default function SAPServicePage() {
       description: 'Best Practices für automatisierte SAP-Tests von der Anforderungsaufnahme bis zum Monitoring in Cloud-Umgebungen.',
       topic: 'Test Automation',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=1200&auto=format&fit=crop',
+      image: '/assets/whitepapers/sap/test-automation.jpg',
       downloadUrl: '#'
     }
   ];
