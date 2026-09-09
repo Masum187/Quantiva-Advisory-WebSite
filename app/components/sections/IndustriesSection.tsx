@@ -98,23 +98,6 @@ interface IndustriesSectionProps {
   lang: 'de' | 'en';
 }
 
-const container = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i = 1) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.15 * i,
-    },
-  }),
-};
-
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export default function IndustriesSection({ lang }: IndustriesSectionProps) {
   const industries = lang === 'de' ? industriesDe : industriesEn;
   const { localePath } = useLanguage();
@@ -127,7 +110,7 @@ export default function IndustriesSection({ lang }: IndustriesSectionProps) {
   return (
     <section className="relative bg-black py-20" id="industries">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(45,212,191,0.08),_transparent_65%)]" />
-      <div className="relative mx-auto max-w-6xl px-6">
+      <div className="relative mx-auto max-w-7xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -143,40 +126,55 @@ export default function IndustriesSection({ lang }: IndustriesSectionProps) {
           <p className="mx-auto mt-4 max-w-2xl text-base text-gray-300 md:text-lg">{subline}</p>
         </motion.div>
 
+        {/* Framed box with an endless marquee running left to right */}
         <motion.div
-          className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-4"
-          variants={container}
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="industries-marquee relative mt-14 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] py-8 shadow-[0_40px_120px_-60px_rgba(45,212,191,0.35)] backdrop-blur"
         >
-          {industries.map((industry) => (
-            <motion.div key={industry.title} variants={item}>
-              <Link
-                href={localePath(`/industries/${industry.slug}`)}
-                className="group relative block h-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-900/60 backdrop-blur transition-transform duration-500 hover:-translate-y-1"
+          <div className="industries-marquee-track">
+            {[false, true].map((isClone) => (
+              <div
+                key={isClone ? 'clone' : 'original'}
+                className="flex shrink-0 gap-8 px-4"
+                aria-hidden={isClone || undefined}
               >
-                <div className="relative h-48 overflow-hidden">
-                  <IndustryCardMedia
-                    image={industry.image}
-                    video={industry.video}
-                    splitVideos={industry.splitVideos}
-                    playbackRate={industry.playbackRate}
-                    alt={industry.title}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-white">{industry.title}</h3>
-                  <p className="mt-2 text-sm text-gray-400">{industry.description}</p>
-                  <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-1 text-xs uppercase tracking-[0.2em] text-gray-400">
-                    <span>{industry.projects}+ {lang === 'de' ? 'Projekte' : 'projects'}</span>
-                  </div>
-                </div>
-                <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-teal-400/60 to-transparent" />
-              </Link>
-            </motion.div>
-          ))}
+                {industries.map((industry) => (
+                  <Link
+                    key={industry.slug}
+                    href={localePath(`/industries/${industry.slug}`)}
+                    tabIndex={isClone ? -1 : undefined}
+                    className="group relative block w-[320px] shrink-0 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-900/60 transition-transform duration-500 hover:-translate-y-1 md:w-[360px]"
+                  >
+                    <div className="relative h-56 overflow-hidden md:h-64">
+                      <IndustryCardMedia
+                        image={industry.image}
+                        video={industry.video}
+                        splitVideos={industry.splitVideos}
+                        playbackRate={industry.playbackRate}
+                        alt={industry.title}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold text-white">{industry.title}</h3>
+                      <p className="mt-2 text-sm text-gray-400">{industry.description}</p>
+                      <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-1 text-xs uppercase tracking-[0.2em] text-gray-400">
+                        <span>{industry.projects}+ {lang === 'de' ? 'Projekte' : 'projects'}</span>
+                      </div>
+                    </div>
+                    <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-teal-400/60 to-transparent" />
+                  </Link>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Fade edges so the cards dissolve at the box borders */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black/80 to-transparent md:w-24" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-black/80 to-transparent md:w-24" aria-hidden="true" />
         </motion.div>
       </div>
     </section>

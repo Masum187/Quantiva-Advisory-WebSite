@@ -291,4 +291,34 @@ html {
   }
 }
 
+/* Industries marquee: endless loop from left to right inside the framed box */
+.industries-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: industries-marquee 55s linear infinite;
+  will-change: transform;
+}
+
+/* Pause the loop while the user hovers or focuses a card */
+.industries-marquee:hover .industries-marquee-track,
+.industries-marquee:focus-within .industries-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes industries-marquee {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industries-marquee-track {
+    animation: none;
+    transform: translateX(0);
+  }
+}
+
 
