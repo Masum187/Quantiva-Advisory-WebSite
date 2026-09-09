@@ -321,4 +321,27 @@ html {
   }
 }
 
+/* Industry detail pages: technology ticker band (right to left) */
+.industry-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: industry-ticker 35s linear infinite;
+  will-change: transform;
+}
+
+@keyframes industry-ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-ticker-track {
+    animation: none;
+  }
+}
+
 
