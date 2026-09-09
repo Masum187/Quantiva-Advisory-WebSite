@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Navigation from '../../components/Navigation';
 import { Linkedin, Mail, Award, Users, Target, TrendingUp, Volume2, VolumeX, ChevronRight, Lightbulb, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 // Animation Components
 function AnimatedParticles() {
@@ -796,12 +797,12 @@ export default function TeamPage() {
             <p className="text-xl text-gray-300 mb-8">
               Wir suchen talentierte Menschen, die mit uns die Zukunft gestalten möchten.
             </p>
-            <a
+            <Link
               href="/de/career"
               className="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors text-lg"
             >
               Offene Stellen ansehen
-            </a>
+            </Link>
           </SlideIn>
         </div>
       </section>

@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Linkedin, Mail, Award, Users, Target, TrendingUp, Volume2, VolumeX, ChevronRight, Lightbulb, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 // Animation Components
 function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number }) {
@@ -656,12 +657,12 @@ export default function TeamPage() {
             <p className="text-xl text-gray-300 mb-8">
               We are looking for talented people who want to shape the future with us.
             </p>
-            <a
+            <Link
               href="/en/career"
               className="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors text-lg"
             >
               View Open Positions
-            </a>
+            </Link>
           </SlideIn>
         </div>
       </section>
