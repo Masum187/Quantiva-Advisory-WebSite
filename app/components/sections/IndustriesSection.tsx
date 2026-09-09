@@ -2,10 +2,11 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Briefcase } from 'lucide-react';
 import { industriesDe, industriesEn } from '../../lib/data/industries';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '../QuantivaWebsite';
 
 /**
@@ -98,14 +99,56 @@ interface IndustriesSectionProps {
   lang: 'de' | 'en';
 }
 
+/** State for the channel page transition triggered by a card click. */
+type ChannelTransition = {
+  x: number;
+  y: number;
+  href: string;
+  slug: string;
+};
+
 export default function IndustriesSection({ lang }: IndustriesSectionProps) {
   const industries = lang === 'de' ? industriesDe : industriesEn;
   const { localePath } = useLanguage();
+  const router = useRouter();
+  const [channel, setChannel] = useState<ChannelTransition | null>(null);
   const headline = lang === 'de' ? 'Branchen-Expertise' : 'Industry Expertise';
   const subline =
     lang === 'de'
       ? 'Wir begleiten mittelständische Marktführer in regulierten und wachstumsstarken Branchen.'
       : 'We partner with mid-market leaders in regulated and fast-scaling industries.';
+
+  // Card click: open the subpage through a channel/tunnel that expands
+  // from the card center. With reduced motion, navigate directly instead.
+  const handleCardClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+    slug: string
+  ) => {
+    if (channel) {
+      e.preventDefault();
+      return;
+    }
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    if (reduceMotion) return; // default link navigation
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    setChannel({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      href,
+      slug,
+    });
+    router.prefetch(href);
+  };
+
+  useEffect(() => {
+    if (!channel) return;
+    const t = window.setTimeout(() => router.push(channel.href), 750);
+    return () => window.clearTimeout(t);
+  }, [channel, router]);
 
   return (
     <section className="relative bg-black py-20" id="industries">
@@ -146,7 +189,20 @@ export default function IndustriesSection({ lang }: IndustriesSectionProps) {
                     key={industry.slug}
                     href={localePath(`/industries/${industry.slug}`)}
                     tabIndex={isClone ? -1 : undefined}
-                    className="group relative block w-[320px] shrink-0 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-900/60 transition-transform duration-500 hover:-translate-y-1 md:w-[360px]"
+                    onClick={(e) =>
+                      handleCardClick(
+                        e,
+                        localePath(`/industries/${industry.slug}`),
+                        industry.slug
+                      )
+                    }
+                    className={`group relative block w-[320px] shrink-0 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/90 to-slate-900/60 transition-transform duration-500 ease-out hover:z-10 hover:scale-[1.06] hover:border-teal-400/50 hover:shadow-[0_30px_90px_-30px_rgba(45,212,191,0.5)] md:w-[360px] ${
+                      channel && channel.slug === industry.slug && !isClone
+                        ? 'z-20 scale-110'
+                        : channel
+                          ? 'opacity-40'
+                          : ''
+                    }`}
                   >
                     <div className="relative h-56 overflow-hidden md:h-64">
                       <IndustryCardMedia
@@ -177,6 +233,67 @@ export default function IndustriesSection({ lang }: IndustriesSectionProps) {
           <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-black/80 to-transparent md:w-24" aria-hidden="true" />
         </motion.div>
       </div>
+
+      {/* Channel transition: rings + fill expand from the clicked card and
+          swallow the screen before the subpage loads. */}
+      <AnimatePresence>
+        {channel && (
+          <div className="fixed inset-0 z-[100]" aria-hidden="true">
+            {/* Expanding teal rings (the "channel" walls) */}
+            {[0, 1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full border-2 border-teal-400/70"
+                style={{
+                  left: channel.x,
+                  top: channel.y,
+                  width: 24,
+                  height: 24,
+                  x: '-50%',
+                  y: '-50%',
+                }}
+                initial={{ scale: 0, opacity: 0.9 }}
+                animate={{ scale: 160, opacity: 0 }}
+                transition={{
+                  duration: 0.85,
+                  delay: i * 0.09,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              />
+            ))}
+            {/* Glow core at the click point */}
+            <motion.div
+              className="absolute rounded-full bg-teal-400/40 blur-2xl"
+              style={{
+                left: channel.x,
+                top: channel.y,
+                width: 120,
+                height: 120,
+                x: '-50%',
+                y: '-50%',
+              }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 6, opacity: [0, 1, 0.6] }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+            />
+            {/* Black fill that closes the channel and covers the screen */}
+            <motion.div
+              className="absolute rounded-full bg-black"
+              style={{
+                left: channel.x,
+                top: channel.y,
+                width: 24,
+                height: 24,
+                x: '-50%',
+                y: '-50%',
+              }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 200 }}
+              transition={{ duration: 0.65, delay: 0.18, ease: [0.7, 0, 0.84, 0] }}
+            />
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
