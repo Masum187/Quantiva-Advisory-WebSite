@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback, useRef, Suspense } from "react";
 import Image from 'next/image';
+import CareerCardMedia from './CareerCardMedia';
 import Link from 'next/link';
 import { motion, useInView } from "framer-motion";
 import dynamic from 'next/dynamic';
@@ -851,10 +852,10 @@ export default function QuantivaWebsite() {
                     className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-teal-500/30 bg-slate-950/70 shadow-[0_35px_80px_-40px_rgba(45,212,191,0.45)] transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/70"
                   >
                     <div className="relative h-64 w-full overflow-hidden">
-                      <Image
-                        src={(service as any).image}
+                      <CareerCardMedia
+                        image={(service as any).image}
+                        video={(service as any).image?.replace(/\.jpg$/, '.mp4')}
                         alt={(service as any).imageAlt ?? service.title}
-                        fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover object-center transition-transform duration-700 group-hover:scale-105 group-focus-visible:scale-105"
                       />
