@@ -48,6 +48,41 @@ export const whitepapers: WhitepaperEntry[] = [
     title: 'SAP Test Automation Framework',
     url: `${CLOUD}/fl_attachment:SAP-Test-Automation-Framework/v1788989580/06-testautomatisierung-2026_odixjq.pdf`,
   },
+
+  // ── KI / AI & Machine Learning ─────────────────────────────────────────
+  // Hinweis: Für diese Assets ist `fl_attachment` durch die Cloudinary-
+  // Einstellung „Strict transformations“ nicht freigegeben (liefert 401).
+  // Die PDFs werden daher ohne Transformation ausgeliefert (öffnen inline).
+  {
+    slug: 'ai-use-case-discovery',
+    title: 'AI Use Case Discovery Whitepaper (2025)',
+    url: `${CLOUD}/v1789081342/07-ai-use-case-discovery-2026_drlxye.pdf`,
+  },
+  {
+    slug: 'ai-compliance-guardrails',
+    title: 'AI Compliance & Guardrails (2025)',
+    url: `${CLOUD}/v1789081341/08-ai-compliance-guardrails-2026_ohkeol.pdf`,
+  },
+  {
+    slug: 'ai-mlops-genai-cases',
+    title: 'MLOps & GenAI Summit Case Studies (2025)',
+    url: `${CLOUD}/v1789081342/09-mlops-genai-praxis-2026_ldeb13.pdf`,
+  },
+  {
+    slug: 'ai-use-case-erfolgsfaktoren',
+    title: 'AI Use Case Erfolgsfaktoren (2025)',
+    url: `${CLOUD}/v1789081342/10-ai-use-case-erfolgsfaktoren-2026_jbfznm.pdf`,
+  },
+  {
+    slug: 'ai-eu-ai-act-guide',
+    title: 'EU AI Act Implementation Guide (2025)',
+    url: `${CLOUD}/v1789081342/11-eu-ai-act-umsetzung-2026_eftdum.pdf`,
+  },
+  {
+    slug: 'ai-genai-business-impact',
+    title: 'Generative AI Business Impact Study (2025)',
+    url: `${CLOUD}/v1789081342/12-genai-business-impact-2026_iypxpi.pdf`,
+  },
 ];
 
 export function getWhitepaper(slug: string): WhitepaperEntry | null {

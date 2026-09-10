@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import ServiceNavigation from '../../../components/ServiceNavigation';
+import WhitepaperCard from '../../../components/WhitepaperCard';
 import { Brain, ArrowLeft, CheckCircle, Cpu, Zap, Shield, Target } from 'lucide-react';
 
 function SlideIn({ children, direction = 'up', delay = 0, duration = 0.8 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; duration?: number }) {
@@ -88,54 +89,56 @@ export default function AIServicePage() {
     }
   ];
 
-  const studies = [
+  // Downloadbare Whitepapers – Versand per E-Mail über /api/whitepaper (Brevo),
+  // PDF-URLs liegen server-seitig in app/lib/data/whitepapers.ts.
+  const whitepapers = [
     {
       title: 'AI Use Case Discovery Whitepaper (2025)',
       description: 'Strategien zur Identifikation & Umsetzung von KI-Anwendungsfällen, inkl. Marktbeispiele und Self-Assessment für Unternehmen.',
       topic: 'Use Case Discovery',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1200&auto=format&fit=crop',
-      url: 'https://skopos-elements.de/wissen/whitepaper/ai-use-case-discovery-ki-marktforschung'
+      image: '/assets/whitepapers/ai/use-case-discovery.jpg',
+      slug: 'ai-use-case-discovery'
     },
     {
       title: 'AI Compliance & Guardrails (2025)',
       description: 'Überblick zu regulatorischen Anforderungen (EU AI Act, ISO 42001, NIST RMF) und den aktuellen Trends in der AI-Governance.',
       topic: 'Compliance & Guardrails',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=1200&auto=format&fit=crop',
-      url: 'https://www.sciencedirect.com/science/article/pii/S0007681325001387'
+      image: '/assets/whitepapers/ai/compliance-guardrails.jpg',
+      slug: 'ai-compliance-guardrails'
     },
     {
       title: 'MLOps & GenAI Summit Case Studies (2025)',
       description: 'Erfahrungsberichte & Best Practices zu GenAI, MLOps und Agentic AI in der Praxis. Lessons Learned aus erfolgreichen Implementierungen.',
       topic: 'MLOps & GenAI',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop',
-      url: 'https://mlopsworld.com/'
+      image: '/assets/whitepapers/ai/mlops-genai.jpg',
+      slug: 'ai-mlops-genai-cases'
     },
     {
       title: 'AI Use Case Erfolgsfaktoren (2025)',
       description: 'Analysen zeigen: Strukturierte Discovery-Prozesse sind entscheidend für den Business Impact von KI-Projekten und verhindern Ressourcenverschwendung.',
       topic: 'Success Factors',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop',
-      url: 'https://skopos-elements.de/wissen/whitepaper/ai-use-case-discovery-ki-marktforschung'
+      image: '/assets/whitepapers/ai/success-factors.jpg',
+      slug: 'ai-use-case-erfolgsfaktoren'
     },
     {
       title: 'EU AI Act Implementation Guide (2025)',
       description: 'Praktische Anleitung zur Umsetzung der EU AI Act Anforderungen in Unternehmen. Compliance-Framework und Best Practices.',
       topic: 'EU AI Act',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop',
-      url: 'https://skopos-elements.de/wissen/whitepaper/ai-use-case-discovery-ki-marktforschung'
+      image: '/assets/whitepapers/ai/eu-ai-act.jpg',
+      slug: 'ai-eu-ai-act-guide'
     },
     {
       title: 'Generative AI Business Impact Study (2025)',
       description: 'Umfassende Studie zu den Geschäftsauswirkungen von Generative AI in verschiedenen Industrien und Anwendungsbereichen.',
       topic: 'GenAI Impact',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=1200&auto=format&fit=crop',
-      url: 'https://skopos-elements.de/wissen/whitepaper/ai-use-case-discovery-ki-marktforschung'
+      image: '/assets/whitepapers/ai/genai-impact.jpg',
+      slug: 'ai-genai-business-impact'
     }
   ];
 
@@ -347,71 +350,16 @@ export default function AIServicePage() {
           </SlideIn>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {studies.map((study, index) => (
-              <SlideIn key={index} delay={index * 0.1 + 0.5}>
-                <motion.article
-                  className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 hover:border-white/40 transition-all duration-500"
-                  whileHover={{
-                    scale: 1.02,
-                    y: -5,
-                    transition: { duration: 0.3 }
-                  }}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                >
-                  {/* Study Image */}
-                  <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={study.image}
-                      alt={study.title}
-                      width={400}
-                      height={192}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    
-                    {/* Topic Badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-purple-500/80 text-white text-xs font-semibold rounded-full backdrop-blur-sm">
-                        {study.topic}
-                      </span>
-                    </div>
-
-                    {/* Date Badge */}
-                    <div className="absolute top-4 right-4">
-                      <span className="px-3 py-1 bg-white/20 text-white text-xs font-semibold rounded-full backdrop-blur-sm">
-                        {study.date}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Study Content */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-300 transition-colors line-clamp-2">
-                      {study.title}
-                    </h3>
-                    
-                    <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
-                      {study.description}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <a
-                        href={study.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-purple-300 text-sm font-semibold hover:text-purple-200 transition-colors duration-300"
-                      >
-                        Whitepaper lesen →
-                      </a>
-                      <div className="flex items-center gap-2 text-gray-400 text-xs">
-                        <span>{study.date}</span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.article>
+            {whitepapers.map((wp, index) => (
+              <SlideIn key={wp.slug} delay={index * 0.1 + 0.5}>
+                <WhitepaperCard
+                  title={wp.title}
+                  description={wp.description}
+                  topic={wp.topic}
+                  date={wp.date}
+                  image={wp.image}
+                  slug={wp.slug}
+                />
               </SlideIn>
             ))}
           </div>
