@@ -18,12 +18,18 @@
 - **Beispiel:** `sk_abc123...`
 - **Erforderlich:** Optional (fallback auf Browser TTS)
 
-### 3. **RESEND_API_KEY** (Server-only, ohne REACT_APP/NEXT_PUBLIC Prefix!)
-- **Zweck:** E-Mail-Versand (Whitepaper-Zustellung) über https://resend.com
+### 3. **BREVO_API_KEY** (Server-only, ohne REACT_APP/NEXT_PUBLIC Prefix!) — EMPFOHLEN (EU-Anbieter)
+- **Zweck:** E-Mail-Versand (Whitepaper-Zustellung) über https://www.brevo.com (Frankreich, DSGVO-konform, EU-Server, kostenlos bis 300 Mails/Tag)
+- **Wo verwendet:** `app/api/whitepaper/route.ts`
+- **Beispiel:** `xkeysib-abc123...`
+- **Erforderlich:** Ja (entweder BREVO_API_KEY **oder** RESEND_API_KEY)
+- **Setup:** Brevo-Account anlegen → Senders & Domains → Domain `quantivaadvisory.com` verifizieren (DNS: SPF + DKIM) → SMTP & API → neuen API Key erstellen
+
+### 3b. **RESEND_API_KEY** (Server-only) — Alternative zu Brevo (US-Anbieter)
+- **Zweck:** E-Mail-Versand über https://resend.com (wird nur genutzt, wenn kein BREVO_API_KEY gesetzt ist)
 - **Wo verwendet:** `app/api/whitepaper/route.ts`
 - **Beispiel:** `re_abc123...`
-- **Erforderlich:** Ja (für Whitepaper-Versand per E-Mail)
-- **Setup:** Resend-Account anlegen → Domain `quantivaadvisory.com` verifizieren (DNS: SPF + DKIM) → API Key erstellen
+- **Erforderlich:** Nein, wenn Brevo konfiguriert ist
 
 ### 4. **MAIL_FROM** (Server-only)
 - **Zweck:** Verifizierte Absenderadresse für den Whitepaper-Versand

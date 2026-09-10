@@ -10,8 +10,9 @@ import { getWhitepaper } from '../../lib/data/whitepapers';
  * notification.
  *
  * Required environment variables (Vercel → Project Settings → Environment
- * Variables):
- *   RESEND_API_KEY     – API key from https://resend.com
+ * Variables). Configure ONE mail provider:
+ *   BREVO_API_KEY      – API key from https://brevo.com (EU provider, preferred)
+ *   RESEND_API_KEY     – alternative: API key from https://resend.com
  *   MAIL_FROM          – verified sender, e.g. "Quantiva Advisory <mail@quantivaadvisory.com>"
  *   LEAD_NOTIFY_EMAIL  – internal recipient for lead notifications (optional)
  */
@@ -36,36 +37,82 @@ function checkRateLimit(req: NextRequest): boolean {
   return true;
 }
 
+function mailConfigured(): boolean {
+  return Boolean(
+    (process.env.BREVO_API_KEY || process.env.RESEND_API_KEY) && process.env.MAIL_FROM
+  );
+}
+
+/** Parse MAIL_FROM in the form `Name <mail@domain.de>` (or just `mail@domain.de`). */
+function parseSender(from: string): { name: string; email: string } {
+  const match = from.match(/^(.*)<([^>]+)>\s*$/);
+  if (match) {
+    return { name: match[1].trim().replace(/^"|"$/g, ''), email: match[2].trim() };
+  }
+  return { name: 'Quantiva Advisory', email: from.trim() };
+}
+
 async function sendMail(payload: {
   to: string;
   subject: string;
   html: string;
   replyTo?: string;
 }): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.MAIL_FROM;
-  if (!apiKey || !from) return false;
+  if (!from) return false;
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from,
-      to: [payload.to],
-      subject: payload.subject,
-      html: payload.html,
-      ...(payload.replyTo ? { reply_to: payload.replyTo } : {}),
-    }),
-  });
+  // Preferred: Brevo (EU provider, GDPR-compliant, EU data centers)
+  const brevoKey = process.env.BREVO_API_KEY;
+  if (brevoKey) {
+    const sender = parseSender(from);
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'api-key': brevoKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sender,
+        to: [{ email: payload.to }],
+        subject: payload.subject,
+        htmlContent: payload.html,
+        ...(payload.replyTo ? { replyTo: { email: payload.replyTo } } : {}),
+      }),
+    });
 
-  if (!res.ok) {
-    console.error('Resend error:', res.status, await res.text());
-    return false;
+    if (!res.ok) {
+      console.error('Brevo error:', res.status, await res.text());
+      return false;
+    }
+    return true;
   }
-  return true;
+
+  // Fallback: Resend
+  const resendKey = process.env.RESEND_API_KEY;
+  if (resendKey) {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to: [payload.to],
+        subject: payload.subject,
+        html: payload.html,
+        ...(payload.replyTo ? { reply_to: payload.replyTo } : {}),
+      }),
+    });
+
+    if (!res.ok) {
+      console.error('Resend error:', res.status, await res.text());
+      return false;
+    }
+    return true;
+  }
+
+  return false;
 }
 
 function escapeHtml(value: string): string {
@@ -120,8 +167,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.RESEND_API_KEY || !process.env.MAIL_FROM) {
-      console.error('Mail service not configured (RESEND_API_KEY / MAIL_FROM missing)');
+    if (!mailConfigured()) {
+      console.error('Mail service not configured (BREVO_API_KEY/RESEND_API_KEY + MAIL_FROM missing)');
       return NextResponse.json(
         { error: 'Der Versand ist derzeit nicht möglich. Bitte kontaktieren Sie uns direkt.' },
         { status: 503 }
