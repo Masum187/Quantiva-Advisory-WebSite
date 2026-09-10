@@ -52,6 +52,9 @@ function parseSender(from: string): { name: string; email: string } {
   return { name: 'Quantiva Advisory', email: from.trim() };
 }
 
+// TEMP DEBUG: letzter Provider-Fehler für Diagnose (wird nach Setup entfernt)
+let lastProviderError = '';
+
 async function sendMail(payload: {
   to: string;
   subject: string;
@@ -81,7 +84,8 @@ async function sendMail(payload: {
     });
 
     if (!res.ok) {
-      console.error('Brevo error:', res.status, await res.text());
+      lastProviderError = `Brevo ${res.status}: ${(await res.text()).slice(0, 300)}`;
+      console.error(lastProviderError);
       return false;
     }
     return true;
@@ -106,12 +110,14 @@ async function sendMail(payload: {
     });
 
     if (!res.ok) {
-      console.error('Resend error:', res.status, await res.text());
+      lastProviderError = `Resend ${res.status}: ${(await res.text()).slice(0, 300)}`;
+      console.error(lastProviderError);
       return false;
     }
     return true;
   }
 
+  lastProviderError = 'No mail provider key configured';
   return false;
 }
 
@@ -206,7 +212,11 @@ export async function POST(req: NextRequest) {
 
     if (!sent) {
       return NextResponse.json(
-        { error: 'Der Versand ist fehlgeschlagen. Bitte versuchen Sie es später erneut.' },
+        {
+          error: 'Der Versand ist fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+          // TEMP DEBUG – wird nach dem Setup entfernt
+          detail: lastProviderError,
+        },
         { status: 502 }
       );
     }
