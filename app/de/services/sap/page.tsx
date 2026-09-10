@@ -148,7 +148,7 @@ export default function SAPServicePage() {
       topic: 'S/4HANA Transformation',
       date: '2025',
       image: '/assets/whitepapers/sap/s4hana.jpg',
-      downloadUrl: '#'
+      slug: 'sap-s4hana-transformation'
     },
     {
       title: 'SAP BTP Integration Patterns Whitepaper',
@@ -156,7 +156,7 @@ export default function SAPServicePage() {
       topic: 'BTP Integration',
       date: '2025',
       image: '/assets/whitepapers/sap/btp.jpg',
-      downloadUrl: '#'
+      slug: 'sap-btp-integration'
     },
     {
       title: 'SAP Cloud ALM Best Practices',
@@ -164,7 +164,7 @@ export default function SAPServicePage() {
       topic: 'Cloud ALM',
       date: '2025',
       image: '/assets/whitepapers/sap/cloud-alm.jpg',
-      downloadUrl: '#'
+      slug: 'sap-cloud-alm'
     },
     {
       title: 'KI & SAP Joule Integration Guide',
@@ -172,7 +172,7 @@ export default function SAPServicePage() {
       topic: 'KI & Joule Integration',
       date: '2025',
       image: '/assets/whitepapers/sap/ki-joule.jpg',
-      downloadUrl: '#'
+      slug: 'sap-ki-joule'
     },
     {
       title: 'SAP Fiori UX Design Guidelines 2025',
@@ -180,7 +180,7 @@ export default function SAPServicePage() {
       topic: 'Fiori UX Design',
       date: '2025',
       image: '/assets/whitepapers/sap/fiori-ux.jpg',
-      downloadUrl: '#'
+      slug: 'sap-fiori-ux'
     },
     {
       title: 'SAP Test Automation Framework',
@@ -188,7 +188,7 @@ export default function SAPServicePage() {
       topic: 'Test Automation',
       date: '2025',
       image: '/assets/whitepapers/sap/test-automation.jpg',
-      downloadUrl: '#'
+      slug: 'sap-test-automation'
     }
   ];
 
@@ -423,7 +423,7 @@ export default function SAPServicePage() {
                   topic={whitepaper.topic}
                   date={whitepaper.date}
                   image={whitepaper.image}
-                  downloadUrl={whitepaper.downloadUrl}
+                  slug={whitepaper.slug}
                 />
               </SlideIn>
             ))}

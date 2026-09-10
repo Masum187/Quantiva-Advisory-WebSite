@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Download, CheckCircle } from 'lucide-react';
+import { Download, CheckCircle, Mail } from 'lucide-react';
 import Image from 'next/image';
 
 interface WhitepaperCardProps {
@@ -11,8 +11,18 @@ interface WhitepaperCardProps {
   topic: string;
   date: string;
   image: string;
-  downloadUrl: string;
+  /** Slug des Whitepapers – wird an /api/whitepaper übergeben. */
+  slug: string;
 }
+
+const EMPTY_FORM = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  company: '',
+  phone: '',
+  honeypot: ''
+};
 
 export default function WhitepaperCard({ 
   title, 
@@ -20,43 +30,47 @@ export default function WhitepaperCard({
   topic, 
   date, 
   image,
-  downloadUrl 
+  slug 
 }: WhitepaperCardProps) {
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    company: '',
-    phone: ''
-  });
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const closeForm = () => {
+    setShowForm(false);
+    setStatus('idle');
+    setErrorMessage('');
+  };
 
   const handleDownload = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsDownloading(true);
-    
-    // Hier würde normalerweise die Daten an ein Backend oder CRM gesendet werden
-    console.log('Form data submitted:', formData);
-    
-    // Simuliere Download nach kurzer Verzögerung
-    setTimeout(() => {
-      // Öffne das Whitepaper als Embedded Viewer
-      setShowForm(false);
-      setIsDownloading(false);
-      
-      // Öffne embedded Canva viewer
-      window.open('https://www.canva.com/design/DAG2dA7rSLc/szCCyCPcHvj-hudg23snEw/view?utm_content=DAG2dA7rSLc&utm_campaign=designshare&utm_medium=embeds&utm_source=link', '_blank');
-      
-      // Reset form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        company: '',
-        phone: ''
+    setStatus('sending');
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/whitepaper', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, ...formData })
       });
-    }, 1000);
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setStatus('error');
+        setErrorMessage(
+          data.error || 'Der Versand ist fehlgeschlagen. Bitte versuchen Sie es später erneut.'
+        );
+        return;
+      }
+
+      setStatus('success');
+      setFormData(EMPTY_FORM);
+    } catch {
+      setStatus('error');
+      setErrorMessage('Der Versand ist fehlgeschlagen. Bitte versuchen Sie es später erneut.');
+    }
   };
 
   return (
@@ -115,12 +129,44 @@ export default function WhitepaperCard({
             animate={{ opacity: 1, scale: 1 }}
             className="bg-slate-900 rounded-2xl p-8 max-w-md w-full border border-white/30"
           >
-            <h3 className="text-2xl font-bold text-white mb-2">Whitepaper herunterladen</h3>
+            {status === 'success' ? (
+              <div className="text-center py-6">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-teal-500/15">
+                  <Mail className="h-8 w-8 text-teal-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">E-Mail unterwegs!</h3>
+                <p className="text-gray-300 mb-6">
+                  Wir haben Ihnen das Whitepaper <span className="text-white font-semibold">{title}</span> per
+                  E-Mail zugesendet. Bitte prüfen Sie auch Ihren Spam-Ordner.
+                </p>
+                <button
+                  type="button"
+                  onClick={closeForm}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all font-semibold"
+                >
+                  <CheckCircle className="w-5 h-5" />
+                  Schließen
+                </button>
+              </div>
+            ) : (
+            <>
+            <h3 className="text-2xl font-bold text-white mb-2">Whitepaper anfordern</h3>
             <p className="text-gray-300 mb-6">
-              Bitte füllen Sie das Formular aus, um das Whitepaper herunterzuladen.
+              Bitte füllen Sie das Formular aus – Sie erhalten das Whitepaper per E-Mail.
             </p>
 
             <form onSubmit={handleDownload} className="space-y-4">
+              {/* Honeypot – für Menschen unsichtbar */}
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={formData.honeypot}
+                onChange={(e) => setFormData({ ...formData, honeypot: e.target.value })}
+                className="hidden"
+                aria-hidden="true"
+              />
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -186,30 +232,38 @@ export default function WhitepaperCard({
                 />
               </div>
 
+              {status === 'error' && errorMessage && (
+                <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                  {errorMessage}
+                </p>
+              )}
+
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  disabled={isDownloading}
+                  disabled={status === 'sending'}
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all font-semibold disabled:opacity-50"
                 >
-                  {isDownloading ? (
-                    'Wird heruntergeladen...'
+                  {status === 'sending' ? (
+                    'Wird versendet...'
                   ) : (
                     <>
-                      <Download className="w-5 h-5" />
-                      Jetzt herunterladen
+                      <Mail className="w-5 h-5" />
+                      Per E-Mail zusenden
                     </>
                   )}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowForm(false)}
+                  onClick={closeForm}
                   className="px-6 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-all border border-white/20"
                 >
                   Abbrechen
                 </button>
               </div>
             </form>
+            </>
+            )}
           </motion.div>
         </div>
       )}

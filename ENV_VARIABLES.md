@@ -18,6 +18,25 @@
 - **Beispiel:** `sk_abc123...`
 - **Erforderlich:** Optional (fallback auf Browser TTS)
 
+### 3. **RESEND_API_KEY** (Server-only, ohne REACT_APP/NEXT_PUBLIC Prefix!)
+- **Zweck:** E-Mail-Versand (Whitepaper-Zustellung) über https://resend.com
+- **Wo verwendet:** `app/api/whitepaper/route.ts`
+- **Beispiel:** `re_abc123...`
+- **Erforderlich:** Ja (für Whitepaper-Versand per E-Mail)
+- **Setup:** Resend-Account anlegen → Domain `quantivaadvisory.com` verifizieren (DNS: SPF + DKIM) → API Key erstellen
+
+### 4. **MAIL_FROM** (Server-only)
+- **Zweck:** Verifizierte Absenderadresse für den Whitepaper-Versand
+- **Wo verwendet:** `app/api/whitepaper/route.ts`
+- **Beispiel:** `Quantiva Advisory <whitepaper@quantivaadvisory.com>`
+- **Erforderlich:** Ja (für Whitepaper-Versand)
+
+### 5. **LEAD_NOTIFY_EMAIL** (Server-only)
+- **Zweck:** Interne Empfängeradresse für Lead-Benachrichtigungen (wer hat welches Whitepaper angefordert)
+- **Wo verwendet:** `app/api/whitepaper/route.ts`
+- **Beispiel:** `info@quantivaadvisory.com`
+- **Erforderlich:** Optional (ohne diese Variable gibt es keine interne Benachrichtigung)
+
 ---
 
 ## 🔧 **Setup**
