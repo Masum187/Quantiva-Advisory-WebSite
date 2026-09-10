@@ -29,7 +29,8 @@ export const whitepapers: WhitepaperEntry[] = [
   {
     slug: 'sap-cloud-alm',
     title: 'SAP Cloud ALM Best Practices',
-    url: 'REPLACE_WITH_CLOUDINARY_URL',
+    // fl_attachment sorgt dafür, dass das PDF als Download mit sauberem Dateinamen kommt
+    url: 'https://res.cloudinary.com/dbrisux8i/image/upload/fl_attachment:SAP-Cloud-ALM-Best-Practices/v1788989580/03-cloud-alm-2026_o7dsbd.pdf',
   },
   {
     slug: 'sap-ki-joule',
