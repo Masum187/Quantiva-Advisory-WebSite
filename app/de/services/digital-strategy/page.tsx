@@ -1,198 +1,218 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { Target, ArrowLeft, CheckCircle, Users, TrendingUp, Lightbulb, BookOpen } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import ServiceVideoBackground from '../../../components/ServiceVideoBackground';
+import {
+  EASE,
+  ScrollProgress,
+  MaskedHeadline,
+  ScrollStatement,
+  ShineButton,
+  SectionLabel,
+} from '../../../components/pages/projects/detail/shared';
 
-function SlideIn({ children, direction = 'up', delay = 0, duration = 0.8 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; duration?: number }) {
-  const variants = {
-    hidden: {
-      opacity: 0,
-      x: direction === 'left' ? -80 : direction === 'right' ? 80 : 0,
-      y: direction === 'up' ? 80 : direction === 'down' ? -80 : 0,
-      scale: 0.9,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      scale: 1,
-    },
-  };
+const ACCENT = '#fbbf24';
+const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
 
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
-      variants={variants}
-      transition={{
-        duration,
-        delay,
-        type: "spring",
-        stiffness: 100,
-        damping: 20
-      }}
-    >
-      {children}
-    </motion.div>
-  );
-}
+const ROADMAP = [
+  { step: 'Analyse', copy: 'Standort bestimmen: Reifegrad, Prozesse und Kompetenzen erfassen.' },
+  { step: 'Strategie', copy: 'Kurs setzen: Roadmap, Business Case und Prioritäten definieren.' },
+  { step: 'Befähigung', copy: 'Teams trainieren: Workshops, Schulungen und Know-how-Transfer.' },
+  { step: 'Skalierung', copy: 'Wirkung messen: Adoption begleiten und Erfolge verstetigen.' },
+];
 
 export default function DigitalStrategyServicePage() {
+  const reduceMotion = useReducedMotion();
+
   const offerings = [
     {
-      icon: Target,
       title: 'Digital Strategy Development',
       description: 'Entwicklung einer maßgeschneiderten Digitalstrategie für Ihr Unternehmen',
-      features: ['Digital Maturity Assessment', 'Technology Roadmap', 'Business Case Analysis', 'Strategic Planning']
+      features: ['Digital Maturity Assessment', 'Technology Roadmap', 'Business Case Analysis', 'Strategic Planning'],
     },
     {
-      icon: Users,
       title: 'Change Management & Training',
       description: 'Begleitung Ihrer Organisation durch digitale Transformation',
-      features: ['Stakeholder Management', 'Communication Strategy', 'Training Programs', 'Adoption Support']
+      features: ['Stakeholder Management', 'Communication Strategy', 'Training Programs', 'Adoption Support'],
     },
     {
-      icon: TrendingUp,
       title: 'Process Optimization',
       description: 'Analyse und Optimierung Ihrer Geschäftsprozesse',
-      features: ['Process Mapping', 'Gap Analysis', 'Automation Opportunities', 'Performance Metrics']
+      features: ['Process Mapping', 'Gap Analysis', 'Automation Opportunities', 'Performance Metrics'],
     },
     {
-      icon: Lightbulb,
       title: 'Innovation Consulting',
       description: 'Identifikation und Implementierung innovativer Technologien',
-      features: ['Technology Scouting', 'Innovation Labs', 'Pilot Projects', 'ROI Measurement']
-    }
+      features: ['Technology Scouting', 'Innovation Labs', 'Pilot Projects', 'ROI Measurement'],
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
-      {/* Fixed Background Video */}
+    <div className="relative min-h-screen overflow-x-clip bg-black">
+      <ScrollProgress accent={ACCENT} />
       <ServiceVideoBackground videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1762103900/grok-video-dda3f51a-7efb-453a-a311-9467a101e4a0_rteefh.mp4"]} />
 
-      {/* Content */}
       <div className="relative z-10">
-      {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-emerald-900/20 via-black/60 to-teal-900/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SlideIn>
-            <div className="text-center mb-16">
-              <Link 
-                href="/de"
-                className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors mb-8"
+        {/* Hero — Magazin-Cover, zentriert */}
+        <section className="relative flex min-h-screen flex-col items-center justify-center px-6 py-32 text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: EASE }}
+          >
+            <Link
+              href="/de"
+              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-gray-400 transition hover:text-white"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Zurück zur Hauptseite
+            </Link>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+            className="mt-16 font-mono text-sm tracking-[0.5em]"
+            style={{ color: ACCENT }}
+          >
+            N° I — ENABLEMENT &amp; TRAINING
+          </motion.p>
+
+          <motion.span
+            aria-hidden="true"
+            className="mt-8 h-px w-40 origin-center bg-white/30"
+            initial={{ scaleX: reduceMotion ? 1 : 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.1, delay: 0.5, ease: EASE }}
+          />
+
+          <h1 className="mt-10 max-w-4xl text-[clamp(2.6rem,7vw,6rem)] font-extralight uppercase leading-[1.05] tracking-[0.12em] text-white">
+            <MaskedHeadline text="Enablement & Training" />
+          </h1>
+
+          <motion.span
+            aria-hidden="true"
+            className="mt-10 h-px w-40 origin-center bg-white/30"
+            initial={{ scaleX: reduceMotion ? 1 : 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.1, delay: 0.9, ease: EASE }}
+          />
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, delay: 1.2, ease: EASE }}
+            className="mt-10 max-w-xl text-lg font-light leading-relaxed tracking-wide text-gray-300"
+          >
+            Workshops, Schulungen und Know-how-Transfer für Ihre Teams. Wir befähigen Ihre
+            Mitarbeiter, die digitale Transformation erfolgreich zu gestalten.
+          </motion.p>
+        </section>
+
+        {/* Offerings — nummerierte Editorial-Liste */}
+        <section className="mx-auto max-w-4xl px-6 py-24 md:py-32">
+          <SectionLabel num="01" accent={ACCENT}>
+            Unsere Enablement-Dienstleistungen
+          </SectionLabel>
+          <div className="mt-12 divide-y divide-white/10 border-y border-white/10">
+            {offerings.map((offering, index) => (
+              <motion.div
+                key={offering.title}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.8, delay: index * 0.05, ease: EASE }}
+                className="group py-10 transition-transform duration-500 hover:translate-x-2 md:py-12"
               >
-                <ArrowLeft className="w-4 h-4" />
-                Zurück zur Hauptseite
-              </Link>
-              
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 mb-8">
-                <Target className="w-6 h-6 text-emerald-400" />
-                <span className="text-emerald-300 text-sm font-semibold tracking-wider">ENABLEMENT & TRAINING</span>
-              </div>
-
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
-                Enablement &{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-                  Training
-                </span>
-              </h1>
-
-              <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                Workshops, Schulungen und Know-how-Transfer für Ihre Teams. 
-                Wir befähigen Ihre Mitarbeiter, die digitale Transformation erfolgreich zu gestalten.
-              </p>
-            </div>
-          </SlideIn>
-        </div>
-      </section>
-
-      {/* Service Overview */}
-      <section className="py-24 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SlideIn>
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-                Unsere{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-                  Enablement-Dienstleistungen
-                </span>
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Professionelle Schulungen und Strategieberatung für moderne Unternehmen
-              </p>
-            </div>
-          </SlideIn>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {offerings.map((offering, index) => {
-              const Icon = offering.icon;
-              return (
-                <SlideIn key={index} delay={index * 0.1}>
-                  <motion.div
-                    className="p-8 rounded-3xl bg-gradient-to-br from-emerald-900/10 to-teal-900/10 border border-emerald-500/20 backdrop-blur-sm hover:border-emerald-400/40 transition-all duration-300"
-                    whileHover={{ scale: 1.02 }}
+                <div className="flex flex-col gap-6 md:flex-row md:items-baseline md:gap-12">
+                  <span
+                    className="w-14 shrink-0 font-mono text-2xl font-light tracking-widest"
+                    style={{ color: ACCENT }}
                   >
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-400/40 flex items-center justify-center">
-                        <Icon className="w-8 h-8 text-emerald-400" />
-                      </div>
-                      <h3 className="text-2xl font-bold text-white">{offering.title}</h3>
-                    </div>
-
-                    <p className="text-gray-300 mb-6 leading-relaxed">
+                    {ROMAN[index]}
+                  </span>
+                  <div>
+                    <h3 className="text-2xl font-extralight tracking-wide text-white md:text-3xl">
+                      {offering.title}
+                    </h3>
+                    <p className="mt-3 font-light leading-relaxed text-gray-400">
                       {offering.description}
                     </p>
-
-                    <div className="space-y-3">
-                      {offering.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-center gap-3">
-                          <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                          <span className="text-gray-300">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </SlideIn>
-              );
-            })}
+                    <p className="mt-4 text-sm font-light tracking-wide text-gray-500">
+                      {offering.features.join('  ·  ')}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-emerald-600 to-teal-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <SlideIn>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-              Bereit für{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-teal-200">
-                digitale Transformation?
-              </span>
+        {/* Pull-Quote */}
+        <section className="mx-auto max-w-4xl px-6 py-16 text-center md:py-24">
+          <ScrollStatement
+            text="Strategie ist kein Dokument — sie ist die Fähigkeit einer Organisation, Richtung zu halten und Menschen zu befähigen."
+            className="text-[clamp(1.6rem,3.6vw,2.8rem)] font-extralight leading-snug tracking-wide"
+          />
+        </section>
+
+        {/* Roadmap — aufsteigende Treppe */}
+        <section className="mx-auto max-w-5xl px-6 py-24 md:py-32">
+          <SectionLabel num="02" accent={ACCENT}>
+            Der Weg — Schritt für Schritt
+          </SectionLabel>
+          <div className="mt-14">
+            {ROADMAP.map((item, index) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, x: reduceMotion ? 0 : -32 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.8, delay: index * 0.1, ease: EASE }}
+                className="border-t border-white/15 py-8"
+                style={{ marginLeft: `${index * 8}%` }}
+              >
+                <p className="font-mono text-xs tracking-[0.4em]" style={{ color: ACCENT }}>
+                  {ROMAN[index]}
+                </p>
+                <h4 className="mt-2 text-xl font-extralight uppercase tracking-[0.2em] text-white md:text-2xl">
+                  {item.step}
+                </h4>
+                <p className="mt-2 max-w-md text-sm font-light leading-relaxed text-gray-400">
+                  {item.copy}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="border-t border-white/10 py-28">
+          <div className="mx-auto max-w-3xl px-6 text-center">
+            <h2 className="text-3xl font-extralight tracking-wide text-white md:text-5xl">
+              Bereit für <span style={{ color: ACCENT }}>digitale Transformation?</span>
             </h2>
-            <p className="text-xl text-emerald-100 mb-12 max-w-2xl mx-auto">
+            <p className="mx-auto mt-6 max-w-xl text-lg font-light text-gray-300">
               Lassen Sie uns gemeinsam Ihre Digitalstrategie entwickeln und Ihre Teams befähigen.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/de#contact"
-                className="px-10 py-5 bg-white text-emerald-600 text-lg font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:scale-105"
-              >
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+              <ShineButton href="/de#contact" accent={ACCENT}>
                 Strategieberatung anfragen
-              </Link>
+                <ArrowUpRight className="h-4 w-4" />
+              </ShineButton>
               <Link
                 href="/de/capabilities/digital-strategy"
-                className="px-10 py-5 bg-emerald-500/20 backdrop-blur-sm border-2 border-white/30 text-white text-lg font-semibold rounded-xl hover:bg-emerald-500/30 transition-all duration-300"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-7 py-3.5 font-semibold text-white transition hover:bg-white/10"
               >
                 Technische Details →
               </Link>
             </div>
-          </SlideIn>
-        </div>
-      </section>
+          </div>
+        </section>
       </div>
     </div>
   );

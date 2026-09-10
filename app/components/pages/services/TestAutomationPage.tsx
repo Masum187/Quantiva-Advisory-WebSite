@@ -1,16 +1,42 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Bug, Zap, Target, CheckCircle, ArrowRight, Code, BarChart, Shield } from 'lucide-react';
-import { AnimatedCard } from '../../services/AnimatedCard';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Bug, ArrowUpRight, CheckCircle } from 'lucide-react';
 import ServiceVideoBackground from '../../ServiceVideoBackground';
+import {
+  EASE,
+  ScrollProgress,
+  LetterHeadline,
+  MaskedHeadline,
+  ScrollStatement,
+  ShineButton,
+  SectionLabel,
+  PulseNode,
+} from '../projects/detail/shared';
+
+const ACCENT = '#2dd4bf';
+
+const CONSOLE_LINES = [
+  { symbol: '✓', name: 'regression-suite', status: 'PASSED', ok: true },
+  { symbol: '✓', name: 'e2e-checkout', status: 'PASSED', ok: true },
+  { symbol: '✓', name: 'api-contract-tests', status: 'PASSED', ok: true },
+  { symbol: '✓', name: 'visual-diff', status: 'PASSED', ok: true },
+  { symbol: '⠿', name: 'performance', status: 'RUNNING', ok: false },
+];
+
+const PIPELINE_STEPS = {
+  de: ['Plan', 'Automatisieren', 'Ausführen', 'Reporten'],
+  en: ['Plan', 'Automate', 'Execute', 'Report'],
+};
 
 interface TestAutomationPageProps {
   lang: 'de' | 'en';
 }
 
 export default function TestAutomationPage({ lang }: TestAutomationPageProps) {
+  const reduceMotion = useReducedMotion();
+
   const content = {
     de: {
       hero: {
@@ -26,22 +52,18 @@ export default function TestAutomationPage({ lang }: TestAutomationPageProps) {
         title: 'Unsere Leistungen',
         items: [
           {
-            icon: Code,
             title: 'Test-Framework-Design',
             description: 'Aufbau skalierbarer Test-Frameworks mit Selenium, Cypress, Playwright oder Appium für Web, Mobile und Desktop.',
           },
           {
-            icon: Zap,
             title: 'CI/CD-Integration',
             description: 'Nahtlose Integration in Jenkins, GitLab CI, Azure DevOps oder GitHub Actions für kontinuierliches Testing.',
           },
           {
-            icon: Target,
             title: 'Performance Testing',
             description: 'Load-, Stress- und Endurance-Tests mit JMeter, Gatling oder K6 für optimale System-Performance.',
           },
           {
-            icon: Shield,
             title: 'Security Testing',
             description: 'Automatisierte Sicherheitstests mit OWASP ZAP, Burp Suite und statischer Code-Analyse (SAST/DAST).',
           },
@@ -81,22 +103,18 @@ export default function TestAutomationPage({ lang }: TestAutomationPageProps) {
         title: 'Our Services',
         items: [
           {
-            icon: Code,
             title: 'Test Framework Design',
             description: 'Building scalable test frameworks with Selenium, Cypress, Playwright or Appium for web, mobile and desktop.',
           },
           {
-            icon: Zap,
             title: 'CI/CD Integration',
             description: 'Seamless integration into Jenkins, GitLab CI, Azure DevOps or GitHub Actions for continuous testing.',
           },
           {
-            icon: Target,
             title: 'Performance Testing',
             description: 'Load, stress and endurance tests with JMeter, Gatling or K6 for optimal system performance.',
           },
           {
-            icon: Shield,
             title: 'Security Testing',
             description: 'Automated security testing with OWASP ZAP, Burp Suite and static code analysis (SAST/DAST).',
           },
@@ -124,149 +142,231 @@ export default function TestAutomationPage({ lang }: TestAutomationPageProps) {
     },
   }[lang];
 
+  const pipeline = PIPELINE_STEPS[lang];
+
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* Fixed Background Video */}
-      <ServiceVideoBackground videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1760435643/kling_20251014_Text_to_Video_Title__The_4174_0_b3juos.mp4"]} />
+    <div className="relative min-h-screen bg-black text-white">
+      <ScrollProgress accent={ACCENT} />
 
-      {/* Content */}
+      {/* Fixed Background Video (kept), dimmed for console readability */}
+      <ServiceVideoBackground
+        videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1760435643/kling_20251014_Text_to_Video_Title__The_4174_0_b3juos.mp4"]}
+        overlayClassName="bg-black/70"
+      />
+
       <div className="relative z-10">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-green-900/40 via-black/60 to-black/60 py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(34,197,94,0.15),_transparent_50%)]" />
-        <div className="relative mx-auto max-w-6xl px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-green-500/40 bg-green-500/10 px-6 py-2 text-sm font-semibold uppercase tracking-wider text-green-200">
-              <Bug className="h-4 w-4" />
-              {content.hero.badge}
+        {/* ---------- Hero: headline + test-run console ---------- */}
+        <section className="relative flex min-h-[92svh] items-center border-b border-white/10">
+          <div className="mx-auto grid w-full max-w-6xl items-center gap-14 px-6 py-28 md:px-12 lg:grid-cols-2">
+            <div>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.1 }}
+                className="mb-6 inline-flex items-center gap-3 font-mono text-xs uppercase tracking-[0.35em]"
+                style={{ color: ACCENT }}
+              >
+                <Bug className="h-4 w-4" />
+                {content.hero.badge}
+              </motion.p>
+              <h1 className="text-[clamp(1.4rem,3vw,2.4rem)] font-black uppercase leading-[1.1] tracking-tight">
+                <LetterHeadline text={content.hero.title} delay={0.3} />
+              </h1>
+              <motion.p
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 2.4, ease: EASE }}
+                className="mt-8 max-w-xl text-lg text-gray-300"
+              >
+                {content.hero.subtitle}
+              </motion.p>
             </div>
-            <h1 className="mb-6 text-5xl font-black uppercase tracking-tight md:text-6xl lg:text-7xl">
-              {content.hero.title}
-            </h1>
-            <p className="mx-auto max-w-3xl text-xl text-gray-300">
-              {content.hero.subtitle}
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Intro Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <AnimatedCard direction="up" className="rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-black/80 p-12">
-            <h2 className="mb-6 text-3xl font-bold">{content.intro.title}</h2>
-            <p className="text-lg leading-relaxed text-gray-300">
-              {content.intro.description}
-            </p>
-          </AnimatedCard>
-        </div>
-      </section>
-
-      {/* Services Grid */}
-      <section className="py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="mb-12 text-center text-4xl font-bold"
-          >
-            {content.services.title}
-          </motion.h2>
-          <div className="grid gap-8 md:grid-cols-2">
-            {content.services.items.map((service, index) => {
-              const Icon = service.icon;
-              return (
-                <AnimatedCard
-                  key={service.title}
-                  direction={index % 2 === 0 ? 'left' : 'right'}
-                  delay={index * 0.1}
-                  className="group rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-black/80 p-8 transition-all hover:border-green-500/50"
+            {/* Console card */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.5, ease: EASE }}
+              className="rounded-xl border border-white/10 bg-[#050a09]/95 shadow-2xl backdrop-blur"
+              style={{ boxShadow: `0 40px 120px -40px ${ACCENT}33` }}
+            >
+              <div className="flex items-center gap-2 border-b border-white/10 px-5 py-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+                <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/70" />
+                <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
+                <span className="ml-3 font-mono text-xs text-gray-500">quantiva-qa — test run</span>
+              </div>
+              <motion.div
+                className="space-y-2.5 px-5 py-6 font-mono text-sm"
+                initial="hidden"
+                animate="visible"
+                variants={{ visible: { transition: { staggerChildren: 0.35, delayChildren: 0.9 } } }}
+              >
+                {CONSOLE_LINES.map((line) => (
+                  <motion.p
+                    key={line.name}
+                    variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+                    transition={{ duration: 0.3 }}
+                    className="flex items-center justify-between gap-4"
+                  >
+                    <span className="truncate text-gray-300">
+                      <span className="mr-3" style={{ color: line.ok ? ACCENT : '#facc15' }}>{line.symbol}</span>
+                      {line.name}
+                    </span>
+                    <span className="shrink-0" style={{ color: line.ok ? ACCENT : '#facc15' }}>
+                      {line.status}
+                    </span>
+                  </motion.p>
+                ))}
+                <motion.p
+                  variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+                  className="flex items-center pt-2 text-gray-500"
                 >
-                  <div className="mb-4 inline-flex rounded-2xl bg-green-500/20 p-4">
-                    <Icon className="h-8 w-8 text-green-400" />
-                  </div>
-                  <h3 className="mb-3 text-2xl font-bold">{service.title}</h3>
-                  <p className="text-gray-300">{service.description}</p>
-                </AnimatedCard>
-              );
-            })}
+                  <span className="mr-2">$</span>
+                  <motion.span
+                    aria-hidden="true"
+                    className="inline-block h-4 w-2"
+                    style={{ background: ACCENT }}
+                    animate={reduceMotion ? undefined : { opacity: [1, 1, 0, 0] }}
+                    transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
+                  />
+                </motion.p>
+              </motion.div>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-b from-black/60 to-green-950/20">
-        <div className="mx-auto max-w-6xl px-6">
-          <AnimatedCard direction="up">
-            <h2 className="mb-12 text-center text-4xl font-bold">{content.benefits.title}</h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {content.benefits.items.map((benefit, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-start gap-4 rounded-2xl border border-white/10 bg-slate-900/60 p-6"
+        {/* ---------- Statement ---------- */}
+        <section className="mx-auto max-w-5xl px-6 py-28 md:px-12">
+          <SectionLabel num="01" accent={ACCENT}>{content.intro.title}</SectionLabel>
+          <ScrollStatement
+            text={content.intro.description}
+            className="mt-8 text-[clamp(1.35rem,2.8vw,2.2rem)] font-light leading-snug"
+          />
+        </section>
+
+        {/* ---------- Offerings: pass/fail checklist rows ---------- */}
+        <section className="mx-auto max-w-6xl px-6 pb-28 md:px-12">
+          <SectionLabel num="02" accent={ACCENT}>{content.services.title}</SectionLabel>
+          <h2 className="mt-6 text-3xl font-bold md:text-4xl">
+            <MaskedHeadline text={content.services.title} />
+          </h2>
+          <div className="mt-14 border-t border-white/10">
+            {content.services.items.map((service, i) => (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.7, delay: i * 0.06, ease: EASE }}
+                className="group grid gap-4 border-b border-white/10 py-8 pl-5 transition-colors hover:bg-white/[0.03] md:grid-cols-[auto_1fr_auto] md:items-center md:gap-10"
+                style={{ borderLeft: `2px solid ${ACCENT}44` }}
+              >
+                <span className="font-mono text-sm text-gray-500">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h3 className="text-xl font-bold transition-colors group-hover:text-white md:text-2xl">
+                    {service.title}
+                  </h3>
+                  <p className="mt-2 max-w-3xl leading-relaxed text-gray-400">{service.description}</p>
+                </div>
+                <span
+                  className="inline-flex w-fit items-center rounded border px-3 py-1 font-mono text-xs font-bold tracking-widest"
+                  style={{ borderColor: `${ACCENT}55`, background: `${ACCENT}12`, color: ACCENT }}
                 >
-                  <CheckCircle className="h-6 w-6 flex-shrink-0 text-green-400" />
-                  <p className="text-gray-200">{benefit}</p>
-                </motion.div>
+                  PASS
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ---------- Pipeline strip ---------- */}
+        <section className="border-y border-white/10 py-20">
+          <div className="mx-auto max-w-5xl px-6 md:px-12">
+            <div className="relative flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
+              <motion.span
+                aria-hidden="true"
+                className="absolute left-5 top-0 hidden h-px w-full origin-left md:block md:top-5"
+                style={{ background: `linear-gradient(90deg, ${ACCENT}66, ${ACCENT}11)` }}
+                initial={reduceMotion ? false : { scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 1.4, ease: EASE }}
+              />
+              {pipeline.map((step, i) => (
+                <div key={step} className="relative flex items-center gap-4 md:flex-col md:items-start">
+                  <PulseNode index={i} accent={ACCENT} />
+                  <span className="font-mono text-sm uppercase tracking-[0.25em] text-gray-300">{step}</span>
+                </div>
               ))}
             </div>
-          </AnimatedCard>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* Technologies Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <AnimatedCard direction="up">
-            <h2 className="mb-12 text-center text-4xl font-bold">{content.technologies.title}</h2>
-            <div className="flex flex-wrap justify-center gap-4">
-              {content.technologies.items.map((tech, index) => (
-                <motion.div
+        {/* ---------- Benefits + tools ---------- */}
+        <section className="mx-auto max-w-6xl px-6 py-28 md:px-12">
+          <SectionLabel num="03" accent={ACCENT}>{content.benefits.title}</SectionLabel>
+          <ul className="mt-10 max-w-3xl space-y-5">
+            {content.benefits.items.map((benefit, i) => (
+              <motion.li
+                key={benefit}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-30px' }}
+                transition={{ duration: 0.6, delay: i * 0.07, ease: EASE }}
+                className="flex items-start gap-4"
+              >
+                <CheckCircle className="mt-1 h-5 w-5 shrink-0" style={{ color: ACCENT }} />
+                <span className="text-gray-200">{benefit}</span>
+              </motion.li>
+            ))}
+          </ul>
+
+          <div className="mt-20">
+            <SectionLabel num="04" accent={ACCENT}>{content.technologies.title}</SectionLabel>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {content.technologies.items.map((tech, i) => (
+                <motion.span
                   key={tech}
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  viewport={{ once: true }}
-                  className="rounded-full border border-green-500/30 bg-green-500/10 px-6 py-3 text-sm font-semibold text-green-200"
+                  viewport={{ once: true, margin: '-30px' }}
+                  transition={{ duration: 0.4, delay: i * 0.04, ease: EASE }}
+                  className="rounded border border-white/15 bg-white/[0.04] px-4 py-2 font-mono text-xs text-gray-300"
                 >
                   {tech}
-                </motion.div>
+                </motion.span>
               ))}
             </div>
-          </AnimatedCard>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-4xl px-6">
-          <AnimatedCard direction="up" className="rounded-3xl border border-green-500/30 bg-gradient-to-br from-green-900/40 to-black p-12 text-center">
-            <h2 className="mb-4 text-4xl font-bold">{content.cta.title}</h2>
-            <p className="mb-8 text-xl text-gray-300">{content.cta.description}</p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-green-500 to-teal-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-green-500/50 transition-all hover:shadow-xl hover:shadow-green-500/70"
+        {/* ---------- CTA ---------- */}
+        <section className="border-t border-white/10 py-28 text-center md:py-36">
+          <div className="mx-auto max-w-3xl px-6">
+            <h2 className="text-3xl font-bold md:text-5xl">
+              <MaskedHeadline text={content.cta.title} />
+            </h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="mt-6 text-lg text-gray-300"
             >
-              {content.cta.button}
-              <ArrowRight className="h-5 w-5" />
-            </motion.button>
-          </AnimatedCard>
-        </div>
-      </section>
+              {content.cta.description}
+            </motion.p>
+            <div className="mt-12 flex justify-center">
+              <ShineButton href={`/${lang}#contact`} accent={ACCENT}>
+                {content.cta.button}
+                <ArrowUpRight className="h-4 w-4" />
+              </ShineButton>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
 }
-

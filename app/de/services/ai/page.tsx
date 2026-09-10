@@ -1,59 +1,31 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import Image from 'next/image';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Brain, CheckCircle, Cpu, Zap, Shield, ArrowUpRight } from 'lucide-react';
 import ServiceNavigation from '../../../components/ServiceNavigation';
 import WhitepaperCard from '../../../components/WhitepaperCard';
-import { Brain, ArrowLeft, CheckCircle, Cpu, Zap, Shield, Target } from 'lucide-react';
+import VentureCanvas from '../../../components/pages/projects/VentureCanvas';
+import {
+  EASE,
+  ScrollProgress,
+  LetterHeadline,
+  MaskedHeadline,
+  ScrollStatement,
+  SpotlightCard,
+  PulseNode,
+  ShineButton,
+  SectionLabel,
+  AccentOrbs,
+} from '../../../components/pages/projects/detail/shared';
 
-function SlideIn({ children, direction = 'up', delay = 0, duration = 0.8 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; duration?: number }) {
-  const variants = {
-    hidden: {
-      opacity: 0,
-      x: direction === 'left' ? -80 : direction === 'right' ? 80 : 0,
-      y: direction === 'up' ? 80 : direction === 'down' ? -80 : 0,
-      scale: 0.9,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      scale: 1,
-    },
-  };
+const ACCENT = '#a78bfa';
 
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
-      variants={variants}
-      transition={{
-        duration,
-        delay,
-        type: "spring",
-        stiffness: 100,
-        damping: 20
-      }}
-    >
-      {children}
-    </motion.div>
-  );
-}
+const PIPELINE_STEPS = ['Discovery', 'Guardrails', 'MLOps', 'Evaluation'];
 
 export default function AIServicePage() {
-  // Navigation items for German
-  const navigationItems = [
-    { id: 'home', label: 'Home', href: '/de' },
-    { id: 'about', label: 'Über uns', href: '/de/about' },
-    { id: 'services', label: 'Services', href: '/de#services' },
-    { id: 'search', label: 'Suche', href: '/de/search' },
-    { id: 'cases', label: 'Projekte', href: '/de/cases' },
-    { id: 'team', label: 'Team', href: '/de/team' },
-    { id: 'career', label: 'Karriere', href: '/de#career' },
-  ];
+  const reduceMotion = useReducedMotion();
+
   const offerings = [
     {
       icon: Brain,
@@ -143,9 +115,12 @@ export default function AIServicePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white">
+      <ScrollProgress accent={ACCENT} />
+
       {/* Service Navigation */}
       <ServiceNavigation lang="de" serviceTitle="AI & Machine Learning" serviceId="ai" />
+
       {/* Fixed Background Video */}
       <div className="fixed inset-0 z-0">
         <video
@@ -163,234 +138,282 @@ export default function AIServicePage() {
 
       {/* Content */}
       <div className="relative z-10">
-        {/* Hero Section */}
-        <section className="relative py-32 min-h-screen flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SlideIn>
-            <div className="text-center mb-16">
-              <Link 
-                href="/de"
-                className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors mb-8"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Zurück zur Hauptseite
-              </Link>
-              
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 mb-8">
-                <Brain className="w-6 h-6 text-purple-400" />
-                <span className="text-purple-300 text-sm font-semibold tracking-wider">AI & MACHINE LEARNING</span>
-              </div>
+        {/* ---------- Hero: Neural Grid ---------- */}
+        <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6">
+          {/* Neural canvas layer over the video */}
+          <VentureCanvas
+            effect="network"
+            accent={ACCENT}
+            className="pointer-events-none absolute inset-0 opacity-40"
+          />
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(60% 55% at 50% 50%, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.25) 100%), linear-gradient(to bottom, rgba(0,0,0,0.55), transparent 40%, rgba(0,0,0,0.75))',
+            }}
+          />
 
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
-                AI & Machine{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                  Learning
-                </span>
-              </h1>
+          <div className="relative mx-auto max-w-5xl text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
+              className="mb-8 inline-flex items-center gap-3 rounded-full border px-6 py-2.5 backdrop-blur-sm"
+              style={{ borderColor: `${ACCENT}44`, background: `${ACCENT}12` }}
+            >
+              <Brain className="h-5 w-5" style={{ color: ACCENT }} />
+              <span className="font-mono text-xs uppercase tracking-[0.3em]" style={{ color: ACCENT }}>
+                Neural Grid — AI Services
+              </span>
+            </motion.div>
 
-              <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed mb-8">
-                End-to-End Beratung für moderne KI-Use Cases entlang des gesamten Lebenszyklus – von der Use Case Discovery, über Guardrails & Compliance, bis hin zu MLOps, GenAI, Model Training & Evaluation.
-              </p>
+            <h1 className="text-[clamp(2.6rem,8vw,6.5rem)] font-bold leading-[0.95] tracking-tight text-white">
+              <span className="block">
+                <LetterHeadline text="AI & Machine" />
+              </span>
+              <span className="block" style={{ color: ACCENT }}>
+                <LetterHeadline text="Learning" delay={0.9} />
+              </span>
+            </h1>
 
-              <div className="max-w-4xl mx-auto bg-slate-900/90 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-2xl">
-                <p className="text-lg text-gray-100 leading-relaxed mb-6 font-medium">
-                  Als innovatives Beratungsunternehmen begleiten wir Organisationen bei der erfolgreichen Realisierung von KI-Projekten. Unser strukturierter Ansatz sorgt für Klarheit, vermeidet Pilot-Fatigue und hilft Ihnen, Chancen effizient zu nutzen.
-                </p>
-                <div className="grid md:grid-cols-2 gap-6 text-sm text-gray-100">
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-purple-400 mt-2 flex-shrink-0"></div>
-                    <div>
-                      <strong className="text-white">Use Case Discovery:</strong> Strukturierte Identifikation relevanter KI-Anwendungsfälle, die echten Mehrwert schaffen.
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-pink-400 mt-2 flex-shrink-0"></div>
-                    <div>
-                      <strong className="text-white">Guardrails & Compliance:</strong> EU AI Act, ISO/IEC 42001 und NIST AI RMF Compliance für sichere KI-Systeme.
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-purple-400 mt-2 flex-shrink-0"></div>
-                    <div>
-                      <strong className="text-white">MLOps & GenAI:</strong> Moderne MLOps-Plattformen und Generative AI Integration von Concept to Production.
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-pink-400 mt-2 flex-shrink-0"></div>
-                    <div>
-                      <strong className="text-white">Model Training & Evaluation:</strong> Entwicklung und Bewertung von ML-Modellen mit Fokus auf Reproduzierbarkeit.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </SlideIn>
-        </div>
-      </section>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 1.7, ease: EASE }}
+              className="mx-auto mt-8 max-w-3xl text-[clamp(1.05rem,2.2vw,1.4rem)] font-light leading-relaxed text-gray-200"
+            >
+              End-to-End Beratung für moderne KI-Use Cases entlang des gesamten Lebenszyklus – von
+              der Use Case Discovery, über Guardrails & Compliance, bis hin zu MLOps, GenAI, Model
+              Training & Evaluation.
+            </motion.p>
+          </div>
+        </section>
 
-      {/* Service Overview */}
-      <section className="py-24 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SlideIn>
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-                Unsere{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                  KI-Dienstleistungen
-                </span>
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Professionelle KI-Lösungen für moderne Unternehmen
-              </p>
-            </div>
-          </SlideIn>
+        {/* ---------- 01 — Offerings: Bento Grid ---------- */}
+        <section className="relative overflow-hidden bg-black/75 px-6 py-24 backdrop-blur-sm md:px-12 md:py-36">
+          <AccentOrbs accent={ACCENT} />
+          <div className="relative mx-auto max-w-7xl">
+            <SectionLabel num="01" accent={ACCENT}>
+              KI-Dienstleistungen
+            </SectionLabel>
+            <h2 className="mt-8 max-w-3xl text-[clamp(2.2rem,5vw,4rem)] font-bold leading-[1.05] tracking-tight text-white">
+              <MaskedHeadline text="Unsere KI-Dienstleistungen" />
+            </h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+              className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-300"
+            >
+              Professionelle KI-Lösungen für moderne Unternehmen
+            </motion.p>
 
-          <div className="space-y-16">
-            {offerings.map((offering, index) => {
-              const Icon = offering.icon;
-              return (
-                <SlideIn key={index} delay={index * 0.2}>
+            <div className="mt-16 grid gap-6 md:grid-cols-2">
+              {offerings.map((offering, index) => {
+                const Icon = offering.icon;
+                const span = index === 0 ? 'md:col-span-2' : '';
+                return (
                   <motion.div
-                    className="p-12 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all duration-300 shadow-2xl"
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    key={offering.title}
+                    className={span}
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: '-60px' }}
+                    transition={{ duration: 0.7, delay: (index % 2) * 0.12, ease: EASE }}
                   >
-                    <div className="flex items-center gap-6 mb-8">
-                      <div className="w-20 h-20 rounded-2xl bg-purple-600/80 border border-purple-400/50 flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <Icon className="w-10 h-10 text-white" />
+                    <SpotlightCard
+                      accent={ACCENT}
+                      className="h-full rounded-3xl border border-white/10 bg-slate-950/70 p-8 backdrop-blur-md transition-colors duration-500 hover:border-white/25 md:p-10"
+                    >
+                      <div className="flex flex-col gap-6 md:flex-row md:items-start">
+                        <div
+                          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border"
+                          style={{ borderColor: `${ACCENT}55`, background: `${ACCENT}14` }}
+                        >
+                          <Icon className="h-7 w-7" style={{ color: ACCENT }} />
+                        </div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-white">{offering.title}</h3>
+                          <p className="mt-3 leading-relaxed text-gray-300">{offering.description}</p>
+                          <p className="mt-3 text-sm leading-relaxed text-gray-400">{offering.details}</p>
+                          <div className="mt-5 flex flex-wrap gap-2">
+                            {offering.features.map((feature) => (
+                              <span
+                                key={feature}
+                                className="rounded-full border px-3 py-1 font-mono text-[11px] uppercase tracking-wide text-gray-300"
+                                style={{ borderColor: `${ACCENT}33`, background: `${ACCENT}0a` }}
+                              >
+                                {feature}
+                              </span>
+                            ))}
+                          </div>
+                          <ul className="mt-5 space-y-2">
+                            {offering.benefits.map((benefit) => (
+                              <li key={benefit} className="flex items-center gap-3 text-sm text-gray-200">
+                                <CheckCircle className="h-4 w-4 shrink-0" style={{ color: ACCENT }} />
+                                {benefit}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
-                      <h3 className="text-3xl font-bold text-white">{offering.title}</h3>
-                    </div>
+                    </SpotlightCard>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-                    <p className="text-gray-100 mb-8 leading-relaxed text-lg font-medium">
-                      {offering.description}
-                    </p>
+        {/* ---------- 02 — Model Pipeline ---------- */}
+        <section className="relative bg-black/80 px-6 py-24 backdrop-blur-sm md:px-12 md:py-32">
+          <div className="mx-auto max-w-6xl">
+            <SectionLabel num="02" accent={ACCENT}>
+              Model Pipeline
+            </SectionLabel>
+            <h2 className="mt-8 max-w-2xl text-[clamp(1.8rem,4vw,3rem)] font-bold leading-[1.1] tracking-tight text-white">
+              <MaskedHeadline text="Vom Use Case zur Produktion" />
+            </h2>
 
-                    <div className="mb-8">
-                      <h4 className="text-xl font-semibold text-white mb-4">Was ist {offering.title.split(' ')[0]}?</h4>
-                      <p className="text-gray-100 text-lg leading-relaxed font-medium">
-                        {offering.details}
+            <div className="relative mt-16">
+              {/* Animated gradient connector line (desktop) */}
+              <motion.div
+                aria-hidden="true"
+                className="absolute left-5 top-5 hidden h-px w-[calc(100%-2.5rem)] origin-left md:block"
+                style={{ background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT}22)` }}
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: reduceMotion ? 0 : 1.4, ease: EASE }}
+              />
+              {/* Vertical connector (mobile) */}
+              <motion.div
+                aria-hidden="true"
+                className="absolute left-5 top-5 h-[calc(100%-2.5rem)] w-px origin-top md:hidden"
+                style={{ background: `linear-gradient(180deg, ${ACCENT}, ${ACCENT}22)` }}
+                initial={{ scaleY: 0 }}
+                whileInView={{ scaleY: 1 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: reduceMotion ? 0 : 1.4, ease: EASE }}
+              />
+
+              <div className="grid gap-10 md:grid-cols-4 md:gap-6">
+                {PIPELINE_STEPS.map((step, index) => (
+                  <motion.div
+                    key={step}
+                    className="flex items-start gap-4 md:flex-col md:gap-5"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-60px' }}
+                    transition={{ duration: 0.7, delay: index * 0.18, ease: EASE }}
+                  >
+                    <PulseNode index={index} accent={ACCENT} />
+                    <div>
+                      <p className="font-mono text-xs uppercase tracking-[0.25em]" style={{ color: ACCENT }}>
+                        Phase {String(index + 1).padStart(2, '0')}
+                      </p>
+                      <p className="mt-1 text-lg font-semibold text-white">{step}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                        {offerings[index].title}
                       </p>
                     </div>
-
-                    <div className="grid md:grid-cols-2 gap-8">
-                      <div>
-                        <h4 className="text-lg font-semibold text-white mb-4">Unsere Leistungen:</h4>
-                        <div className="space-y-3">
-                          {offering.features.map((feature, idx) => (
-                            <motion.div
-                              key={idx}
-                              className="flex items-center gap-3"
-                              initial={{ opacity: 0, x: -20 }}
-                              whileInView={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.2 + idx * 0.1 + 0.8 }}
-                            >
-                              <CheckCircle className="w-5 h-5 text-purple-400 flex-shrink-0" />
-                              <span className="text-gray-100 font-medium">{feature}</span>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <h4 className="text-lg font-semibold text-white mb-4">Ihre Vorteile:</h4>
-                        <div className="space-y-3">
-                          {offering.benefits.map((benefit, idx) => (
-                            <motion.div
-                              key={idx}
-                              className="flex items-center gap-3"
-                              initial={{ opacity: 0, x: -20 }}
-                              whileInView={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.2 + idx * 0.1 + 1.0 }}
-                            >
-                              <div className="w-2 h-2 rounded-full bg-pink-400 flex-shrink-0"></div>
-                              <span className="text-gray-100 font-medium">{benefit}</span>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
                   </motion.div>
-                </SlideIn>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Studies Section */}
-      <section className="py-24 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SlideIn>
-            <div className="text-center mb-20">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-              >
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-                  Aktuelle{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300">
-                    Studien & Whitepapers
-                  </span>
-                </h2>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
-              >
-                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                  Wissenschaftlich fundierte Erkenntnisse und praktische Leitfäden für erfolgreiche KI-Implementierungen
-                </p>
-              </motion.div>
+                ))}
+              </div>
             </div>
-          </SlideIn>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {whitepapers.map((wp, index) => (
-              <SlideIn key={wp.slug} delay={index * 0.1 + 0.5}>
-                <WhitepaperCard
-                  title={wp.title}
-                  description={wp.description}
-                  topic={wp.topic}
-                  date={wp.date}
-                  image={wp.image}
-                  slug={wp.slug}
-                />
-              </SlideIn>
-            ))}
           </div>
+        </section>
 
-        </div>
-      </section>
+        {/* ---------- 03 — Manifest (ScrollStatement, nach den Offerings) ---------- */}
+        <section className="relative bg-black/70 px-6 py-28 backdrop-blur-sm md:px-12 md:py-40">
+          <div className="mx-auto max-w-5xl">
+            <SectionLabel num="03" accent={ACCENT}>
+              Manifest
+            </SectionLabel>
+            <div className="mt-10">
+              <ScrollStatement text="Als innovatives Beratungsunternehmen begleiten wir Organisationen bei der erfolgreichen Realisierung von KI-Projekten. Unser strukturierter Ansatz sorgt für Klarheit, vermeidet Pilot-Fatigue und hilft Ihnen, Chancen effizient zu nutzen." />
+            </div>
+          </div>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-purple-600 to-pink-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <SlideIn>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-              Bereit für{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-200">
-                KI-Transformation?
-              </span>
+        {/* ---------- 04 — Studien & Whitepapers ---------- */}
+        <section className="relative bg-black/80 px-6 py-24 backdrop-blur-sm md:px-12 md:py-36">
+          <div className="mx-auto max-w-7xl">
+            <SectionLabel num="04" accent={ACCENT}>
+              Wissen
+            </SectionLabel>
+            <h2 className="mt-8 max-w-3xl text-[clamp(2.2rem,5vw,4rem)] font-bold leading-[1.05] tracking-tight text-white">
+              <MaskedHeadline text="Aktuelle Studien & Whitepapers" />
             </h2>
-            <p className="text-xl text-purple-100 mb-12 max-w-2xl mx-auto">
-              Lassen Sie uns gemeinsam Ihre KI-Strategie entwickeln und erfolgreich umsetzen.
-            </p>
-            <div className="flex justify-center">
-              <Link
-                href="/de#contact"
-                className="px-12 py-6 bg-white text-purple-600 text-xl font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:scale-105"
-              >
-                KI-Beratung anfragen
-              </Link>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+              className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-300"
+            >
+              Wissenschaftlich fundierte Erkenntnisse und praktische Leitfäden für erfolgreiche
+              KI-Implementierungen
+            </motion.p>
+
+            <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {whitepapers.map((wp, index) => (
+                <motion.div
+                  key={wp.slug}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.7, delay: (index % 3) * 0.1, ease: EASE }}
+                >
+                  <WhitepaperCard
+                    title={wp.title}
+                    description={wp.description}
+                    topic={wp.topic}
+                    date={wp.date}
+                    image={wp.image}
+                    slug={wp.slug}
+                  />
+                </motion.div>
+              ))}
             </div>
-          </SlideIn>
-        </div>
-      </section>
+          </div>
+        </section>
+
+        {/* ---------- 05 — CTA ---------- */}
+        <section className="relative overflow-hidden border-t border-white/10 bg-black/85 px-6 py-28 backdrop-blur-sm md:px-12 md:py-40">
+          <AccentOrbs accent={ACCENT} />
+          <div className="relative mx-auto max-w-4xl text-center">
+            <SectionLabel num="05" accent={ACCENT}>
+              Kontakt
+            </SectionLabel>
+            <h2 className="mt-8 text-[clamp(2.4rem,6vw,4.5rem)] font-bold leading-[1.05] tracking-tight text-white">
+              <MaskedHeadline text="Bereit für KI-Transformation?" className="inline-block" />
+            </h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+              className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-300"
+            >
+              Lassen Sie uns gemeinsam Ihre KI-Strategie entwickeln und erfolgreich umsetzen.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
+              className="mt-12 flex justify-center"
+            >
+              <ShineButton href="/de#contact" accent={ACCENT}>
+                KI-Beratung anfragen
+                <ArrowUpRight className="h-4 w-4" />
+              </ShineButton>
+            </motion.div>
+          </div>
+        </section>
       </div>
     </div>
   );

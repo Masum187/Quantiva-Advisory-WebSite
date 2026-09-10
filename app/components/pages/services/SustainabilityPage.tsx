@@ -1,16 +1,45 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Leaf, TrendingDown, BarChart, CheckCircle, ArrowRight, Recycle, Sun, Droplet } from 'lucide-react';
-import { AnimatedCard } from '../../services/AnimatedCard';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Leaf, TrendingDown, BarChart, CheckCircle, ArrowUpRight, Recycle, Sun } from 'lucide-react';
 import ServiceVideoBackground from '../../ServiceVideoBackground';
+import VentureCanvas from '../projects/VentureCanvas';
+import {
+  EASE,
+  ScrollProgress,
+  MaskedHeadline,
+  ScrollStatement,
+  SpotlightCard,
+  ShineButton,
+  SectionLabel,
+  AccentOrbs,
+} from '../projects/detail/shared';
+
+const ACCENT = '#4ade80';
+
+const IMPACT_METRICS = {
+  de: [
+    { value: '30%', label: 'Kosteneinsparung durch Energieeffizienz' },
+    { value: '1–3', label: 'Scope-Erfassung der CO₂-Bilanz' },
+    { value: 'CSRD', label: 'Reporting-ready nach EU-Standard' },
+    { value: '360°', label: 'Blick auf Ihre Wertschöpfungskette' },
+  ],
+  en: [
+    { value: '30%', label: 'Cost savings through energy efficiency' },
+    { value: '1–3', label: 'Scope coverage of carbon accounting' },
+    { value: 'CSRD', label: 'Reporting-ready to EU standard' },
+    { value: '360°', label: 'View across your value chain' },
+  ],
+};
 
 interface SustainabilityPageProps {
   lang: 'de' | 'en';
 }
 
 export default function SustainabilityPage({ lang }: SustainabilityPageProps) {
+  const reduceMotion = useReducedMotion();
+
   const content = {
     de: {
       hero: {
@@ -124,149 +153,197 @@ export default function SustainabilityPage({ lang }: SustainabilityPageProps) {
     },
   }[lang];
 
+  const metrics = IMPACT_METRICS[lang];
+
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* Fixed Background Video */}
-      <ServiceVideoBackground videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1761924430/video_f85758c6_1761914591442_yszhud.mp4"]} />
+    <div className="relative min-h-screen bg-black text-white">
+      <ScrollProgress accent={ACCENT} />
 
-      {/* Content */}
+      {/* Fixed Background Video (kept) */}
+      <ServiceVideoBackground
+        videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1761924430/video_f85758c6_1761914591442_yszhud.mp4"]}
+        overlayClassName="bg-black/55"
+      />
+
       <div className="relative z-10">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-emerald-900/40 via-black/60 to-black/60 py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(16,185,129,0.15),_transparent_50%)]" />
-        <div className="relative mx-auto max-w-6xl px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-6 py-2 text-sm font-semibold uppercase tracking-wider text-emerald-200">
-              <Leaf className="h-4 w-4" />
-              {content.hero.badge}
+        {/* ---------- Hero: Organic Impact ---------- */}
+        <section className="relative flex min-h-[92svh] items-center justify-center overflow-hidden border-b border-white/10">
+          <AccentOrbs accent={ACCENT} />
+          <div className="relative mx-auto max-w-4xl px-6 py-28 text-center">
+            {/* Badge with drawn ring */}
+            <div className="relative mx-auto mb-10 flex h-24 w-24 items-center justify-center">
+              <svg viewBox="0 0 96 96" className="absolute inset-0 h-full w-full -rotate-90" aria-hidden="true">
+                <motion.circle
+                  cx="48"
+                  cy="48"
+                  r="45"
+                  fill="none"
+                  stroke={ACCENT}
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  initial={reduceMotion ? false : { pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 1.6, delay: 0.3, ease: EASE }}
+                />
+              </svg>
+              <Leaf className="h-8 w-8" style={{ color: ACCENT }} />
             </div>
-            <h1 className="mb-6 text-5xl font-black uppercase tracking-tight md:text-6xl lg:text-7xl">
-              {content.hero.title}
+            <p className="mb-6 font-mono text-xs uppercase tracking-[0.35em]" style={{ color: ACCENT }}>
+              {content.hero.badge}
+            </p>
+            <h1 className="text-[clamp(2.2rem,6vw,4.4rem)] font-black leading-[1.05] tracking-tight">
+              <MaskedHeadline text={content.hero.title} />
             </h1>
-            <p className="mx-auto max-w-3xl text-xl text-gray-300">
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.1, ease: EASE }}
+              className="mx-auto mt-8 max-w-2xl text-lg text-gray-300 md:text-xl"
+            >
               {content.hero.subtitle}
-            </p>
-          </motion.div>
-        </div>
-      </section>
+            </motion.p>
+          </div>
+        </section>
 
-      {/* Intro Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <AnimatedCard direction="up" className="rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-black/80 p-12">
-            <h2 className="mb-6 text-3xl font-bold">{content.intro.title}</h2>
-            <p className="text-lg leading-relaxed text-gray-300">
-              {content.intro.description}
-            </p>
-          </AnimatedCard>
-        </div>
-      </section>
+        {/* ---------- Statement with threads canvas ---------- */}
+        <section className="relative overflow-hidden py-28 md:py-36">
+          <VentureCanvas effect="threads" accent={ACCENT} className="absolute inset-0 h-full w-full opacity-25" />
+          <div className="relative mx-auto max-w-4xl px-6 text-center md:px-12">
+            <SectionLabel num="01" accent={ACCENT}>{content.intro.title}</SectionLabel>
+            <ScrollStatement
+              text={content.intro.description}
+              className="mt-10 text-[clamp(1.35rem,2.8vw,2.2rem)] font-light leading-snug"
+            />
+          </div>
+        </section>
 
-      {/* Services Grid */}
-      <section className="py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="mb-12 text-center text-4xl font-bold"
-          >
-            {content.services.title}
-          </motion.h2>
-          <div className="grid gap-8 md:grid-cols-2">
-            {content.services.items.map((service, index) => {
+        {/* ---------- Offerings: organic asymmetric grid ---------- */}
+        <section className="mx-auto max-w-6xl px-6 pb-28 md:px-12">
+          <SectionLabel num="02" accent={ACCENT}>{content.services.title}</SectionLabel>
+          <h2 className="mt-6 text-3xl font-bold md:text-4xl">
+            <MaskedHeadline text={content.services.title} />
+          </h2>
+          <div className="mt-14 grid gap-8 md:grid-cols-12">
+            {content.services.items.map((service, i) => {
               const Icon = service.icon;
+              const wide = i === 0 || i === 3;
+              const rounded = i % 2 === 0 ? 'rounded-[3rem]' : 'rounded-[2rem]';
               return (
-                <AnimatedCard
+                <motion.div
                   key={service.title}
-                  direction={index % 2 === 0 ? 'left' : 'right'}
-                  delay={index * 0.1}
-                  className="group rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-black/80 p-8 transition-all hover:border-emerald-500/50"
+                  initial={{ opacity: 0, y: 26, rotate: i % 2 === 0 ? -2 : 2 }}
+                  whileInView={{ opacity: 1, y: 0, rotate: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.9, delay: (i % 2) * 0.12, ease: EASE }}
+                  className={`${wide ? 'md:col-span-7' : 'md:col-span-5'} ${i === 2 ? 'md:mt-10' : ''}`}
                 >
-                  <div className="mb-4 inline-flex rounded-2xl bg-emerald-500/20 p-4">
-                    <Icon className="h-8 w-8 text-emerald-400" />
-                  </div>
-                  <h3 className="mb-3 text-2xl font-bold">{service.title}</h3>
-                  <p className="text-gray-300">{service.description}</p>
-                </AnimatedCard>
+                  <SpotlightCard
+                    accent={ACCENT}
+                    className={`h-full border border-white/10 bg-[#06110a]/85 p-8 backdrop-blur md:p-10 ${rounded}`}
+                  >
+                    <span
+                      className="inline-flex h-14 w-14 items-center justify-center rounded-full border"
+                      style={{ borderColor: `${ACCENT}44`, background: `${ACCENT}12`, color: ACCENT }}
+                    >
+                      <Icon className="h-7 w-7" />
+                    </span>
+                    <h3 className="mt-6 text-2xl font-bold">{service.title}</h3>
+                    <p className="mt-4 leading-relaxed text-gray-300">{service.description}</p>
+                  </SpotlightCard>
+                </motion.div>
               );
             })}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-b from-black/60 to-emerald-950/20">
-        <div className="mx-auto max-w-6xl px-6">
-          <AnimatedCard direction="up">
-            <h2 className="mb-12 text-center text-4xl font-bold">{content.benefits.title}</h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {content.benefits.items.map((benefit, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-start gap-4 rounded-2xl border border-white/10 bg-slate-900/60 p-6"
-                >
-                  <CheckCircle className="h-6 w-6 flex-shrink-0 text-emerald-400" />
-                  <p className="text-gray-200">{benefit}</p>
-                </motion.div>
-              ))}
+        {/* ---------- Impact metrics ---------- */}
+        <section className="border-y border-white/10 py-24">
+          <div className="mx-auto grid max-w-6xl gap-12 px-6 sm:grid-cols-2 md:px-12 lg:grid-cols-4">
+            {metrics.map((m, i) => (
+              <motion.div
+                key={m.value}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.8, delay: i * 0.1, ease: EASE }}
+                className="text-center lg:text-left"
+              >
+                <p className="text-[clamp(2.8rem,5vw,4.2rem)] font-black leading-none" style={{ color: ACCENT }}>
+                  {m.value}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-gray-400">{m.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ---------- Benefits + standards ---------- */}
+        <section className="mx-auto max-w-6xl px-6 py-28 md:px-12">
+          <div className="grid gap-16 lg:grid-cols-2">
+            <div>
+              <SectionLabel num="03" accent={ACCENT}>{content.benefits.title}</SectionLabel>
+              <ul className="mt-10 space-y-5">
+                {content.benefits.items.map((benefit, i) => (
+                  <motion.li
+                    key={benefit}
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-30px' }}
+                    transition={{ duration: 0.6, delay: i * 0.07, ease: EASE }}
+                    className="flex items-start gap-4"
+                  >
+                    <CheckCircle className="mt-1 h-5 w-5 shrink-0" style={{ color: ACCENT }} />
+                    <span className="text-gray-200">{benefit}</span>
+                  </motion.li>
+                ))}
+              </ul>
             </div>
-          </AnimatedCard>
-        </div>
-      </section>
-
-      {/* Standards Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <AnimatedCard direction="up">
-            <h2 className="mb-12 text-center text-4xl font-bold">{content.standards.title}</h2>
-            <div className="flex flex-wrap justify-center gap-4">
-              {content.standards.items.map((standard, index) => (
-                <motion.div
-                  key={standard}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  viewport={{ once: true }}
-                  className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 text-sm font-semibold text-emerald-200"
-                >
-                  {standard}
-                </motion.div>
-              ))}
+            <div>
+              <SectionLabel num="04" accent={ACCENT}>{content.standards.title}</SectionLabel>
+              <div className="mt-10 flex flex-wrap gap-3">
+                {content.standards.items.map((standard, i) => (
+                  <motion.span
+                    key={standard}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: '-30px' }}
+                    transition={{ duration: 0.5, delay: i * 0.05, ease: EASE }}
+                    className="rounded-full border px-5 py-2.5 font-mono text-sm"
+                    style={{ borderColor: `${ACCENT}33`, background: `${ACCENT}0d`, color: '#d1fae5' }}
+                  >
+                    {standard}
+                  </motion.span>
+                ))}
+              </div>
             </div>
-          </AnimatedCard>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-4xl px-6">
-          <AnimatedCard direction="up" className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-900/40 to-black p-12 text-center">
-            <h2 className="mb-4 text-4xl font-bold">{content.cta.title}</h2>
-            <p className="mb-8 text-xl text-gray-300">{content.cta.description}</p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-emerald-500/50 transition-all hover:shadow-xl hover:shadow-emerald-500/70"
+        {/* ---------- CTA ---------- */}
+        <section className="relative overflow-hidden border-t border-white/10 py-28 text-center md:py-36">
+          <AccentOrbs accent={ACCENT} />
+          <div className="relative mx-auto max-w-3xl px-6">
+            <h2 className="text-3xl font-bold md:text-5xl">
+              <MaskedHeadline text={content.cta.title} />
+            </h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="mt-6 text-lg text-gray-300"
             >
-              {content.cta.button}
-              <ArrowRight className="h-5 w-5" />
-            </motion.button>
-          </AnimatedCard>
-        </div>
-      </section>
+              {content.cta.description}
+            </motion.p>
+            <div className="mt-12 flex justify-center">
+              <ShineButton href={`/${lang}#contact`} accent={ACCENT}>
+                {content.cta.button}
+                <ArrowUpRight className="h-4 w-4" />
+              </ShineButton>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
 }
-

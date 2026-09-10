@@ -53,8 +53,11 @@ export function Topbar({ label = 'Quantiva Ventures' }: { label?: string }) {
 }
 
 /* ---------- Buchstaben-Reveal ---------- */
+/** Buchstaben werden pro Wort gruppiert (whitespace-nowrap), damit lange
+ *  Überschriften nur an Wortgrenzen umbrechen — nie mitten im Wort. */
 export function LetterHeadline({ text, delay = 0.35 }: { text: string; delay?: number }) {
-  const chars = Array.from(text);
+  const words = text.split(' ');
+  let charIndex = 0;
   return (
     <motion.span
       initial="hidden"
@@ -63,20 +66,32 @@ export function LetterHeadline({ text, delay = 0.35 }: { text: string; delay?: n
       className="inline-block"
       aria-label={text}
     >
-      {chars.map((c, i) => (
-        <span key={i} className="inline-block overflow-hidden pb-2 align-bottom" aria-hidden="true">
-          <motion.span
-            className="inline-block"
-            variants={{
-              hidden: { y: '115%', rotate: 8, opacity: 0 },
-              visible: { y: 0, rotate: 0, opacity: 1 },
-            }}
-            transition={{ duration: 0.8, ease: EASE }}
-          >
-            {c === ' ' ? '\u00A0' : c}
-          </motion.span>
-        </span>
-      ))}
+      {words.map((word, w) => {
+        const chars = Array.from(word);
+        const node = (
+          <span key={w} className="inline-block whitespace-nowrap" aria-hidden="true">
+            {chars.map((c, i) => {
+              charIndex += 1;
+              return (
+                <span key={i} className="inline-block overflow-hidden pb-2 align-bottom">
+                  <motion.span
+                    className="inline-block"
+                    variants={{
+                      hidden: { y: '115%', rotate: 8, opacity: 0 },
+                      visible: { y: 0, rotate: 0, opacity: 1 },
+                    }}
+                    transition={{ duration: 0.8, ease: EASE }}
+                  >
+                    {c}
+                  </motion.span>
+                </span>
+              );
+            })}
+            {w < words.length - 1 ? '\u00A0' : ''}
+          </span>
+        );
+        return node;
+      })}
     </motion.span>
   );
 }
