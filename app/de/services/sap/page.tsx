@@ -8,7 +8,7 @@ import { Database, ArrowLeft, CheckCircle, Users, Target, Zap } from 'lucide-rea
 import ServiceNavigation from '../../../components/ServiceNavigation';
 import WhitepaperCard from '../../../components/WhitepaperCard';
 
-function SlideIn({ children, direction = 'up', delay = 0, duration = 0.8 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; duration?: number }) {
+function SlideIn({ children, direction = 'up', delay = 0, duration = 0.8, className }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; duration?: number; className?: string }) {
   const variants = {
     hidden: {
       opacity: 0,
@@ -26,6 +26,7 @@ function SlideIn({ children, direction = 'up', delay = 0, duration = 0.8 }: { ch
 
   return (
     <motion.div
+      className={className}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
@@ -414,9 +415,9 @@ export default function SAPServicePage() {
             </div>
           </SlideIn>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
             {whitepapers.map((whitepaper, index) => (
-              <SlideIn key={index} delay={index * 0.1 + 0.5}>
+              <SlideIn key={index} delay={index * 0.1 + 0.5} className="h-full">
                 <WhitepaperCard
                   title={whitepaper.title}
                   description={whitepaper.description}

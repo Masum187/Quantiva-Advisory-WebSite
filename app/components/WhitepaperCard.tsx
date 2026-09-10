@@ -395,7 +395,7 @@ export default function WhitepaperCard({
   const [open, setOpen] = useState(false);
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all duration-500 shadow-2xl">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all duration-500 shadow-2xl">
       {/* Study Image */}
       <div className="relative h-48 overflow-hidden">
         <Image
@@ -423,12 +423,12 @@ export default function WhitepaperCard({
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="flex flex-1 flex-col p-6">
         <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-300 transition-colors line-clamp-2">
           {title}
         </h3>
 
-        <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
+        <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3 flex-1">
           {description}
         </p>
 
