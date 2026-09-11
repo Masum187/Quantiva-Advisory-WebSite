@@ -11,7 +11,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import VentureCanvas from '../VentureCanvas';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 import {
   EASE,
   ScrollProgress,
@@ -25,7 +25,45 @@ import {
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
 
-export default function VeyaLayout({ venture, next }: { venture: Venture; next: Venture }) {
+const COPY: Record<
+  Lang,
+  {
+    topbarLabel: string;
+    thesis: string;
+    demarcation: string;
+    graphLabel: string;
+    cycleNote: string;
+    constitution: string;
+  }
+> = {
+  de: {
+    topbarLabel: 'Workforce Progression',
+    thesis: 'I — These',
+    demarcation: 'II — Abgrenzung',
+    graphLabel: 'III — Der Progressionsgraph',
+    cycleNote: '… und der Kreislauf beginnt von vorn ↺',
+    constitution: 'IV — Product Constitution',
+  },
+  en: {
+    topbarLabel: 'Workforce Progression',
+    thesis: 'I — Thesis',
+    demarcation: 'II — Demarcation',
+    graphLabel: 'III — The Progression Graph',
+    cycleNote: '… and the cycle begins again ↺',
+    constitution: 'IV — Product Constitution',
+  },
+};
+
+export default function VeyaLayout({
+  venture,
+  next,
+  lang = 'de',
+}: {
+  venture: Venture;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const accent = venture.accent;
@@ -50,7 +88,7 @@ export default function VeyaLayout({ venture, next }: { venture: Venture; next: 
           className="pointer-events-none absolute inset-0"
           style={{ background: 'radial-gradient(70% 60% at 50% 45%, transparent 0%, #050505 100%)' }}
         />
-        <Topbar label="Workforce Progression" />
+        <Topbar label={copy.topbarLabel} lang={lang} />
 
         <motion.div
           style={{
@@ -111,7 +149,9 @@ export default function VeyaLayout({ venture, next }: { venture: Venture; next: 
 
       {/* STATEMENT — editorial zentriert */}
       <section className="mx-auto max-w-3xl px-6 py-32 text-center md:py-44">
-        <p className="mb-12 font-mono text-xs uppercase tracking-[0.4em] text-gray-500">I — These</p>
+        <p className="mb-12 font-mono text-xs uppercase tracking-[0.4em] text-gray-500">
+          {copy.thesis}
+        </p>
         <ScrollStatement
           text={venture.intro}
           className="text-[clamp(1.5rem,3.2vw,2.6rem)] font-extralight leading-relaxed"
@@ -122,7 +162,7 @@ export default function VeyaLayout({ venture, next }: { venture: Venture; next: 
       <section className="border-t border-white/10 py-28 md:py-36">
         <div className="mx-auto max-w-6xl px-6">
           <p className="text-center font-mono text-xs uppercase tracking-[0.4em] text-gray-500">
-            II — Abgrenzung
+            {copy.demarcation}
           </p>
           <h2 className="mt-6 text-center text-[clamp(1.8rem,4vw,3.2rem)] font-extralight tracking-wide">
             <MaskedHeadline text={venture.problemTitle} />
@@ -152,7 +192,7 @@ export default function VeyaLayout({ venture, next }: { venture: Venture; next: 
       <section className="border-t border-white/10 py-28 md:py-36">
         <div className="mx-auto max-w-5xl px-6">
           <p className="text-center font-mono text-xs uppercase tracking-[0.4em] text-gray-500">
-            III — Der Progressionsgraph
+            {copy.graphLabel}
           </p>
           <h2 className="mt-6 text-center text-[clamp(1.8rem,4vw,3.2rem)] font-extralight tracking-wide">
             <MaskedHeadline text={venture.flowTitle} />
@@ -194,7 +234,7 @@ export default function VeyaLayout({ venture, next }: { venture: Venture; next: 
             transition={{ duration: 1, delay: 0.6 }}
             className="mt-10 text-right font-mono text-xs uppercase tracking-[0.3em] text-gray-500"
           >
-            … und der Kreislauf beginnt von vorn ↺
+            {copy.cycleNote}
           </motion.p>
         </div>
       </section>
@@ -203,7 +243,7 @@ export default function VeyaLayout({ venture, next }: { venture: Venture; next: 
       <section className="border-t border-white/10 py-28 md:py-36">
         <div className="mx-auto max-w-2xl px-6 text-center">
           <p className="font-mono text-xs uppercase tracking-[0.4em] text-gray-500">
-            IV — Product Constitution
+            {copy.constitution}
           </p>
           <div className="mt-16 space-y-12">
             {venture.principles.map((p, i) => (
@@ -225,7 +265,7 @@ export default function VeyaLayout({ venture, next }: { venture: Venture; next: 
         </div>
       </section>
 
-      <NextFooter accent={accent} next={next} />
+      <NextFooter accent={accent} next={next} lang={lang} />
     </div>
   );
 }

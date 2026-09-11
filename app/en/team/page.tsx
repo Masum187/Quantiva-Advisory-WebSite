@@ -2,11 +2,50 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Navigation from '../../components/Navigation';
 import { Linkedin, Mail, Award, Users, Target, TrendingUp, Volume2, VolumeX, ChevronRight, Lightbulb, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 // Animation Components
+function AnimatedParticles() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
+  return (
+    <>
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-teal-400 rounded-full"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            opacity: [0.2, 1, 0.2],
+            scale: [1, 1.5, 1],
+          }}
+          transition={{
+            duration: 3 + Math.random() * 2,
+            repeat: Infinity,
+            delay: Math.random() * 2,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
 function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number }) {
   const variants = {
     hidden: {
@@ -38,7 +77,19 @@ export default function TeamPage() {
   const lang = 'en';
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [selectedMember, setSelectedMember] = useState(0); // 0 = CEO, 1 = CTO
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Navigation items for English
+  const navigationItems = [
+    { id: 'home', label: 'Home', href: '/en' },
+    { id: 'about', label: 'About', href: '/en/about' },
+    { id: 'services', label: 'Services', href: '/en#services' },
+    { id: 'search', label: 'Search', href: '/en/search' },
+    { id: 'cases', label: 'Cases', href: '/en/cases' },
+    { id: 'team', label: 'Team', href: '/en/team' },
+    { id: 'career', label: 'Career', href: '/en#career' },
+  ];
 
   // ☁️ Cloudinary Configuration
   const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dbrisux8i';
@@ -89,26 +140,49 @@ export default function TeamPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrackIndex]);
 
+  const leadershipTeam = [
+    {
+      id: 1,
+      name: 'Gülnur Patan',
+      role: 'CEO & Founder',
+      image: 'https://res.cloudinary.com/dbrisux8i/image/upload/v1760346416/image3_l0nj0f.jpg',
+      bio: 'Visionary leader with 15+ years of experience in digital transformation. Expert in strategic consulting and innovative technology solutions.',
+      expertise: ['Strategic Consulting', 'Digital Transformation', 'Leadership'],
+      linkedin: 'https://linkedin.com/in/gulnur-patan',
+      email: 'gulnur@quantiva-advisory.com'
+    },
+    {
+      id: 2,
+      name: 'Dr. Michael Weber',
+      role: 'CTO & Technical Lead',
+      image: 'https://res.cloudinary.com/dbrisux8i/image/upload/v1760221471/generated-image_30_r8cjtq.png',
+      bio: 'Technology visionary with expertise in AI, cloud architectures, and modern development methods. Drives innovation forward.',
+      expertise: ['AI & Machine Learning', 'Cloud Architecture', 'DevOps'],
+      linkedin: 'https://linkedin.com/in/michael-weber',
+      email: 'michael@quantiva-advisory.com'
+    }
+  ];
+
   const t = {
     hero: {
       subtitle: 'MEET OUR LEADERSHIP',
-      title: 'Our Visionary Leadership',
+      title: 'Our visionary leadership',
       name: 'Dr. Elena Richter',
       role: 'CEO & Founder',
-      description: 'With over 15 years of experience in management consulting and a strong focus on digital transformation, Dr. Richter leads our team with innovation and strategic vision.',
+      description: 'With over 15 years of experience in management consulting and a strong focus on digital transformation, Dr. Richter leads our team with innovation and strategic foresight.',
     },
     teamTitle: 'Our Team',
     teamSubtitle: 'The experts behind Quantiva',
     values: {
       title: 'Our Values',
       items: [
-        { icon: Award, title: 'Excellence', description: 'Highest quality in everything we do' },
-        { icon: Users, title: 'Collaboration', description: 'Achieve more together' },
+        { icon: Award, title: 'Excellence', description: 'The highest quality in everything we do' },
+        { icon: Users, title: 'Collaboration', description: 'Achieving more together' },
         { icon: Target, title: 'Innovation', description: 'Future-oriented solutions' },
         { icon: TrendingUp, title: 'Growth', description: 'Continuous development' },
       ],
     },
-    cta: 'Contact Us Now',
+    cta: 'Get in touch now',
   };
 
   const teamMembers = [
@@ -172,6 +246,8 @@ export default function TeamPage() {
 
   return (
     <div className="min-h-screen bg-black relative">
+      {/* Navigation */}
+      <Navigation lang="en" items={navigationItems} />
       {/* Background Music - Suno Playlist */}
       <audio
         ref={audioRef}
@@ -235,7 +311,7 @@ export default function TeamPage() {
         </div>
       </div>
 
-      {/* Hero Section - Leadership */}
+      {/* Hero Section - Leadership Cards */}
       <section className="relative min-h-[80vh] flex items-center bg-gradient-to-br from-slate-900 via-black to-slate-900">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
@@ -246,85 +322,149 @@ export default function TeamPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Text Content */}
-            <SlideIn direction="left">
-              <div>
-                <div className="inline-block px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 mb-6">
-                  <span className="text-orange-400 text-sm font-semibold tracking-wider">{t.hero.subtitle}</span>
-                </div>
-                <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                  {t.hero.title}
-                </h1>
-                <div className="mb-6">
-                  <h2 className="text-3xl font-bold text-orange-400 mb-2">{t.hero.name}</h2>
-                  <p className="text-xl text-gray-300">{t.hero.role}</p>
-                </div>
-                <p className="text-lg text-gray-300 leading-relaxed mb-8">
-                  {t.hero.description}
-                </p>
-                <div className="flex gap-4">
-                  <a
-                    href="mailto:elena.richter@quantiva.com"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors"
-                  >
-                    <Mail className="h-5 w-5" />
-                    {t.cta}
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/company/quantiva-advisory"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-semibold hover:bg-white/20 transition-colors"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                    LinkedIn
-                  </a>
-                </div>
+          {/* Header */}
+          <SlideIn direction="up">
+            <div className="text-center mb-16">
+              <div className="inline-block px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 mb-6">
+                <span className="text-orange-400 text-sm font-semibold tracking-wider">MEET OUR LEADERSHIP</span>
               </div>
-            </SlideIn>
+              <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                Our <span className="bg-gradient-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent">Leadership</span>
+              </h1>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                Meet the visionary minds who make Quantiva Advisory what it is.
+              </p>
+            </div>
+          </SlideIn>
 
-            {/* Right: Leadership Image */}
-            <SlideIn direction="right" delay={0.2}>
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-2xl blur-3xl"></div>
-                <Image
-      src="https://res.cloudinary.com/dbrisux8i/image/upload/v1760346416/image3_l0nj0f.jpg"
-      alt="Dr. Elena Richter"
-      width={800}
-      height={600}
-      className="relative rounded-2xl w-full h-[600px] object-cover shadow-2xl"
-    />
-              </div>
-            </SlideIn>
+          {/* Leadership Carousel */}
+          <div className="relative">
+            {/* Carousel Container */}
+            <div className="relative overflow-hidden rounded-3xl bg-black/20 backdrop-blur-sm border border-white/10">
+              <motion.div
+                className="flex transition-transform duration-500 ease-in-out"
+                animate={{ x: `-${selectedMember * 100}%` }}
+              >
+                {leadershipTeam.map((member, index) => (
+                  <div key={member.id} className="w-full flex-shrink-0">
+                    <div className="grid lg:grid-cols-2 gap-12 items-center p-8">
+                      {/* Left: Member Image */}
+                      <SlideIn direction="left" delay={index * 0.2}>
+                        <div className="relative group">
+                          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-3xl blur-3xl"></div>
+                          <div className="relative rounded-3xl overflow-hidden">
+                            <Image
+                              src={member.image}
+                              alt={member.name}
+                              width={600}
+                              height={600}
+                              className="w-full h-[600px] object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                              style={{ 
+                                objectPosition: member.id === 1 ? 'center 30%' : 'center 25%'
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            <div className="absolute bottom-8 left-8 right-8">
+                              <div className="bg-black/80 backdrop-blur-md border border-orange-500/30 rounded-2xl p-6">
+                                <h3 className="text-2xl font-bold text-white mb-2">{member.name}</h3>
+                                <p className="text-orange-400 font-semibold">{member.role}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </SlideIn>
+
+                      {/* Right: Member Details */}
+                      <SlideIn direction="right" delay={index * 0.2 + 0.1}>
+                        <div className="space-y-8">
+                          <div>
+                            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                              {member.name}
+                            </h2>
+                            <p className="text-2xl text-orange-400 font-semibold mb-6">{member.role}</p>
+                            <p className="text-lg text-gray-300 leading-relaxed mb-8">
+                              {member.bio}
+                            </p>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h4 className="text-xl font-semibold text-white mb-4">Expertise</h4>
+                            <div className="flex flex-wrap gap-3">
+                              {member.expertise.map((skill, skillIndex) => (
+                                <span
+                                  key={skillIndex}
+                                  className="px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-medium hover:bg-white/20 transition-colors"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="flex gap-4">
+                            <a
+                              href={member.linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-semibold hover:bg-white/20 transition-colors"
+                            >
+                              <Linkedin className="w-5 h-5" />
+                              LinkedIn
+                            </a>
+                            <a
+                              href={`mailto:${member.email}`}
+                              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-500/50 transition-all duration-300"
+                            >
+                              <Mail className="w-5 h-5" />
+                              Contact
+                            </a>
+                          </div>
+                        </div>
+                      </SlideIn>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Carousel Controls */}
+            <div className="flex items-center justify-center gap-4 mt-8">
+              <button
+                onClick={() => setSelectedMember((prev) => (prev - 1 + leadershipTeam.length) % leadershipTeam.length)}
+                className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-colors flex items-center justify-center"
+              >
+                <ChevronRight className="w-6 h-6 rotate-180" />
+              </button>
+              
+              <button
+                onClick={() => setSelectedMember((prev) => (prev + 1) % leadershipTeam.length)}
+                className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-colors flex items-center justify-center"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Slide Indicators */}
+            <div className="flex justify-center gap-2 mt-6">
+              {leadershipTeam.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedMember(index)}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    selectedMember === index ? 'bg-orange-400' : 'bg-white/30'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Values Section - Interactive 3D Flip Cards */}
-      <section className="py-20 bg-black border-t border-white/10 relative overflow-hidden">
+      <section className="py-20 bg-black relative overflow-hidden">
         {/* Animated Background Particles */}
         <div className="absolute inset-0 opacity-30">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-teal-400 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [0, -30, 0],
-                opacity: [0.2, 1, 0.2],
-                scale: [1, 1.5, 1],
-              }}
-              transition={{
-                duration: 3 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
+          <AnimatedParticles />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -525,22 +665,22 @@ export default function TeamPage() {
                           <h3 className="text-2xl font-bold text-white mb-4">{value.title}</h3>
                           <div className="space-y-2 text-white/90">
                             <p className="text-sm font-semibold">
-                              {index === 0 && '✓ Highest Standards'}
-                              {index === 1 && '✓ Team Spirit'}
-                              {index === 2 && '✓ Creative Solutions'}
-                              {index === 3 && '✓ Continuous Improvement'}
+                              {index === 0 && '✓ Highest standards'}
+                              {index === 1 && '✓ Team spirit'}
+                              {index === 2 && '✓ Creative solutions'}
+                              {index === 3 && '✓ Continuous improvement'}
                             </p>
                             <p className="text-sm font-semibold">
-                              {index === 0 && '✓ Quality Control'}
-                              {index === 1 && '✓ Open Communication'}
-                              {index === 2 && '✓ Future Technologies'}
-                              {index === 3 && '✓ Personal Development'}
+                              {index === 0 && '✓ Quality control'}
+                              {index === 1 && '✓ Open communication'}
+                              {index === 2 && '✓ Future technologies'}
+                              {index === 3 && '✓ Personal development'}
                             </p>
                             <p className="text-sm font-semibold">
-                              {index === 0 && '✓ Best Practices'}
-                              {index === 1 && '✓ Shared Success'}
+                              {index === 0 && '✓ Best practices'}
+                              {index === 1 && '✓ Shared successes'}
                               {index === 2 && '✓ Agility'}
-                              {index === 3 && '✓ Career Growth'}
+                              {index === 3 && '✓ Career growth'}
                             </p>
                           </div>
                         </div>
@@ -648,11 +788,11 @@ export default function TeamPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-orange-900/20 via-black to-yellow-900/20 border-t border-white/10">
+      <section className="py-20 bg-gradient-to-br from-orange-900/20 via-black to-yellow-900/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SlideIn direction="up">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Join Our Team
+              Become part of our team
             </h2>
             <p className="text-xl text-gray-300 mb-8">
               We are looking for talented people who want to shape the future with us.
@@ -661,7 +801,7 @@ export default function TeamPage() {
               href="/en/career"
               className="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors text-lg"
             >
-              View Open Positions
+              View open positions
             </Link>
           </SlideIn>
         </div>

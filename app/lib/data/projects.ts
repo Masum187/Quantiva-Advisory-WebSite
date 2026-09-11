@@ -6,6 +6,8 @@
  * Status-, Validierungs- oder Preisangaben.
  */
 
+import { ventureTranslationsEn } from './projects.en';
+
 export type VentureEffect = 'network' | 'threads' | 'radar' | 'ledger';
 
 export type VentureFlowStep = {
@@ -399,11 +401,23 @@ export const ventures: Venture[] = [
   },
 ];
 
-export function getVenture(slug: string): Venture | null {
-  return ventures.find((v) => v.slug === slug) ?? null;
+export type Lang = 'de' | 'en';
+
+/** Liefert das Portfolio in der gewünschten Sprache (DE = Quelle, unverändert). */
+export function getVentures(lang: Lang = 'de'): Venture[] {
+  if (lang === 'de') return ventures;
+  return ventures.map((v) => {
+    const t = ventureTranslationsEn[v.slug];
+    return t ? { ...v, ...t } : v;
+  });
 }
 
-export function getNextVenture(slug: string): Venture {
-  const idx = ventures.findIndex((v) => v.slug === slug);
-  return ventures[(idx + 1) % ventures.length];
+export function getVenture(slug: string, lang: Lang = 'de'): Venture | null {
+  return getVentures(lang).find((v) => v.slug === slug) ?? null;
+}
+
+export function getNextVenture(slug: string, lang: Lang = 'de'): Venture {
+  const list = getVentures(lang);
+  const idx = list.findIndex((v) => v.slug === slug);
+  return list[(idx + 1) % list.length];
 }

@@ -7,9 +7,58 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import CommandPalette from '../../CommandPalette';
 import Navigation from '../../Navigation';
-import { ventures } from '../../../lib/data/projects';
+import { getVentures, type Lang } from '../../../lib/data/projects';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+type OverviewCopy = {
+  nav: { id: string; label: string; href: string }[];
+  heroSub: string;
+  machineLabel: string;
+  machineLead: string;
+  machineHighlight: string;
+  cta: string;
+};
+
+/** Die Headline „Proof statt Promise." ist das Markenmotto und bleibt in beiden Sprachen identisch. */
+const COPY: Record<Lang, OverviewCopy> = {
+  de: {
+    nav: [
+      { id: 'home', label: 'Home', href: '/de' },
+      { id: 'about', label: 'Über uns', href: '/de/about' },
+      { id: 'services', label: 'Services', href: '/de#services' },
+      { id: 'search', label: 'Suche', href: '/de/search' },
+      { id: 'cases', label: 'Projekte', href: '/de/cases' },
+      { id: 'team', label: 'Team', href: '/de/team' },
+      { id: 'career', label: 'Karriere', href: '/de#career' },
+    ],
+    heroSub:
+      'Acht Produkte, ein Prinzip: Jede Aussage braucht einen Beleg. Vom Einordnen über das Beweisen bis zum Governen — das Portfolio der Quantiva GmbH.',
+    machineLabel: 'Gemeinsame Maschine',
+    machineLead:
+      'Read-only Ingest → Kernmodell mit Herkunft → Regel-Engine → Findings mit Beleg je Aussage.',
+    machineHighlight: 'Eine Evidenz-Maschine, mehrere Märkte.',
+    cta: 'Mit uns sprechen',
+  },
+  en: {
+    nav: [
+      { id: 'home', label: 'Home', href: '/en' },
+      { id: 'about', label: 'About us', href: '/en/about' },
+      { id: 'services', label: 'Services', href: '/en#services' },
+      { id: 'search', label: 'Search', href: '/en/search' },
+      { id: 'cases', label: 'Projects', href: '/en/cases' },
+      { id: 'team', label: 'Team', href: '/en/team' },
+      { id: 'career', label: 'Careers', href: '/en#career' },
+    ],
+    heroSub:
+      'Eight products, one principle: every claim needs evidence. From classifying to proving to governing — the portfolio of Quantiva GmbH.',
+    machineLabel: 'One shared machine',
+    machineLead:
+      'Read-only ingest → core model with provenance → rule engine → findings with evidence per claim.',
+    machineHighlight: 'One evidence machine, multiple markets.',
+    cta: 'Talk to us',
+  },
+};
 
 function MaskedWord({ text, delay = 0 }: { text: string; delay?: number }) {
   return (
@@ -26,26 +75,20 @@ function MaskedWord({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-export default function VenturesOverview() {
+export default function VenturesOverview({ lang = 'de' }: { lang?: Lang }) {
   const [hovered, setHovered] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
 
-  const navigationItems = [
-    { id: 'home', label: 'Home', href: '/de' },
-    { id: 'about', label: 'Über uns', href: '/de/about' },
-    { id: 'services', label: 'Services', href: '/de#services' },
-    { id: 'search', label: 'Suche', href: '/de/search' },
-    { id: 'cases', label: 'Projekte', href: '/de/cases' },
-    { id: 'team', label: 'Team', href: '/de/team' },
-    { id: 'career', label: 'Karriere', href: '/de#career' },
-  ];
+  const copy = COPY[lang];
+  const ventures = getVentures(lang);
+  const navigationItems = copy.nav;
 
   const active = ventures.find((v) => v.slug === hovered) ?? null;
 
   return (
     <div className="min-h-screen bg-[#05070f] text-white">
       <CommandPalette />
-      <Navigation lang="de" items={navigationItems} />
+      <Navigation lang={lang} items={navigationItems} />
 
       {/* Hero */}
       <header className="relative overflow-hidden px-6 pb-16 pt-36 md:pb-24 md:pt-44">
@@ -75,8 +118,7 @@ export default function VenturesOverview() {
             transition={{ duration: 0.8, delay: 0.35, ease: EASE }}
             className="mt-8 max-w-2xl text-lg leading-relaxed text-gray-400"
           >
-            Acht Produkte, ein Prinzip: Jede Aussage braucht einen Beleg. Vom Einordnen über das
-            Beweisen bis zum Governen — das Portfolio der Quantiva GmbH.
+            {copy.heroSub}
           </motion.p>
         </div>
       </header>
@@ -147,7 +189,7 @@ export default function VenturesOverview() {
               transition={{ duration: 0.7, delay: (i % 4) * 0.06, ease: EASE }}
             >
               <Link
-                href={`/de/cases/${v.slug}`}
+                href={`/${lang}/cases/${v.slug}`}
                 onMouseEnter={() => setHovered(v.slug)}
                 onMouseLeave={() => setHovered(null)}
                 className="group relative block py-8 transition-colors md:py-10"
@@ -211,17 +253,16 @@ export default function VenturesOverview() {
           className="mt-24 text-center"
         >
           <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
-            Gemeinsame Maschine
+            {copy.machineLabel}
           </p>
           <p className="mx-auto mt-6 max-w-3xl text-2xl font-light leading-relaxed text-gray-300">
-            Read-only Ingest → Kernmodell mit Herkunft → Regel-Engine → Findings mit Beleg je
-            Aussage. <span className="text-white">Eine Evidenz-Maschine, mehrere Märkte.</span>
+            {copy.machineLead} <span className="text-white">{copy.machineHighlight}</span>
           </p>
           <Link
-            href="/de#contact"
+            href={`/${lang}#contact`}
             className="mt-10 inline-flex items-center gap-2 rounded-xl border border-white/20 px-8 py-4 font-semibold text-white transition hover:border-teal-400/60 hover:bg-teal-400/10"
           >
-            Mit uns sprechen
+            {copy.cta}
             <ArrowUpRight className="h-4 w-4" />
           </Link>
         </motion.div>

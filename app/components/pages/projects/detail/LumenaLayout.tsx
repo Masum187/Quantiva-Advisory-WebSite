@@ -10,7 +10,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown, CheckCircle2, ShieldCheck } from 'lucide-react';
 import VentureCanvas from '../VentureCanvas';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 import {
   EASE,
   ScrollProgress,
@@ -24,14 +24,68 @@ import {
   SectionLabel,
 } from './shared';
 
-const AUDIT_CHECKS = [
-  { art: 'Art. 13', label: 'Transparenz & Information', state: 'BESTANDEN' },
-  { art: 'Art. 14', label: 'Menschliche Aufsicht', state: 'BESTANDEN' },
-  { art: 'Art. 15', label: 'Robustheit & Genauigkeit', state: 'GEPRÜFT' },
-  { art: 'Art. 12', label: 'Aufzeichnungspflichten', state: 'EVIDENZ' },
-];
+type AuditCheck = { art: string; label: string; state: string };
 
-export default function LumenaLayout({ venture, next }: { venture: Venture; next: Venture }) {
+const COPY: Record<
+  Lang,
+  {
+    auditChecks: AuditCheck[];
+    topbarLabel: string;
+    auditCaption: string;
+    why: string;
+    problemSpace: string;
+    how: string;
+    principles: string;
+    scanLabel: string;
+    flowNote: string;
+  }
+> = {
+  de: {
+    auditChecks: [
+      { art: 'Art. 13', label: 'Transparenz & Information', state: 'BESTANDEN' },
+      { art: 'Art. 14', label: 'Menschliche Aufsicht', state: 'BESTANDEN' },
+      { art: 'Art. 15', label: 'Robustheit & Genauigkeit', state: 'GEPRÜFT' },
+      { art: 'Art. 12', label: 'Aufzeichnungspflichten', state: 'EVIDENZ' },
+    ],
+    topbarLabel: 'EU-souverän · EU-only Hosting',
+    auditCaption: 'Auditierbare Evidenz je Artikel — nicht Selbstauskunft',
+    why: 'Warum',
+    problemSpace: 'Problemraum',
+    how: 'Funktionsweise',
+    principles: 'Prinzipien',
+    scanLabel: 'Scan',
+    flowNote:
+      'Compliance-by-Proof und Use-Case-ROI greifen ineinander: erst der technische Nachweis, dann die wirtschaftliche Entscheidung — und LUMENA governt das Dazwischen.',
+  },
+  en: {
+    auditChecks: [
+      { art: 'Art. 13', label: 'Transparency & information', state: 'PASSED' },
+      { art: 'Art. 14', label: 'Human oversight', state: 'PASSED' },
+      { art: 'Art. 15', label: 'Robustness & accuracy', state: 'TESTED' },
+      { art: 'Art. 12', label: 'Record-keeping obligations', state: 'EVIDENCE' },
+    ],
+    topbarLabel: 'EU-sovereign · EU-only hosting',
+    auditCaption: 'Auditable evidence per article — not self-attestation',
+    why: 'Why',
+    problemSpace: 'Problem space',
+    how: 'How it works',
+    principles: 'Principles',
+    scanLabel: 'Scan',
+    flowNote:
+      'Compliance-by-proof and use-case ROI interlock: first the technical evidence, then the economic decision — and LUMENA governs the in-between.',
+  },
+};
+
+export default function LumenaLayout({
+  venture,
+  next,
+  lang = 'de',
+}: {
+  venture: Venture;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const accent = venture.accent;
@@ -58,7 +112,7 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
             }}
           />
         </motion.div>
-        <Topbar label="EU-souverän · EU-only Hosting" />
+        <Topbar label={copy.topbarLabel} lang={lang} />
 
         <motion.div
           style={{ opacity: reduceMotion ? 1 : heroOpacity }}
@@ -111,7 +165,7 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
             variants={{ visible: { transition: { staggerChildren: 0.35, delayChildren: 1 } } }}
             className="space-y-3"
           >
-            {AUDIT_CHECKS.map((c, i) => (
+            {copy.auditChecks.map((c, i) => (
               <motion.div
                 key={i}
                 variants={{
@@ -140,7 +194,7 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
               className="pt-2 text-center font-mono text-xs uppercase tracking-[0.3em] text-gray-500"
             >
-              Auditierbare Evidenz je Artikel — nicht Selbstauskunft
+              {copy.auditCaption}
             </motion.p>
           </motion.div>
         </motion.div>
@@ -159,7 +213,7 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-36">
         <div className="mb-10">
           <SectionLabel num="01" accent={accent}>
-            Warum
+            {copy.why}
           </SectionLabel>
         </div>
         <ScrollStatement text={venture.intro} />
@@ -169,7 +223,7 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <SectionLabel num="02" accent={accent}>
-            Problemraum
+            {copy.problemSpace}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.problemTitle} />
@@ -194,7 +248,7 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
                   className="font-mono text-xs uppercase tracking-[0.3em]"
                   style={{ color: accent }}
                 >
-                  Scan {String(i + 1).padStart(2, '0')}
+                  {copy.scanLabel} {String(i + 1).padStart(2, '0')}
                 </span>
                 <h3 className="mt-4 text-xl font-bold text-white">{p.title}</h3>
                 <p className="mt-3 leading-relaxed text-gray-400">{p.text}</p>
@@ -209,15 +263,12 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
         <div className="mx-auto grid max-w-6xl gap-14 px-6 md:grid-cols-[1fr_1.3fr]">
           <div className="md:sticky md:top-28 md:self-start">
             <SectionLabel num="03" accent={accent}>
-              Funktionsweise
+              {copy.how}
             </SectionLabel>
             <h2 className="mt-4 text-[clamp(1.9rem,4vw,3.2rem)] font-bold uppercase tracking-tight">
               <MaskedHeadline text={venture.flowTitle} />
             </h2>
-            <p className="mt-6 max-w-sm leading-relaxed text-gray-400">
-              Compliance-by-Proof und Use-Case-ROI greifen ineinander: erst der technische
-              Nachweis, dann die wirtschaftliche Entscheidung — und LUMENA governt das Dazwischen.
-            </p>
+            <p className="mt-6 max-w-sm leading-relaxed text-gray-400">{copy.flowNote}</p>
           </div>
           <div className="space-y-5">
             {venture.flow.map((s, i) => (
@@ -247,7 +298,7 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-5xl space-y-16 px-6">
           <SectionLabel num="04" accent={accent}>
-            Prinzipien
+            {copy.principles}
           </SectionLabel>
           {venture.principles.map((p, i) => (
             <motion.blockquote
@@ -272,7 +323,7 @@ export default function LumenaLayout({ venture, next }: { venture: Venture; next
         </div>
       </section>
 
-      <NextFooter accent={accent} next={next} />
+      <NextFooter accent={accent} next={next} lang={lang} />
     </div>
   );
 }

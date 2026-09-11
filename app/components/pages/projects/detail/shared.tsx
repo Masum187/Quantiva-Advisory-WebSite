@@ -17,7 +17,7 @@ import {
   useReducedMotion,
 } from 'framer-motion';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -35,11 +35,17 @@ export function ScrollProgress({ accent }: { accent: string }) {
 }
 
 /* ---------- Topbar ---------- */
-export function Topbar({ label = 'Quantiva Ventures' }: { label?: string }) {
+export function Topbar({
+  label = 'Quantiva Ventures',
+  lang = 'de',
+}: {
+  label?: string;
+  lang?: Lang;
+}) {
   return (
     <div className="relative z-10 flex items-center justify-between gap-6 px-6 pt-8 md:px-12">
       <Link
-        href="/de/cases"
+        href={`/${lang}/cases`}
         className="group inline-flex shrink-0 items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-gray-400 transition hover:text-white"
       >
         <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
@@ -388,7 +394,21 @@ export function ShineButton({
 }
 
 /* ---------- Footer mit Next-Projekt + CTA ---------- */
-export function NextFooter({ accent, next }: { accent: string; next: Venture }) {
+const NEXT_FOOTER_COPY: Record<Lang, { nextProject: string; allProjects: string; talkToUs: string }> = {
+  de: { nextProject: 'Nächstes Projekt', allProjects: 'Alle Projekte', talkToUs: 'Mit uns sprechen' },
+  en: { nextProject: 'Next project', allProjects: 'All projects', talkToUs: 'Talk to us' },
+};
+
+export function NextFooter({
+  accent,
+  next,
+  lang = 'de',
+}: {
+  accent: string;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = NEXT_FOOTER_COPY[lang];
   const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -410,9 +430,9 @@ export function NextFooter({ accent, next }: { accent: string; next: Venture }) 
           transition={{ duration: 0.8 }}
           className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500"
         >
-          Nächstes Projekt
+          {copy.nextProject}
         </motion.p>
-        <Link href={`/de/cases/${next.slug}`} className="group mt-6 inline-block">
+        <Link href={`/${lang}/cases/${next.slug}`} className="group mt-6 inline-block">
           <span
             className="block text-[clamp(2.4rem,7vw,5.5rem)] font-bold uppercase leading-none tracking-tight text-white transition-colors duration-300"
             style={{ ['--hov' as never]: next.accent }}
@@ -428,14 +448,14 @@ export function NextFooter({ accent, next }: { accent: string; next: Venture }) 
         </Link>
         <div className="mt-20 flex flex-wrap items-center justify-center gap-4">
           <Link
-            href="/de/cases"
+            href={`/${lang}/cases`}
             className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-7 py-3.5 font-semibold text-white transition hover:bg-white/10"
           >
             <ArrowLeft className="h-4 w-4" />
-            Alle Projekte
+            {copy.allProjects}
           </Link>
-          <ShineButton href="/de#contact" accent={accent}>
-            Mit uns sprechen
+          <ShineButton href={`/${lang}#contact`} accent={accent}>
+            {copy.talkToUs}
             <ArrowUpRight className="h-4 w-4" />
           </ShineButton>
         </div>

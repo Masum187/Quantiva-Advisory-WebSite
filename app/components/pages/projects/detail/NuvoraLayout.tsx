@@ -11,7 +11,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown, Layers } from 'lucide-react';
 import VentureCanvas from '../VentureCanvas';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 import {
   EASE,
   ScrollProgress,
@@ -35,7 +35,50 @@ const CONTRACT = [
   'R7 learns from execution.',
 ];
 
-export default function NuvoraLayout({ venture, next }: { venture: Venture; next: Venture }) {
+const COPY: Record<
+  Lang,
+  {
+    topbarLabel: string;
+    why: string;
+    problemSpace: string;
+    how: string;
+    flowNote: string;
+    layerLabel: string;
+    contractLabel: string;
+  }
+> = {
+  de: {
+    topbarLabel: 'Computational Model',
+    why: 'Warum',
+    problemSpace: 'Problemraum',
+    how: 'Funktionsweise',
+    flowNote:
+      'Sieben Schichten, jede baut auf der vorherigen auf. Beim Scrollen stapelt sich das Modell — genau wie in der Architektur.',
+    layerLabel: 'Layer',
+    contractLabel: 'Architecture Contract',
+  },
+  en: {
+    topbarLabel: 'Computational Model',
+    why: 'Why',
+    problemSpace: 'Problem space',
+    how: 'How it works',
+    flowNote:
+      'Seven layers, each building on the one below. As you scroll, the model stacks up — exactly as it does in the architecture.',
+    layerLabel: 'Layer',
+    contractLabel: 'Architecture Contract',
+  },
+};
+
+export default function NuvoraLayout({
+  venture,
+  next,
+  lang = 'de',
+}: {
+  venture: Venture;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const accent = venture.accent;
@@ -76,7 +119,7 @@ export default function NuvoraLayout({ venture, next }: { venture: Venture; next
             ))}
           </div>
         )}
-        <Topbar label="Computational Model" />
+        <Topbar label={copy.topbarLabel} lang={lang} />
 
         <motion.div
           style={{ opacity: reduceMotion ? 1 : heroOpacity }}
@@ -131,7 +174,7 @@ export default function NuvoraLayout({ venture, next }: { venture: Venture; next
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-36">
         <div className="mb-10">
           <SectionLabel num="01" accent={accent}>
-            Warum
+            {copy.why}
           </SectionLabel>
         </div>
         <ScrollStatement text={venture.intro} />
@@ -141,7 +184,7 @@ export default function NuvoraLayout({ venture, next }: { venture: Venture; next
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <SectionLabel num="02" accent={accent}>
-            Problemraum
+            {copy.problemSpace}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.problemTitle} />
@@ -174,15 +217,12 @@ export default function NuvoraLayout({ venture, next }: { venture: Venture; next
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-4xl px-6">
           <SectionLabel num="03" accent={accent}>
-            Funktionsweise
+            {copy.how}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.flowTitle} />
           </h2>
-          <p className="mt-6 max-w-2xl leading-relaxed text-gray-400">
-            Sieben Schichten, jede baut auf der vorherigen auf. Beim Scrollen stapelt sich das
-            Modell — genau wie in der Architektur.
-          </p>
+          <p className="mt-6 max-w-2xl leading-relaxed text-gray-400">{copy.flowNote}</p>
 
           <div className="mt-16">
             {venture.flow.map((s, i) => (
@@ -206,7 +246,7 @@ export default function NuvoraLayout({ venture, next }: { venture: Venture; next
                       {s.label.split(' · ')[0]}
                     </span>
                     <span className="font-mono text-xs uppercase tracking-[0.25em] text-gray-500">
-                      Layer {i + 1} / {venture.flow.length}
+                      {copy.layerLabel} {i + 1} / {venture.flow.length}
                     </span>
                   </div>
                   <h3 className="mt-4 text-xl font-bold text-white md:text-2xl">
@@ -225,7 +265,7 @@ export default function NuvoraLayout({ venture, next }: { venture: Venture; next
         <div className="mx-auto grid max-w-6xl gap-12 px-6 md:grid-cols-2">
           <div>
             <SectionLabel num="04" accent={accent}>
-              Architecture Contract
+              {copy.contractLabel}
             </SectionLabel>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -279,7 +319,7 @@ export default function NuvoraLayout({ venture, next }: { venture: Venture; next
         </div>
       </section>
 
-      <NextFooter accent={accent} next={next} />
+      <NextFooter accent={accent} next={next} lang={lang} />
     </div>
   );
 }

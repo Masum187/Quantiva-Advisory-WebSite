@@ -11,7 +11,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown, Scale } from 'lucide-react';
 import VentureCanvas from '../VentureCanvas';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 import {
   EASE,
   ScrollProgress,
@@ -24,14 +24,83 @@ import {
   SectionLabel,
 } from './shared';
 
-const STATES = [
-  { label: 'entschieden', desc: 'Das Regelwerk greift eindeutig.', tone: 'ok' },
-  { label: 'unentschieden', desc: 'Ein Merkmal fehlt — das System stellt die Frage.', tone: 'ask' },
-  { label: 'eskaliert', desc: 'Regelkonflikt — behebbar durch Regelpflege.', tone: 'warn' },
-  { label: 'normativ unbestimmt', desc: 'Die Rechtslage selbst ist strittig — ehrlich benannt.', tone: 'hard' },
-];
+type ResultState = { label: string; desc: string; tone: string };
 
-export default function LimenLayout({ venture, next }: { venture: Venture; next: Venture }) {
+const COPY: Record<
+  Lang,
+  {
+    states: ResultState[];
+    topbarLabel: string;
+    muslinLabel: string;
+    muslinKind: string;
+    muslinDesc: string;
+    blanketLabel: string;
+    blanketKind: string;
+    blanketDesc: string;
+    heroCaption: string;
+    why: string;
+    problemSpace: string;
+    how: string;
+    statesLabel: string;
+    statesHeadline: string;
+  }
+> = {
+  de: {
+    states: [
+      { label: 'entschieden', desc: 'Das Regelwerk greift eindeutig.', tone: 'ok' },
+      { label: 'unentschieden', desc: 'Ein Merkmal fehlt — das System stellt die Frage.', tone: 'ask' },
+      { label: 'eskaliert', desc: 'Regelkonflikt — behebbar durch Regelpflege.', tone: 'warn' },
+      { label: 'normativ unbestimmt', desc: 'Die Rechtslage selbst ist strittig — ehrlich benannt.', tone: 'hard' },
+    ],
+    topbarLabel: 'limen — lat. die Schwelle',
+    muslinLabel: 'Musselintuch',
+    muslinKind: 'Textilie',
+    muslinDesc: 'Textilkennzeichnungs-Verordnung. Etikett, Faserangabe — fertig.',
+    blanketLabel: 'Schmusetuch',
+    blanketKind: 'Spielzeug',
+    blanketDesc: 'VO (EU) 2025/2509: CE, EN 71, technisches Dossier, ab 2030 Produktpass.',
+    heroCaption: 'Gleiche Fabrik · gleicher Stoff · zwei Pflichtenwelten',
+    why: 'Warum',
+    problemSpace: 'Problemraum',
+    how: 'Funktionsweise',
+    statesLabel: 'Vier Ergebniszustände',
+    statesHeadline:
+      'Ein System, das sagt, wo die Rechtslage strittig ist, ist wertvoller als eines, das rät.',
+  },
+  en: {
+    states: [
+      { label: 'decided', desc: 'The rulebook applies unambiguously.', tone: 'ok' },
+      { label: 'undecided', desc: 'A feature is missing — the system asks the question.', tone: 'ask' },
+      { label: 'escalated', desc: 'Rule conflict — fixable through rule maintenance.', tone: 'warn' },
+      { label: 'normatively indeterminate', desc: 'The legal position itself is contested — honestly named.', tone: 'hard' },
+    ],
+    topbarLabel: 'limen — Latin: the threshold',
+    muslinLabel: 'Muslin cloth',
+    muslinKind: 'Textile',
+    muslinDesc: 'Textile Labelling Regulation. Label, fibre composition — done.',
+    blanketLabel: 'Comfort blanket',
+    blanketKind: 'Toy',
+    blanketDesc: 'Regulation (EU) 2025/2509: CE, EN 71, technical file, product passport from 2030.',
+    heroCaption: 'Same factory · same fabric · two worlds of obligations',
+    why: 'Why',
+    problemSpace: 'Problem space',
+    how: 'How it works',
+    statesLabel: 'Four result states',
+    statesHeadline:
+      'A system that says where the legal position is contested is more valuable than one that guesses.',
+  },
+};
+
+export default function LimenLayout({
+  venture,
+  next,
+  lang = 'de',
+}: {
+  venture: Venture;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const accent = venture.accent;
@@ -65,7 +134,7 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
           className="pointer-events-none absolute bottom-0 left-1/2 top-0 hidden w-px origin-top md:block"
           style={{ background: `linear-gradient(${accent}00, ${accent}aa 30%, ${accent}aa 70%, ${accent}00)` }}
         />
-        <Topbar label="limen — lat. die Schwelle" />
+        <Topbar label={copy.topbarLabel} lang={lang} />
 
         <motion.div
           style={{ opacity: reduceMotion ? 1 : heroOpacity }}
@@ -108,11 +177,11 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
               transition={{ duration: 0.7, ease: EASE }}
               className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left"
             >
-              <p className="font-mono text-xs uppercase tracking-[0.25em] text-gray-500">Musselintuch</p>
-              <p className="mt-2 text-lg font-bold text-white">Textilie</p>
-              <p className="mt-2 text-sm leading-relaxed text-gray-400">
-                Textilkennzeichnungs-Verordnung. Etikett, Faserangabe — fertig.
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-gray-500">
+                {copy.muslinLabel}
               </p>
+              <p className="mt-2 text-lg font-bold text-white">{copy.muslinKind}</p>
+              <p className="mt-2 text-sm leading-relaxed text-gray-400">{copy.muslinDesc}</p>
             </motion.div>
             <motion.div
               variants={{ hidden: { opacity: 0, scale: 0.6 }, visible: { opacity: 1, scale: 1 } }}
@@ -133,12 +202,10 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
               style={{ borderColor: `${accent}44`, background: `${accent}0d` }}
             >
               <p className="font-mono text-xs uppercase tracking-[0.25em]" style={{ color: accent }}>
-                Schmusetuch
+                {copy.blanketLabel}
               </p>
-              <p className="mt-2 text-lg font-bold text-white">Spielzeug</p>
-              <p className="mt-2 text-sm leading-relaxed text-gray-400">
-                VO (EU) 2025/2509: CE, EN 71, technisches Dossier, ab 2030 Produktpass.
-              </p>
+              <p className="mt-2 text-lg font-bold text-white">{copy.blanketKind}</p>
+              <p className="mt-2 text-sm leading-relaxed text-gray-400">{copy.blanketDesc}</p>
             </motion.div>
           </motion.div>
           <motion.p
@@ -147,7 +214,7 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
             transition={{ delay: 2, duration: 0.8 }}
             className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-gray-500"
           >
-            Gleiche Fabrik · gleicher Stoff · zwei Pflichtenwelten
+            {copy.heroCaption}
           </motion.p>
         </motion.div>
 
@@ -165,7 +232,7 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-36">
         <div className="mb-10">
           <SectionLabel num="01" accent={accent}>
-            Warum
+            {copy.why}
           </SectionLabel>
         </div>
         <ScrollStatement text={venture.intro} />
@@ -175,7 +242,7 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-5xl px-6">
           <SectionLabel num="02" accent={accent}>
-            Problemraum
+            {copy.problemSpace}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.problemTitle} />
@@ -207,7 +274,7 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-4xl px-6">
           <SectionLabel num="03" accent={accent}>
-            Funktionsweise
+            {copy.how}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.flowTitle} />
@@ -254,13 +321,13 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
         />
         <div className="relative mx-auto max-w-6xl px-6">
           <SectionLabel num="04" accent={accent}>
-            Vier Ergebniszustände
+            {copy.statesLabel}
           </SectionLabel>
           <h2 className="mt-4 max-w-3xl text-[clamp(1.6rem,3.5vw,2.8rem)] font-bold tracking-tight">
-            <MaskedHeadline text="Ein System, das sagt, wo die Rechtslage strittig ist, ist wertvoller als eines, das rät." />
+            <MaskedHeadline text={copy.statesHeadline} />
           </h2>
           <div className="mt-14 grid gap-5 md:grid-cols-4">
-            {STATES.map((s, i) => (
+            {copy.states.map((s, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
@@ -302,7 +369,7 @@ export default function LimenLayout({ venture, next }: { venture: Venture; next:
         </div>
       </section>
 
-      <NextFooter accent={accent} next={next} />
+      <NextFooter accent={accent} next={next} lang={lang} />
     </div>
   );
 }

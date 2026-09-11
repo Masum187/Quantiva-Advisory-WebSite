@@ -1,492 +1,385 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { 
-  Users, 
-  Zap, 
-  Globe, 
-  Shield, 
-  TrendingUp, 
-  Heart,
-  ArrowRight,
-  CheckCircle,
-  Target,
-  Lightbulb,
-  GraduationCap,
-  Clock,
-  Smartphone,
-  Laptop,
-  Coffee
-} from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, ArrowUpRight, Check } from 'lucide-react';
 import ServiceNavigation from '../../../components/ServiceNavigation';
+import ServiceVideoBackground from '../../../components/ServiceVideoBackground';
+import {
+  EASE,
+  ScrollProgress,
+  MaskedHeadline,
+  ScrollStatement,
+  ShineButton,
+  SectionLabel,
+} from '../../../components/pages/projects/detail/shared';
 
-// Animation Components
-function SlideIn({ children, direction = 'up', delay = 0 }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number }) {
-  const variants = {
-    hidden: {
-      opacity: 0,
-      x: direction === 'left' ? -50 : direction === 'right' ? 50 : 0,
-      y: direction === 'up' ? 50 : direction === 'down' ? -50 : 0,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-    },
-  };
+const ACCENT = '#f472b6';
 
+/* ---------- Animated divider ---------- */
+function Rule({ className = '', delay = 0 }: { className?: string; delay?: number }) {
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
-      variants={variants}
-    >
-      {children}
-    </motion.div>
+    <motion.span
+      aria-hidden="true"
+      className={`block h-px origin-left bg-white/25 ${className}`}
+      initial={{ scaleX: 0 }}
+      whileInView={{ scaleX: 1 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 1.1, delay, ease: EASE }}
+    />
   );
 }
 
+/* ---------- Content (English copy) ---------- */
+
+const WORK_WORLD = [
+  {
+    title: 'Strategy & Organizational Transformation',
+    text: 'There is no one-size-fits-all New Work template. Together with you, we develop the approach that fits your organization — for people & culture, organization & processes.',
+  },
+  {
+    title: 'Productivity & Collaboration',
+    text: 'The new world of work is defined by collaboration across departmental and company boundaries. Productive collaboration requires modern ways of working and the right digital tools.',
+  },
+  {
+    title: 'Modern Workplace',
+    text: 'As the world of work changes, so do the requirements for the digital workplace. What does a modern workplace look like that fits your company and your people?',
+  },
+];
+
+const SOLUTIONS = [
+  {
+    title: 'Strategy & Transformation',
+    text: 'Development of an individual New Work concept for your company. From analyzing the current situation to step-by-step implementation.',
+    points: [
+      'Organizational analysis & goal definition',
+      'Change management & communication',
+      'Rollout strategy & success measurement',
+    ],
+  },
+  {
+    title: 'Digital Workplace',
+    text: 'Modernization of your IT infrastructure for flexible and secure workplaces. Microsoft 365, collaboration tools, and modern work environments.',
+    points: [
+      'Microsoft 365 & Teams integration',
+      'Cloud-based workplaces',
+      'Mobile device management',
+    ],
+  },
+  {
+    title: 'Collaboration & Productivity',
+    text: 'Optimizing collaboration through modern ways of working, agile processes, and digital collaboration tools.',
+    points: [
+      'Agile methods & Scrum',
+      'Project management tools',
+      'Virtual teamwork',
+    ],
+  },
+];
+
+const PRINCIPLES = [
+  {
+    title: 'Increased Productivity',
+    text: 'Flexible working hours and locations lead to higher motivation and efficiency among employees.',
+  },
+  {
+    title: 'Better Work-Life Balance',
+    text: 'Employees can balance work and private life more effectively, leading to greater satisfaction.',
+  },
+  {
+    title: 'Global Talent Pool',
+    text: 'Access to international talent through remote-friendly working models.',
+  },
+  {
+    title: 'Future-Proofing',
+    text: 'Adapting early to changing worlds of work makes your company fit for the future.',
+  },
+];
+
 export default function NewWorkPage() {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white">
+      <ScrollProgress accent={ACCENT} />
+
       {/* Service Navigation */}
       <ServiceNavigation lang="en" serviceTitle="New Work" serviceId="enablement" />
 
-      {/* Hero Section */}
-      <section className="relative py-24 lg:py-32">
-        {/* Background Video */}
-        <div className="absolute inset-0 z-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-          >
-            <source src="https://res.cloudinary.com/dbrisux8i/video/upload/v1761924430/video_f85758c6_1761914591442_yszhud.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/40"></div>
-        </div>
+      {/* Fixed Background Video */}
+      <ServiceVideoBackground
+        videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1761924430/video_f85758c6_1761914591442_yszhud.mp4"]}
+        overlayClassName="bg-black/60"
+      />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <SlideIn direction="up">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-teal-500/20 to-purple-500/20 border border-teal-500/30 mb-8">
-                <Users className="w-6 h-6 text-teal-400" />
-                <span className="text-white font-semibold">New Work</span>
-              </div>
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-                Unlock Agility and <span className="bg-gradient-to-r from-teal-400 to-purple-400 bg-clip-text text-transparent">Collaboration</span>
-              </h1>
-              <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed mb-8">
-                We unlock agility and collaboration in your company, making every single employee more productive. Through the optimal digital workplace and a work culture that promotes collaboration and networking.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <a
-                  href="#contact"
-                  className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-teal-500 to-purple-500 text-white text-lg font-semibold rounded-xl hover:shadow-lg hover:shadow-teal-500/50 transition-all duration-300"
-                >
-                  Get Consulting Now
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
-                <a
-                  href="#solutions"
-                  className="inline-flex items-center px-8 py-4 bg-white/5 backdrop-blur-sm border-2 border-teal-500/30 text-white text-lg font-semibold rounded-xl hover:bg-teal-500/10 transition-all duration-300"
-                >
-                  Discover Solutions
-                </a>
-              </div>
-            </SlideIn>
-          </div>
-        </div>
-      </section>
+      <div className="relative z-10">
+        {/* ---------- Hero: centered, airy, editorial ---------- */}
+        <section className="relative flex min-h-[88vh] items-center justify-center py-28">
+          <div className="mx-auto max-w-4xl px-6 text-center">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.2, ease: EASE }}
+              className="font-mono text-xs uppercase tracking-[0.5em] text-gray-400"
+            >
+              New <span style={{ color: ACCENT }}>Work</span>
+            </motion.p>
 
-      {/* Main Description Section */}
-      <section className="py-20 bg-black/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <SlideIn direction="left">
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                    The New <span className="bg-gradient-to-r from-teal-400 to-purple-400 bg-clip-text text-transparent">Workplace</span>
-                  </h2>
-                  <p className="text-lg text-gray-300 leading-relaxed mb-8">
-                    New Work is more than just home office or flexible working hours. It&apos;s about a fundamental transformation of work methods that enables collaboration across departmental and company boundaries and makes every employee more productive.
-                  </p>
-                </div>
+            <Rule className="mx-auto mt-8 w-16" delay={0.4} />
 
-                <div className="space-y-6">
-                  <motion.div 
-                    className="flex items-start gap-4 group/item cursor-pointer"
-                    whileHover={{ x: 8 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <motion.div 
-                      className="relative flex items-center justify-center flex-shrink-0"
-                      whileHover={{ scale: 1.15, rotate: [0, -10, 10, -10, 0] }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      {/* 3D Background Effect */}
-                      <div className="absolute inset-0 w-20 h-20 rounded-full bg-gradient-to-br from-teal-500/40 to-teal-600/30 border-2 border-teal-400/60 transform group-hover/item:translate-y-[-4px] group-hover/item:translate-x-[4px] transition-transform duration-300" />
-                      {/* Glow Effect */}
-                      <div className="absolute inset-0 w-20 h-20 rounded-full bg-teal-400/20 blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" />
-                      {/* Face Image Container */}
-                      <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-teal-400/40 group-hover/item:border-teal-400/80 group-hover/item:shadow-[0_0_30px_rgba(20,184,166,0.4)] transition-all duration-300">
-                        <Image
-                          src="https://res.cloudinary.com/dbrisux8i/image/upload/c_thumb,g_west,w_200,h_200,r_max/v1760221494/generated-image_w8egwd.jpg"
-                          alt="Strategy Expert"
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    </motion.div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2 group-hover/item:text-teal-300 transition-colors duration-300">Strategy & Organizational Transformation</h3>
-                      <p className="text-gray-300 leading-relaxed">There is no New Work template that fits every company. We develop the right approach for you regarding people & culture, organization & processes.</p>
-                    </div>
-                  </motion.div>
+            <h1 className="mt-10 text-[clamp(2.6rem,6.5vw,5rem)] font-extralight leading-[1.08] tracking-wide">
+              <MaskedHeadline text="Unleashing agility and collaboration" />
+            </h1>
 
-                  <motion.div 
-                    className="flex items-start gap-4 group/item cursor-pointer"
-                    whileHover={{ x: 8 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <motion.div 
-                      className="relative flex items-center justify-center flex-shrink-0"
-                      whileHover={{ scale: 1.15, rotate: [0, 5, -5, 5, 0] }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      {/* 3D Background Effect */}
-                      <div className="absolute inset-0 w-20 h-20 rounded-full bg-gradient-to-br from-purple-500/40 to-purple-600/30 border-2 border-purple-400/60 transform group-hover/item:translate-y-[-4px] group-hover/item:translate-x-[4px] transition-transform duration-300" />
-                      {/* Glow Effect */}
-                      <div className="absolute inset-0 w-20 h-20 rounded-full bg-purple-400/20 blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" />
-                      {/* Face Image Container */}
-                      <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-purple-400/40 group-hover/item:border-purple-400/80 group-hover/item:shadow-[0_0_30px_rgba(192,132,252,0.4)] transition-all duration-300">
-                        <Image
-                          src="https://res.cloudinary.com/dbrisux8i/image/upload/c_thumb,g_face,w_200,h_200,r_max/v1760221494/generated-image_w8egwd.jpg"
-                          alt="Productivity Expert"
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    </motion.div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2 group-hover/item:text-purple-300 transition-colors duration-300">Productivity & Collaboration</h3>
-                      <p className="text-gray-300 leading-relaxed">The new world of work is characterized by collaboration across departmental and company boundaries. Productive collaboration requires modern work methods and the right digital tools.</p>
-                    </div>
-                  </motion.div>
+            <Rule className="mx-auto mt-10 w-32" delay={0.7} />
 
-                  <motion.div 
-                    className="flex items-start gap-4 group/item cursor-pointer"
-                    whileHover={{ x: 8 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <motion.div 
-                      className="relative flex items-center justify-center flex-shrink-0"
-                      whileHover={{ scale: 1.15, rotate: [0, -8, 8, -8, 0] }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      {/* 3D Background Effect */}
-                      <div className="absolute inset-0 w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/40 to-blue-600/30 border-2 border-blue-400/60 transform group-hover/item:translate-y-[-4px] group-hover/item:translate-x-[4px] transition-transform duration-300" />
-                      {/* Glow Effect */}
-                      <div className="absolute inset-0 w-20 h-20 rounded-full bg-blue-400/20 blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" />
-                      {/* Face Image Container */}
-                      <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-blue-400/40 group-hover/item:border-blue-400/80 group-hover/item:shadow-[0_0_30px_rgba(96,165,250,0.4)] transition-all duration-300">
-                        <Image
-                          src="https://res.cloudinary.com/dbrisux8i/image/upload/c_thumb,g_east,w_200,h_200,r_max/v1760221494/generated-image_w8egwd.jpg"
-                          alt="Modern Workplace Expert"
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    </motion.div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2 group-hover/item:text-blue-300 transition-colors duration-300">Modern Workplace</h3>
-                      <p className="text-gray-300 leading-relaxed">As the world of work changes, so do the requirements for the digital workplace. What does a Modern Workplace look like that fits your company and employees?</p>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-            </SlideIn>
+            <motion.p
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.9, ease: EASE }}
+              className="mx-auto mt-10 max-w-2xl text-lg font-light leading-relaxed tracking-wide text-gray-300"
+            >
+              We unleash agility and collaboration in your company, making every single
+              employee more productive. Through the ideal digital workplace, and a way of
+              working and culture that fosters collaboration and connection.
+            </motion.p>
 
-            <SlideIn direction="right">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/20 to-purple-500/20 rounded-3xl blur-3xl"></div>
-                <div className="relative rounded-3xl overflow-hidden">
-                  <Image
-                    src="https://res.cloudinary.com/dbrisux8i/image/upload/v1760221494/generated-image_w8egwd.jpg"
-                    alt="New Work Team Collaboration"
-                    width={600}
-                    height={600}
-                    className="w-full h-[600px] object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                </div>
-              </div>
-            </SlideIn>
-          </div>
-        </div>
-      </section>
-
-      {/* Solutions Section */}
-      <section id="solutions" className="py-20 bg-black/30 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SlideIn direction="up">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Our <span className="bg-gradient-to-r from-teal-400 to-purple-400 bg-clip-text text-transparent">New Work</span> Solutions
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Tailored approaches for transforming your workplace
-              </p>
-            </div>
-          </SlideIn>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Strategy & Transformation */}
-            <SlideIn direction="up" delay={0.1}>
-              <div className="group relative h-full p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-white/30 hover:border-white/50 shadow-2xl transition-all duration-500">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/30 to-teal-600/20 border border-teal-400/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Target className="w-8 h-8 text-teal-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Strategy & Transformation</h3>
-                <p className="text-gray-100 font-medium leading-relaxed mb-6">
-                  Development of an individual New Work concept for your company. From analysis of the current situation to step-by-step implementation.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-teal-400 flex-shrink-0" />
-                    Organizational Analysis & Goal Definition
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-teal-400 flex-shrink-0" />
-                    Change Management & Communication
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-teal-400 flex-shrink-0" />
-                    Rollout Strategy & Success Measurement
-                  </li>
-                </ul>
-              </div>
-            </SlideIn>
-
-            {/* Digital Workplace */}
-            <SlideIn direction="up" delay={0.2}>
-              <div className="group relative h-full p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-white/30 hover:border-white/50 shadow-2xl transition-all duration-500">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-purple-600/20 border border-purple-400/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Laptop className="w-8 h-8 text-purple-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Digital Workplace</h3>
-                <p className="text-gray-100 font-medium leading-relaxed mb-6">
-                  Modernization of your IT infrastructure for flexible and secure workplaces. Microsoft 365, collaboration tools and modern work environments.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-purple-400 flex-shrink-0" />
-                    Microsoft 365 & Teams Integration
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-purple-400 flex-shrink-0" />
-                    Cloud-based Workplaces
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-purple-400 flex-shrink-0" />
-                    Mobile Device Management
-                  </li>
-                </ul>
-              </div>
-            </SlideIn>
-
-            {/* Collaboration & Productivity */}
-            <SlideIn direction="up" delay={0.3}>
-              <div className="group relative h-full p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-white/30 hover:border-white/50 shadow-2xl transition-all duration-500">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/30 to-blue-600/20 border border-blue-400/40 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="w-8 h-8 text-blue-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Collaboration & Productivity</h3>
-                <p className="text-gray-100 font-medium leading-relaxed mb-6">
-                  Optimization of collaboration through modern work methods, agile processes and digital collaboration tools.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                    Agile Work Methods & Scrum
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                    Project Management Tools
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-100 font-medium">
-                    <CheckCircle className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                    Virtual Teamwork
-                  </li>
-                </ul>
-              </div>
-            </SlideIn>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 bg-black/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SlideIn direction="up">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Why <span className="bg-gradient-to-r from-teal-400 to-purple-400 bg-clip-text text-transparent">New Work</span>?
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                The benefits of modern work methods for your company
-              </p>
-            </div>
-          </SlideIn>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <SlideIn direction="up" delay={0.1}>
-              <div className="text-center group">
-                <motion.div 
-                  className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-teal-500/40 to-teal-600/30 border-2 border-teal-400/60 flex items-center justify-center shadow-lg shadow-teal-500/20"
-                  whileHover={{ 
-                    scale: 1.15,
-                    boxShadow: "0 20px 40px rgba(20, 184, 166, 0.4)"
-                  }}
-                  animate={{
-                    y: [0, -8, 0],
-                  }}
-                  transition={{
-                    y: {
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }
-                  }}
-                >
-                  <TrendingUp className="w-10 h-10 text-teal-300 group-hover:text-teal-200 transition-colors duration-300" />
-                </motion.div>
-                <h3 className="text-xl font-bold text-white mb-3">Increased Productivity</h3>
-                <p className="text-gray-300">Flexible working hours and locations lead to higher motivation and efficiency of employees.</p>
-              </div>
-            </SlideIn>
-
-            <SlideIn direction="up" delay={0.2}>
-              <div className="text-center group">
-                <motion.div 
-                  className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500/40 to-purple-600/30 border-2 border-purple-400/60 flex items-center justify-center shadow-lg shadow-purple-500/20"
-                  whileHover={{ 
-                    scale: 1.15,
-                    boxShadow: "0 20px 40px rgba(192, 132, 252, 0.4)"
-                  }}
-                  animate={{
-                    y: [0, -8, 0],
-                  }}
-                  transition={{
-                    y: {
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.5
-                    }
-                  }}
-                >
-                  <Heart className="w-10 h-10 text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
-                </motion.div>
-                <h3 className="text-xl font-bold text-white mb-3">Better Work-Life Balance</h3>
-                <p className="text-gray-300">Employees can better balance work and private life, leading to higher satisfaction.</p>
-              </div>
-            </SlideIn>
-
-            <SlideIn direction="up" delay={0.3}>
-              <div className="text-center group">
-                <motion.div 
-                  className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500/40 to-blue-600/30 border-2 border-blue-400/60 flex items-center justify-center shadow-lg shadow-blue-500/20"
-                  whileHover={{ 
-                    scale: 1.15,
-                    boxShadow: "0 20px 40px rgba(96, 165, 250, 0.4)"
-                  }}
-                  animate={{
-                    y: [0, -8, 0],
-                  }}
-                  transition={{
-                    y: {
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1
-                    }
-                  }}
-                >
-                  <Globe className="w-10 h-10 text-blue-300 group-hover:text-blue-200 transition-colors duration-300" />
-                </motion.div>
-                <h3 className="text-xl font-bold text-white mb-3">Global Talent Pool</h3>
-                <p className="text-gray-300">Access to international talents through remote-friendly work models.</p>
-              </div>
-            </SlideIn>
-
-            <SlideIn direction="up" delay={0.4}>
-              <div className="text-center group">
-                <motion.div 
-                  className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-500/40 to-green-600/30 border-2 border-green-400/60 flex items-center justify-center shadow-lg shadow-green-500/20"
-                  whileHover={{ 
-                    scale: 1.15,
-                    boxShadow: "0 20px 40px rgba(74, 222, 128, 0.4)"
-                  }}
-                  animate={{
-                    y: [0, -8, 0],
-                  }}
-                  transition={{
-                    y: {
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1.5
-                    }
-                  }}
-                >
-                  <Shield className="w-10 h-10 text-green-300 group-hover:text-green-200 transition-colors duration-300" />
-                </motion.div>
-                <h3 className="text-xl font-bold text-white mb-3">Future-Proof</h3>
-                <p className="text-gray-300">Early adaptation to changing work environments makes your company future-ready.</p>
-              </div>
-            </SlideIn>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section id="contact" className="py-20 bg-gradient-to-br from-teal-900/20 via-black to-purple-900/20 border-t border-white/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <SlideIn direction="up">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready for <span className="bg-gradient-to-r from-teal-400 to-purple-400 bg-clip-text text-transparent">New Work</span>?
-            </h2>
-            <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">
-              Let&apos;s transform your workplace together and unlock the full potential of your teams.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.9, delay: 1.2, ease: EASE }}
+              className="mt-12 flex flex-col items-center justify-center gap-5 sm:flex-row"
+            >
               <a
-                href="mailto:info@quantiva-advisory.com"
-                className="px-10 py-5 bg-gradient-to-r from-teal-500 to-purple-500 text-white text-lg font-semibold rounded-xl hover:shadow-lg hover:shadow-teal-500/50 transition-all duration-300"
+                href="#contact"
+                className="inline-flex items-center gap-2 border-b pb-1 text-sm font-light uppercase tracking-[0.25em] transition-colors hover:text-white"
+                style={{ borderColor: ACCENT, color: `${ACCENT}dd` }}
               >
-                Get Consulting Now
+                Get Advice Now
+                <ArrowRight className="h-4 w-4" />
               </a>
               <a
+                href="#solutions"
+                className="inline-flex items-center gap-2 border-b border-white/30 pb-1 text-sm font-light uppercase tracking-[0.25em] text-gray-300 transition-colors hover:border-white hover:text-white"
+              >
+                Explore Solutions
+              </a>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ---------- Statement ---------- */}
+        <section className="relative py-24">
+          <div className="mx-auto max-w-3xl px-6">
+            <ScrollStatement
+              text="New Work is more than home office or flexible hours. It is a fundamental transformation of the way we work — enabling collaboration across departmental and company boundaries and making every employee more productive."
+              className="text-center text-[clamp(1.4rem,3vw,2.2rem)] font-extralight leading-relaxed tracking-wide"
+            />
+          </div>
+        </section>
+
+        {/* ---------- The new world of work: numbered editorial list ---------- */}
+        <section className="relative py-24">
+          <div className="mx-auto max-w-5xl px-6">
+            <SectionLabel num="01" accent={ACCENT}>
+              The New World of Work
+            </SectionLabel>
+            <h2 className="mt-6 text-4xl font-extralight tracking-wide md:text-5xl">
+              <MaskedHeadline text="The new world of work" />
+            </h2>
+
+            <div className="mt-16">
+              {WORK_WORLD.map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.8, delay: index * 0.08, ease: EASE }}
+                  className="group grid gap-6 border-t border-white/15 py-12 md:grid-cols-[80px_1fr_1.2fr] md:gap-10"
+                >
+                  <span
+                    className="font-mono text-sm tracking-widest transition-colors duration-300"
+                    style={{ color: `${ACCENT}99` }}
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="text-2xl font-light tracking-wide transition-colors duration-300 group-hover:text-white md:text-3xl">
+                    {item.title}
+                  </h3>
+                  <p className="font-light leading-relaxed text-gray-400 transition-colors duration-300 group-hover:text-gray-300">
+                    {item.text}
+                  </p>
+                </motion.div>
+              ))}
+              <Rule className="w-full" />
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Solutions: large alternating editorial rows ---------- */}
+        <section id="solutions" className="relative py-28">
+          <div className="mx-auto max-w-6xl px-6">
+            <SectionLabel num="02" accent={ACCENT}>
+              New Work Solutions
+            </SectionLabel>
+            <h2 className="mt-6 max-w-3xl text-4xl font-extralight tracking-wide md:text-5xl">
+              <MaskedHeadline text="Our New Work Solutions" />
+            </h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
+              className="mt-5 max-w-2xl text-lg font-light tracking-wide text-gray-400"
+            >
+              Tailored approaches for transforming your world of work
+            </motion.p>
+
+            <div className="mt-20">
+              {SOLUTIONS.map((solution, index) => {
+                const flipped = index % 2 === 1;
+                return (
+                  <motion.article
+                    key={solution.title}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: '-60px' }}
+                    transition={{ duration: 0.9, ease: EASE }}
+                    className="grid items-center gap-10 border-t border-white/15 py-20 md:grid-cols-2 md:gap-16"
+                  >
+                    {/* Text */}
+                    <div className={flipped ? 'md:order-2' : ''}>
+                      <h3 className="text-3xl font-extralight tracking-wide md:text-4xl">
+                        {solution.title}
+                      </h3>
+                      <p className="mt-6 font-light leading-relaxed text-gray-300">
+                        {solution.text}
+                      </p>
+                      <ul className="mt-8 space-y-4">
+                        {solution.points.map((point) => (
+                          <li
+                            key={point}
+                            className="flex items-center gap-4 font-light tracking-wide text-gray-300"
+                          >
+                            <Check className="h-4 w-4 shrink-0" style={{ color: ACCENT }} />
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Large numeral */}
+                    <div
+                      className={`flex items-center justify-center ${
+                        flipped ? 'md:order-1 md:justify-start' : 'md:justify-end'
+                      }`}
+                    >
+                      <motion.span
+                        aria-hidden="true"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
+                        className="select-none text-[clamp(8rem,20vw,15rem)] font-extralight leading-none"
+                        style={{
+                          WebkitTextStroke: `1px ${ACCENT}66`,
+                          color: 'transparent',
+                        }}
+                      >
+                        {String(index + 1).padStart(2, '0')}
+                      </motion.span>
+                    </div>
+                  </motion.article>
+                );
+              })}
+              <Rule className="w-full" />
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Principles: large pull quotes ---------- */}
+        <section className="relative py-28">
+          <div className="mx-auto max-w-5xl px-6">
+            <SectionLabel num="03" accent={ACCENT}>
+              Why New Work?
+            </SectionLabel>
+            <h2 className="mt-6 text-4xl font-extralight tracking-wide md:text-5xl">
+              <MaskedHeadline text="Why New Work?" />
+            </h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
+              className="mt-5 max-w-2xl text-lg font-light tracking-wide text-gray-400"
+            >
+              The benefits of a modern way of working for your company
+            </motion.p>
+
+            <div className="mt-24 space-y-28">
+              {PRINCIPLES.map((principle, index) => {
+                const right = index % 2 === 1;
+                return (
+                  <motion.blockquote
+                    key={principle.title}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: '-80px' }}
+                    transition={{ duration: 1, ease: EASE }}
+                    className={`max-w-3xl ${right ? 'ml-auto text-right' : 'text-left'}`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="mb-4 block font-serif text-6xl leading-none"
+                      style={{ color: `${ACCENT}77` }}
+                    >
+                      &ldquo;
+                    </span>
+                    <p className="text-[clamp(1.6rem,3.6vw,2.6rem)] font-extralight leading-snug tracking-wide text-white">
+                      {principle.title}
+                    </p>
+                    <p className="mt-6 max-w-xl font-light leading-relaxed text-gray-400 tracking-wide inline-block">
+                      {principle.text}
+                    </p>
+                  </motion.blockquote>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- CTA ---------- */}
+        <section id="contact" className="relative border-t border-white/10 py-28">
+          <div className="mx-auto max-w-3xl px-6 text-center">
+            <h2 className="text-4xl font-extralight tracking-wide md:text-5xl">
+              <MaskedHeadline text="Ready for New Work?" />
+            </h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
+              className="mx-auto mt-8 max-w-2xl text-lg font-light leading-relaxed tracking-wide text-gray-300"
+            >
+              Let&apos;s transform your world of work together and unlock the full potential
+              of your teams.
+            </motion.p>
+            <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
+              <ShineButton href="mailto:info@quantiva-advisory.com" accent={ACCENT}>
+                Get Advice Now
+                <ArrowUpRight className="h-4 w-4" />
+              </ShineButton>
+              <a
                 href="tel:+49123456789"
-                className="px-10 py-5 bg-white/5 backdrop-blur-sm border-2 border-teal-500/30 text-white text-lg font-semibold rounded-xl hover:bg-teal-500/10 transition-all duration-300"
+                className="inline-flex items-center gap-2 border-b border-white/30 pb-1 text-sm font-light uppercase tracking-[0.25em] text-gray-300 transition-colors hover:border-white hover:text-white"
               >
                 Free Consultation Call
               </a>
             </div>
-          </SlideIn>
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown, Flag, AlertTriangle, FileWarning, TimerReset } from 'lucide-react';
 import VentureCanvas from '../VentureCanvas';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 import {
   EASE,
   ScrollProgress,
@@ -25,14 +25,63 @@ import {
   SectionLabel,
 } from './shared';
 
-const FLAGS = [
-  { icon: Flag, label: 'Off-Contract-Einsatz', level: 'HOCH' },
-  { icon: AlertTriangle, label: 'ANÜ-Signal erkannt', level: 'PRÜFEN' },
-  { icon: FileWarning, label: 'Dokument unvollständig', level: 'MITTEL' },
-  { icon: TimerReset, label: 'Rahmenvertrag läuft aus', level: '90 TAGE' },
-];
+type FlagItem = { icon: typeof Flag; label: string; level: string };
 
-export default function ProcuveraLayout({ venture, next }: { venture: Venture; next: Venture }) {
+const COPY: Record<
+  Lang,
+  {
+    flags: FlagItem[];
+    topbarLabel: string;
+    riskBoard: string;
+    flagsCaption: string;
+    why: string;
+    problemSpace: string;
+    how: string;
+    principles: string;
+  }
+> = {
+  de: {
+    flags: [
+      { icon: Flag, label: 'Off-Contract-Einsatz', level: 'HOCH' },
+      { icon: AlertTriangle, label: 'ANÜ-Signal erkannt', level: 'PRÜFEN' },
+      { icon: FileWarning, label: 'Dokument unvollständig', level: 'MITTEL' },
+      { icon: TimerReset, label: 'Rahmenvertrag läuft aus', level: '90 TAGE' },
+    ],
+    topbarLabel: 'Governance im Einsatzmoment',
+    riskBoard: 'Live-Risikoboard',
+    flagsCaption: 'Flaggt Risiko — urteilt nicht',
+    why: 'Warum',
+    problemSpace: 'Problemraum',
+    how: 'Funktionsweise',
+    principles: 'Prinzipien',
+  },
+  en: {
+    flags: [
+      { icon: Flag, label: 'Off-contract engagement', level: 'HIGH' },
+      { icon: AlertTriangle, label: 'Labor-leasing signal detected', level: 'REVIEW' },
+      { icon: FileWarning, label: 'Document incomplete', level: 'MEDIUM' },
+      { icon: TimerReset, label: 'Framework agreement expiring', level: '90 DAYS' },
+    ],
+    topbarLabel: 'Governance at the moment of deployment',
+    riskBoard: 'Live risk board',
+    flagsCaption: 'Flags risk — passes no judgment',
+    why: 'Why',
+    problemSpace: 'Problem space',
+    how: 'How it works',
+    principles: 'Principles',
+  },
+};
+
+export default function ProcuveraLayout({
+  venture,
+  next,
+  lang = 'de',
+}: {
+  venture: Venture;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const accent = venture.accent;
@@ -58,7 +107,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
             background: `radial-gradient(75% 65% at 60% 45%, transparent 0%, #080a12 100%)`,
           }}
         />
-        <Topbar label="Governance im Einsatzmoment" />
+        <Topbar label={copy.topbarLabel} lang={lang} />
 
         <motion.div
           style={{ opacity: reduceMotion ? 1 : heroOpacity }}
@@ -111,7 +160,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
               className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.3em] text-gray-500"
             >
-              <span>Live-Risikoboard</span>
+              <span>{copy.riskBoard}</span>
               <motion.span
                 animate={reduceMotion ? undefined : { opacity: [1, 0.3, 1] }}
                 transition={{ duration: 1.6, repeat: Infinity }}
@@ -120,7 +169,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
                 ● SCAN
               </motion.span>
             </motion.p>
-            {FLAGS.map((f, i) => {
+            {copy.flags.map((f, i) => {
               const Icon = f.icon;
               return (
                 <motion.div
@@ -154,7 +203,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
               className="pt-1 text-center font-mono text-xs uppercase tracking-[0.25em] text-gray-500"
             >
-              Flaggt Risiko — urteilt nicht
+              {copy.flagsCaption}
             </motion.p>
           </motion.div>
         </motion.div>
@@ -173,7 +222,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-36">
         <div className="mb-10">
           <SectionLabel num="01" accent={accent}>
-            Warum
+            {copy.why}
           </SectionLabel>
         </div>
         <ScrollStatement text={venture.intro} />
@@ -185,7 +234,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
       <section className="py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <SectionLabel num="02" accent={accent}>
-            Problemraum
+            {copy.problemSpace}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.problemTitle} />
@@ -228,7 +277,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
         />
         <div className="relative mx-auto max-w-7xl px-6">
           <SectionLabel num="03" accent={accent}>
-            Funktionsweise
+            {copy.how}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.flowTitle} />
@@ -272,7 +321,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <SectionLabel num="04" accent={accent}>
-            Prinzipien
+            {copy.principles}
           </SectionLabel>
           <div className="mt-12 grid gap-5 md:grid-cols-2">
             {venture.principles.map((p, i) => (
@@ -292,7 +341,7 @@ export default function ProcuveraLayout({ venture, next }: { venture: Venture; n
         </div>
       </section>
 
-      <NextFooter accent={accent} next={next} />
+      <NextFooter accent={accent} next={next} lang={lang} />
     </div>
   );
 }

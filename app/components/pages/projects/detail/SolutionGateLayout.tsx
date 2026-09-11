@@ -10,7 +10,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowRight } from 'lucide-react';
 import VentureCanvas from '../VentureCanvas';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 import {
   EASE,
   ScrollProgress,
@@ -28,7 +28,36 @@ import {
   AccentOrbs,
 } from './shared';
 
-export default function SolutionGateLayout({ venture, next }: { venture: Venture; next: Venture }) {
+const COPY: Record<
+  Lang,
+  { why: string; problemSpace: string; how: string; principles: string; scrollHint: string }
+> = {
+  de: {
+    why: 'Warum',
+    problemSpace: 'Problemraum',
+    how: 'Funktionsweise',
+    principles: 'Prinzipien',
+    scrollHint: 'Scrollen, um die Pipeline zu durchlaufen',
+  },
+  en: {
+    why: 'Why',
+    problemSpace: 'Problem space',
+    how: 'How it works',
+    principles: 'Principles',
+    scrollHint: 'Scroll to move through the pipeline',
+  },
+};
+
+export default function SolutionGateLayout({
+  venture,
+  next,
+  lang = 'de',
+}: {
+  venture: Venture;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const pipeRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
@@ -66,7 +95,7 @@ export default function SolutionGateLayout({ venture, next }: { venture: Venture
           />
         </motion.div>
         <AccentOrbs accent={accent} />
-        <Topbar />
+        <Topbar lang={lang} />
         <motion.div
           style={{ opacity: reduceMotion ? 1 : heroOpacity, y: reduceMotion ? 0 : heroY }}
           className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 text-center"
@@ -125,7 +154,7 @@ export default function SolutionGateLayout({ venture, next }: { venture: Venture
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-40">
         <div className="mb-10">
           <SectionLabel num="01" accent={accent}>
-            Warum
+            {copy.why}
           </SectionLabel>
         </div>
         <ScrollStatement text={venture.intro} />
@@ -137,7 +166,7 @@ export default function SolutionGateLayout({ venture, next }: { venture: Venture
       <section className="py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <SectionLabel num="02" accent={accent}>
-            Problemraum
+            {copy.problemSpace}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.problemTitle} />
@@ -172,7 +201,7 @@ export default function SolutionGateLayout({ venture, next }: { venture: Venture
         <div className="sticky top-0 flex h-[100svh] flex-col justify-center overflow-hidden">
           <div className="mx-auto w-full max-w-6xl px-6">
             <SectionLabel num="03" accent={accent}>
-              Funktionsweise
+              {copy.how}
             </SectionLabel>
             <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
               <MaskedHeadline text={venture.flowTitle} />
@@ -213,7 +242,7 @@ export default function SolutionGateLayout({ venture, next }: { venture: Venture
             </motion.div>
           </div>
           <p className="mt-10 text-center font-mono text-xs uppercase tracking-[0.3em] text-gray-600">
-            Scrollen, um die Pipeline zu durchlaufen
+            {copy.scrollHint}
           </p>
         </div>
       </section>
@@ -222,7 +251,7 @@ export default function SolutionGateLayout({ venture, next }: { venture: Venture
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <SectionLabel num="04" accent={accent}>
-            Prinzipien
+            {copy.principles}
           </SectionLabel>
           <div className="mt-12 divide-y divide-white/10 border-y border-white/10">
             {venture.principles.map((p, i) => (
@@ -254,7 +283,7 @@ export default function SolutionGateLayout({ venture, next }: { venture: Venture
         </div>
       </section>
 
-      <NextFooter accent={accent} next={next} />
+      <NextFooter accent={accent} next={next} lang={lang} />
     </div>
   );
 }

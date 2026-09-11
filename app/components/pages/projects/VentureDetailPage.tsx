@@ -14,7 +14,7 @@
  */
 
 import React from 'react';
-import type { Venture } from '../../../lib/data/projects';
+import type { Venture, Lang } from '../../../lib/data/projects';
 import SolutionGateLayout from './detail/SolutionGateLayout';
 import ShiftGateLayout from './detail/ShiftGateLayout';
 import LumenaLayout from './detail/LumenaLayout';
@@ -24,7 +24,10 @@ import VeyaLayout from './detail/VeyaLayout';
 import NuvoraLayout from './detail/NuvoraLayout';
 import WeftlineLayout from './detail/WeftlineLayout';
 
-const LAYOUTS: Record<string, React.ComponentType<{ venture: Venture; next: Venture }>> = {
+const LAYOUTS: Record<
+  string,
+  React.ComponentType<{ venture: Venture; next: Venture; lang?: Lang }>
+> = {
   solutiongate: SolutionGateLayout,
   shiftgate: ShiftGateLayout,
   lumena: LumenaLayout,
@@ -38,10 +41,12 @@ const LAYOUTS: Record<string, React.ComponentType<{ venture: Venture; next: Vent
 export default function VentureDetailPage({
   venture,
   next,
+  lang = 'de',
 }: {
   venture: Venture;
   next: Venture;
+  lang?: Lang;
 }) {
   const Layout = LAYOUTS[venture.slug] ?? SolutionGateLayout;
-  return <Layout venture={venture} next={next} />;
+  return <Layout venture={venture} next={next} lang={lang} />;
 }

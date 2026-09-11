@@ -11,7 +11,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown, CheckCircle2, XCircle } from 'lucide-react';
 import VentureCanvas from '../VentureCanvas';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 import {
   EASE,
   ScrollProgress,
@@ -27,7 +27,80 @@ import {
 
 const PACKS = ['O2C', 'P2P', 'R2R', 'Plan-to-Produce', 'Warehouse-to-Ship', 'Hire-to-Retire', 'Service-to-Cash'];
 
-export default function WeftlineLayout({ venture, next }: { venture: Venture; next: Venture }) {
+type StatusRow = { label: string; status: string };
+
+const COPY: Record<
+  Lang,
+  {
+    heroEyebrow: string;
+    why: string;
+    problemSpace: string;
+    how: string;
+    principles: string;
+    reportedTitle: string;
+    reportedRows: StatusRow[];
+    actualTitle: string;
+    actualRows: StatusRow[];
+    noErrorNote: string;
+    packsLabel: string;
+  }
+> = {
+  de: {
+    heroEyebrow: 'Business Flow Assurance',
+    why: 'Warum',
+    problemSpace: 'Problemraum',
+    how: 'Funktionsweise',
+    principles: 'Prinzipien',
+    reportedTitle: 'Was die Systeme melden',
+    reportedRows: [
+      { label: 'ERP · IDoc verbucht', status: '✓ OK' },
+      { label: 'Middleware · Nachricht zugestellt', status: '✓ OK' },
+      { label: 'WMS · Auftrag angelegt', status: '✓ OK' },
+      { label: 'Monitoring · keine Alerts', status: '✓ OK' },
+    ],
+    actualTitle: 'Was tatsächlich passiert ist',
+    actualRows: [
+      { label: 'Lieferung · nicht avisiert', status: '✗ FEHLT' },
+      { label: 'Rechnung · hängt in Klärung', status: '✗ OFFEN' },
+      { label: 'Kundenauftrag · Folgebeleg fehlt', status: '✗ STILL' },
+    ],
+    noErrorNote: 'Kein System hat einen Fehler gemeldet.',
+    packsLabel: 'Process Packs:',
+  },
+  en: {
+    heroEyebrow: 'Business Flow Assurance',
+    why: 'Why',
+    problemSpace: 'Problem space',
+    how: 'How it works',
+    principles: 'Principles',
+    reportedTitle: 'What the systems report',
+    reportedRows: [
+      { label: 'ERP · IDoc posted', status: '✓ OK' },
+      { label: 'Middleware · message delivered', status: '✓ OK' },
+      { label: 'WMS · order created', status: '✓ OK' },
+      { label: 'Monitoring · no alerts', status: '✓ OK' },
+    ],
+    actualTitle: 'What actually happened',
+    actualRows: [
+      { label: 'Delivery · not advised', status: '✗ MISSING' },
+      { label: 'Invoice · stuck in clarification', status: '✗ OPEN' },
+      { label: 'Sales order · follow-on document missing', status: '✗ SILENT' },
+    ],
+    noErrorNote: 'No system reported an error.',
+    packsLabel: 'Process Packs:',
+  },
+};
+
+export default function WeftlineLayout({
+  venture,
+  next,
+  lang = 'de',
+}: {
+  venture: Venture;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const accent = venture.accent;
@@ -54,7 +127,7 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
             background: `linear-gradient(180deg, #04101fcc 0%, transparent 35%, transparent 55%, #04101f 100%)`,
           }}
         />
-        <Topbar label={venture.category} />
+        <Topbar label={venture.category} lang={lang} />
 
         {/* Logo-Karte oben rechts */}
         <motion.div
@@ -82,7 +155,7 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
             className="font-mono text-xs uppercase tracking-[0.35em]"
             style={{ color: accent }}
           >
-            Business Flow Assurance
+            {copy.heroEyebrow}
           </motion.p>
           <h1 className="mt-4 text-[clamp(3.4rem,12vw,11rem)] font-bold uppercase leading-[0.85] tracking-tight">
             <MaskedHeadline text="Weft" />
@@ -114,7 +187,7 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-36">
         <div className="mb-10">
           <SectionLabel num="01" accent={accent}>
-            Warum
+            {copy.why}
           </SectionLabel>
         </div>
         <ScrollStatement text={venture.intro} />
@@ -124,7 +197,7 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <SectionLabel num="02" accent={accent}>
-            Problemraum
+            {copy.problemSpace}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.problemTitle} />
@@ -141,13 +214,14 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
             >
               <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-emerald-300">
                 <CheckCircle2 className="h-4 w-4" />
-                Was die Systeme melden
+                {copy.reportedTitle}
               </p>
               <div className="mt-6 space-y-3 font-mono text-sm text-gray-300">
-                <p>ERP · IDoc verbucht <span className="float-right text-emerald-300">✓ OK</span></p>
-                <p>Middleware · Nachricht zugestellt <span className="float-right text-emerald-300">✓ OK</span></p>
-                <p>WMS · Auftrag angelegt <span className="float-right text-emerald-300">✓ OK</span></p>
-                <p>Monitoring · keine Alerts <span className="float-right text-emerald-300">✓ OK</span></p>
+                {copy.reportedRows.map((row, i) => (
+                  <p key={i}>
+                    {row.label} <span className="float-right text-emerald-300">{row.status}</span>
+                  </p>
+                ))}
               </div>
             </motion.div>
             <motion.div
@@ -163,13 +237,18 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
                 style={{ color: accent }}
               >
                 <XCircle className="h-4 w-4" />
-                Was tatsächlich passiert ist
+                {copy.actualTitle}
               </p>
               <div className="mt-6 space-y-3 font-mono text-sm text-gray-300">
-                <p>Lieferung · nicht avisiert <span className="float-right" style={{ color: accent }}>✗ FEHLT</span></p>
-                <p>Rechnung · hängt in Klärung <span className="float-right" style={{ color: accent }}>✗ OFFEN</span></p>
-                <p>Kundenauftrag · Folgebeleg fehlt <span className="float-right" style={{ color: accent }}>✗ STILL</span></p>
-                <p className="text-gray-400">Kein System hat einen Fehler gemeldet.</p>
+                {copy.actualRows.map((row, i) => (
+                  <p key={i}>
+                    {row.label}{' '}
+                    <span className="float-right" style={{ color: accent }}>
+                      {row.status}
+                    </span>
+                  </p>
+                ))}
+                <p className="text-gray-400">{copy.noErrorNote}</p>
               </div>
             </motion.div>
           </div>
@@ -200,7 +279,7 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
       <section className="relative py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <SectionLabel num="03" accent={accent}>
-            Funktionsweise
+            {copy.how}
           </SectionLabel>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
             <MaskedHeadline text={venture.flowTitle} />
@@ -286,7 +365,7 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
             className="mt-20 flex flex-wrap items-center gap-3"
           >
             <span className="mr-2 font-mono text-xs uppercase tracking-[0.3em] text-gray-500">
-              Process Packs:
+              {copy.packsLabel}
             </span>
             {PACKS.map((pack, i) => (
               <motion.span
@@ -307,7 +386,7 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-5xl px-6">
           <SectionLabel num="04" accent={accent}>
-            Prinzipien
+            {copy.principles}
           </SectionLabel>
           <div className="mt-12 space-y-0 divide-y divide-white/10 border-y border-white/10">
             {venture.principles.map((p, i) => (
@@ -331,7 +410,7 @@ export default function WeftlineLayout({ venture, next }: { venture: Venture; ne
         </div>
       </section>
 
-      <NextFooter accent={accent} next={next} />
+      <NextFooter accent={accent} next={next} lang={lang} />
     </div>
   );
 }

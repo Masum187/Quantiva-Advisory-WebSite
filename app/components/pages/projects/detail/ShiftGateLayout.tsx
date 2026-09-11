@@ -11,7 +11,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
 import VentureCanvas from '../VentureCanvas';
-import type { Venture } from '../../../../lib/data/projects';
+import type { Venture, Lang } from '../../../../lib/data/projects';
 import {
   EASE,
   ScrollProgress,
@@ -23,15 +23,62 @@ import {
   NextFooter,
 } from './shared';
 
-const TERMINAL_LINES = [
-  { t: '09:41:07', s: 'SNAPSHOT', d: 'Zustand erfasst — 14.203 Objekte, read-only' },
-  { t: '09:41:08', s: 'HASH', d: 'sha256 4f9c…e2a1 → Kette #58 201' },
-  { t: '09:41:12', s: 'DIFF', d: 'Change erkannt: 3 Transporte, 1 Konfigurationsobjekt' },
-  { t: '09:41:12', s: 'EVIDENZ', d: 'Faktenlage verkettet — zitierfähig, revisionsfähig' },
-  { t: '09:41:13', s: 'STATUS', d: 'Beweis bereit. Urteil: beim Ingenieur.' },
-];
+type TerminalLine = { t: string; s: string; d: string };
 
-export default function ShiftGateLayout({ venture, next }: { venture: Venture; next: Venture }) {
+const COPY: Record<
+  Lang,
+  {
+    terminal: TerminalLine[];
+    topbarLabel: string;
+    heroMeta: string;
+    findingLabel: string;
+    confidentiality: string;
+    caseFile: string;
+    protocolLabel: string;
+  }
+> = {
+  de: {
+    terminal: [
+      { t: '09:41:07', s: 'SNAPSHOT', d: 'Zustand erfasst — 14.203 Objekte, read-only' },
+      { t: '09:41:08', s: 'HASH', d: 'sha256 4f9c…e2a1 → Kette #58 201' },
+      { t: '09:41:12', s: 'DIFF', d: 'Change erkannt: 3 Transporte, 1 Konfigurationsobjekt' },
+      { t: '09:41:12', s: 'EVIDENZ', d: 'Faktenlage verkettet — zitierfähig, revisionsfähig' },
+      { t: '09:41:13', s: 'STATUS', d: 'Beweis bereit. Urteil: beim Ingenieur.' },
+    ],
+    topbarLabel: 'Beweis-Protokoll',
+    heroMeta: 'read-only · betreiber-blind',
+    findingLabel: 'Befund 01 — Warum',
+    confidentiality: 'Vertraulichkeit: öffentlich',
+    caseFile: 'Case File',
+    protocolLabel: 'Protokoll — bindende Grundsätze',
+  },
+  en: {
+    terminal: [
+      { t: '09:41:07', s: 'SNAPSHOT', d: 'State captured — 14,203 objects, read-only' },
+      { t: '09:41:08', s: 'HASH', d: 'sha256 4f9c…e2a1 → chain #58,201' },
+      { t: '09:41:12', s: 'DIFF', d: 'Change detected: 3 transports, 1 configuration object' },
+      { t: '09:41:12', s: 'EVIDENCE', d: 'Facts chained — citable, audit-ready' },
+      { t: '09:41:13', s: 'STATUS', d: 'Proof ready. Judgment: with the engineer.' },
+    ],
+    topbarLabel: 'Evidence Protocol',
+    heroMeta: 'read-only · operator-blind',
+    findingLabel: 'Finding 01 — Why',
+    confidentiality: 'Confidentiality: public',
+    caseFile: 'Case File',
+    protocolLabel: 'Protocol — binding principles',
+  },
+};
+
+export default function ShiftGateLayout({
+  venture,
+  next,
+  lang = 'de',
+}: {
+  venture: Venture;
+  next: Venture;
+  lang?: Lang;
+}) {
+  const copy = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const accent = venture.accent;
@@ -55,7 +102,7 @@ export default function ShiftGateLayout({ venture, next }: { venture: Venture; n
           className="pointer-events-none absolute inset-0"
           style={{ background: 'radial-gradient(80% 70% at 30% 40%, transparent 0%, #07080a 95%)' }}
         />
-        <Topbar label="Beweis-Protokoll" />
+        <Topbar label={copy.topbarLabel} lang={lang} />
 
         <motion.div
           style={{ opacity: reduceMotion ? 1 : heroOpacity }}
@@ -68,7 +115,7 @@ export default function ShiftGateLayout({ venture, next }: { venture: Venture; n
               transition={{ duration: 0.7, ease: EASE }}
               className="font-mono text-xs uppercase tracking-[0.35em] text-gray-400"
             >
-              {venture.category} · read-only · betreiber-blind
+              {venture.category} · {copy.heroMeta}
             </motion.p>
             <h1 className="mt-6 text-[clamp(3rem,8vw,7rem)] font-bold uppercase leading-[0.9] tracking-tight">
               <motion.span
@@ -130,7 +177,7 @@ export default function ShiftGateLayout({ venture, next }: { venture: Venture; n
               variants={{ visible: { transition: { staggerChildren: 0.5, delayChildren: 1.2 } } }}
               className="space-y-3 p-5 font-mono text-[13px] leading-relaxed"
             >
-              {TERMINAL_LINES.map((l, i) => (
+              {copy.terminal.map((l, i) => (
                 <motion.p
                   key={i}
                   variants={{ hidden: { opacity: 0, x: -8 }, visible: { opacity: 1, x: 0 } }}
@@ -169,8 +216,8 @@ export default function ShiftGateLayout({ venture, next }: { venture: Venture; n
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-36">
         <div className="border border-white/15 p-8 md:p-14">
           <p className="mb-8 flex items-center justify-between font-mono text-xs uppercase tracking-[0.3em] text-gray-500">
-            <span>Befund 01 — Warum</span>
-            <span>Vertraulichkeit: öffentlich</span>
+            <span>{copy.findingLabel}</span>
+            <span>{copy.confidentiality}</span>
           </p>
           <ScrollStatement text={venture.intro} />
         </div>
@@ -193,7 +240,7 @@ export default function ShiftGateLayout({ venture, next }: { venture: Venture; n
                 className="group grid gap-4 border-l-2 border-white/25 pl-6 transition-colors hover:border-white md:grid-cols-[160px_1fr] md:gap-10"
               >
                 <p className="font-mono text-xs uppercase leading-loose tracking-[0.2em] text-gray-500">
-                  Case File
+                  {copy.caseFile}
                   <br />
                   <span className="text-2xl font-bold text-white">
                     №{String(i + 1).padStart(3, '0')}
@@ -260,7 +307,7 @@ export default function ShiftGateLayout({ venture, next }: { venture: Venture; n
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-4xl px-6">
           <p className="mb-10 font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
-            Protokoll — bindende Grundsätze
+            {copy.protocolLabel}
           </p>
           <div className="space-y-6">
             {venture.principles.map((p, i) => (
@@ -284,7 +331,7 @@ export default function ShiftGateLayout({ venture, next }: { venture: Venture; n
         </div>
       </section>
 
-      <NextFooter accent={accent} next={next} />
+      <NextFooter accent={accent} next={next} lang={lang} />
     </div>
   );
 }

@@ -5,6 +5,7 @@
  * Kernaussage: Proof statt Promise — Quantiva berät nicht nur, Quantiva
  * baut und beweist. Cineastische Designsprache wie die Venture-Seiten.
  * Herzstück: die CEO-Video-Bühne (Event-Ansprache, 30 Sekunden).
+ * Zweisprachig: identisches Design für /de und /en über das COPY-Wörterbuch.
  */
 
 import React, { useRef, useState, useCallback } from 'react';
@@ -31,53 +32,229 @@ import {
 
 const ACCENT = '#2dd4bf';
 
-const navigationItems = [
-  { id: 'home', label: 'Home', href: '/de' },
-  { id: 'about', label: 'Über uns', href: '/de/about' },
-  { id: 'services', label: 'Services', href: '/de#services' },
-  { id: 'search', label: 'Suche', href: '/de/search' },
-  { id: 'cases', label: 'Projekte', href: '/de/cases' },
-  { id: 'team', label: 'Team', href: '/de/team' },
-  { id: 'career', label: 'Karriere', href: '/de#career' },
-];
+type Lang = 'de' | 'en';
 
-const PILLARS = [
-  {
-    kicker: 'Advisory',
-    title: 'Wir beraten mit Haftung fürs Ergebnis',
-    text: 'SAP-Transformation, Cutover, Prozess- und Test-Exzellenz: Wir begleiten Programme nicht mit Folien, sondern mit überprüfbaren Zwischenständen. Jede Empfehlung muss einem Beweis standhalten.',
-    href: '/de#services',
-    linkLabel: 'Unsere Services',
+interface NavItem {
+  id: string;
+  label: string;
+  href: string;
+}
+
+interface Pillar {
+  kicker: string;
+  title: string;
+  text: string;
+  href: string;
+  linkLabel: string;
+}
+
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface CeoCopy {
+  playAria: string;
+  hint: string;
+  unavailable: string;
+  pauseAria: string;
+  resumeAria: string;
+  name: string;
+  role: string;
+  meta: string;
+}
+
+interface AboutCopy {
+  nav: NavItem[];
+  hero: { kicker: string; line1: string; line2: string; sub: string };
+  manifesto: { label: string; statement: string };
+  message: { label: string; title: string; sub: string };
+  ceo: CeoCopy;
+  verbs: [string, string, string];
+  pillarsSection: { label: string; title: string };
+  pillars: Pillar[];
+  principlesLabel: string;
+  principles: string[];
+  stats: Stat[];
+  cta: {
+    title: string;
+    sub: string;
+    primaryLabel: string;
+    primaryHref: string;
+    secondaryLabel: string;
+    secondaryHref: string;
+  };
+}
+
+const COPY: Record<Lang, AboutCopy> = {
+  de: {
+    nav: [
+      { id: 'home', label: 'Home', href: '/de' },
+      { id: 'about', label: 'Über uns', href: '/de/about' },
+      { id: 'services', label: 'Services', href: '/de#services' },
+      { id: 'search', label: 'Suche', href: '/de/search' },
+      { id: 'cases', label: 'Projekte', href: '/de/cases' },
+      { id: 'team', label: 'Team', href: '/de/team' },
+      { id: 'career', label: 'Karriere', href: '/de#career' },
+    ],
+    hero: {
+      kicker: 'Über Quantiva',
+      line1: 'Proof statt',
+      line2: 'Promise.',
+      sub: 'Wir sind Beratung und Venture Studio in einem Haus: Wir begleiten Transformation — und bauen die Produkte, die Entscheidungen beweisbar machen.',
+    },
+    manifesto: {
+      label: 'Das Manifest',
+      statement:
+        'Zu viele Programme werden auf Basis von Meinungen gestartet und auf Basis von Folien für erfolgreich erklärt. Wir haben Quantiva gegründet, um das umzudrehen: Jede Empfehlung, jedes Produkt und jede Entscheidung muss einem Beweis standhalten — messbar, auditierbar, ehrlich.',
+    },
+    message: {
+      label: 'Die Botschaft',
+      title: 'Unsere CEO. Unser Warum.',
+      sub: 'Gülnur Patan über das Motto und die Vision von Quantiva — in 30 Sekunden, live vor Publikum.',
+    },
+    ceo: {
+      playAria: 'CEO-Video abspielen',
+      hint: '30 Sekunden — Motto & Vision',
+      unavailable: 'Video folgt in Kürze',
+      pauseAria: 'Pausieren',
+      resumeAria: 'Abspielen',
+      name: 'Gülnur Patan',
+      role: 'CEO & Gründerin, Quantiva Advisory',
+      meta: 'Keynote · Motto & Vision · 0:30',
+    },
+    verbs: ['beraten', 'bauen', 'beweisen'],
+    pillarsSection: {
+      label: 'Ein Haus, zwei Kräfte',
+      title: 'Beraten und Bauen',
+    },
+    pillars: [
+      {
+        kicker: 'Advisory',
+        title: 'Wir beraten mit Haftung fürs Ergebnis',
+        text: 'SAP-Transformation, Cutover, Prozess- und Test-Exzellenz: Wir begleiten Programme nicht mit Folien, sondern mit überprüfbaren Zwischenständen. Jede Empfehlung muss einem Beweis standhalten.',
+        href: '/de#services',
+        linkLabel: 'Unsere Services',
+      },
+      {
+        kicker: 'Venture Studio',
+        title: 'Wir bauen die Produkte, die wir vermissen',
+        text: 'Acht Ventures, eine gemeinsame Maschine: ein Evidence-Core, der Signale sammelt, Probleme beweist und Entscheidungen auditierbar macht — von SolutionGate bis WEFTLINE.',
+        href: '/de/cases',
+        linkLabel: 'Alle Projekte',
+      },
+    ],
+    principlesLabel: 'Woran wir uns messen lassen',
+    principles: [
+      'Evidenz schlägt Meinung — jede Aussage muss belegbar sein.',
+      'Wir bauen nur, was ein echtes, bewiesenes Problem löst.',
+      'Systeme flaggen Risiko und liefern Beweise — das Urteil bleibt beim Menschen.',
+      'EU-Souveränität ist Architektur, keine Marketingfolie.',
+      'Ehrliches Scheitern ist billiger als schöner Schein: Kill-Kriterien gehören zu jedem Vorhaben.',
+    ],
+    stats: [
+      { value: '15+', label: 'Jahre Erfahrung' },
+      { value: '200+', label: 'Erfolgreiche Projekte' },
+      { value: '8', label: 'Eigene Ventures' },
+      { value: '99%', label: 'Projekt-Erfolgsrate' },
+    ],
+    cta: {
+      title: 'Lassen Sie uns etwas beweisen.',
+      sub: 'Ob Transformation oder Produktidee: Wir starten mit dem Problem — und hören erst auf, wenn die Wirkung belegt ist.',
+      primaryLabel: 'Mit uns sprechen',
+      primaryHref: '/de#contact',
+      secondaryLabel: 'Unsere Projekte',
+      secondaryHref: '/de/cases',
+    },
   },
-  {
-    kicker: 'Venture Studio',
-    title: 'Wir bauen die Produkte, die wir vermissen',
-    text: 'Acht Ventures, eine gemeinsame Maschine: ein Evidence-Core, der Signale sammelt, Probleme beweist und Entscheidungen auditierbar macht — von SolutionGate bis WEFTLINE.',
-    href: '/de/cases',
-    linkLabel: 'Alle Projekte',
+  en: {
+    nav: [
+      { id: 'home', label: 'Home', href: '/en' },
+      { id: 'about', label: 'About', href: '/en/about' },
+      { id: 'services', label: 'Services', href: '/en#services' },
+      { id: 'search', label: 'Search', href: '/en/search' },
+      { id: 'cases', label: 'Cases', href: '/en/cases' },
+      { id: 'team', label: 'Team', href: '/en/team' },
+      { id: 'career', label: 'Career', href: '/en#career' },
+    ],
+    hero: {
+      kicker: 'About Quantiva',
+      // Brand motto — kept verbatim in English as well.
+      line1: 'Proof statt',
+      line2: 'Promise.',
+      sub: 'We are a consultancy and venture studio under one roof: we guide transformation — and build the products that make decisions provable.',
+    },
+    manifesto: {
+      label: 'The Manifesto',
+      statement:
+        'Too many programs are launched on the basis of opinions and declared successful on the basis of slides. We founded Quantiva to turn that around: every recommendation, every product, and every decision must stand up to proof — measurable, auditable, honest.',
+    },
+    message: {
+      label: 'The Message',
+      title: 'Our CEO. Our Why.',
+      sub: 'Gülnur Patan on the motto and vision of Quantiva — in 30 seconds, live in front of an audience.',
+    },
+    ceo: {
+      playAria: 'Play CEO video',
+      hint: '30 seconds — motto & vision',
+      unavailable: 'Video coming soon',
+      pauseAria: 'Pause',
+      resumeAria: 'Play',
+      name: 'Gülnur Patan',
+      role: 'CEO & Founder, Quantiva Advisory',
+      meta: 'Keynote · Motto & Vision · 0:30',
+    },
+    verbs: ['advise', 'build', 'prove'],
+    pillarsSection: {
+      label: 'One house, two forces',
+      title: 'Advise and Build',
+    },
+    pillars: [
+      {
+        kicker: 'Advisory',
+        title: 'We advise with accountability for the outcome',
+        text: 'SAP transformation, cutover, process and test excellence: we support programs not with slides, but with verifiable interim results. Every recommendation must stand up to proof.',
+        href: '/en#services',
+        linkLabel: 'Our services',
+      },
+      {
+        kicker: 'Venture Studio',
+        title: 'We build the products we were missing',
+        text: 'Eight ventures, one shared machine: an evidence core that collects signals, proves problems, and makes decisions auditable — from SolutionGate to WEFTLINE.',
+        href: '/en/cases',
+        linkLabel: 'All projects',
+      },
+    ],
+    principlesLabel: 'What we hold ourselves to',
+    principles: [
+      'Evidence beats opinion — every claim must be verifiable.',
+      'We only build what solves a real, proven problem.',
+      'Systems flag risk and deliver proof — the judgment stays with people.',
+      'EU sovereignty is architecture, not a marketing slide.',
+      'Honest failure is cheaper than a polished facade: kill criteria are part of every initiative.',
+    ],
+    stats: [
+      { value: '15+', label: 'Years of experience' },
+      { value: '200+', label: 'Successful projects' },
+      { value: '8', label: 'Own ventures' },
+      { value: '99%', label: 'Project success rate' },
+    ],
+    cta: {
+      title: 'Let’s prove something.',
+      sub: 'Whether transformation or product idea: we start with the problem — and don’t stop until the impact is proven.',
+      primaryLabel: 'Talk to us',
+      primaryHref: '/en#contact',
+      secondaryLabel: 'Our projects',
+      secondaryHref: '/en/cases',
+    },
   },
-];
-
-const PRINCIPLES = [
-  'Evidenz schlägt Meinung — jede Aussage muss belegbar sein.',
-  'Wir bauen nur, was ein echtes, bewiesenes Problem löst.',
-  'Systeme flaggen Risiko und liefern Beweise — das Urteil bleibt beim Menschen.',
-  'EU-Souveränität ist Architektur, keine Marketingfolie.',
-  'Ehrliches Scheitern ist billiger als schöner Schein: Kill-Kriterien gehören zu jedem Vorhaben.',
-];
-
-const STATS = [
-  { value: '15+', label: 'Jahre Erfahrung' },
-  { value: '200+', label: 'Erfolgreiche Projekte' },
-  { value: '8', label: 'Eigene Ventures' },
-  { value: '99%', label: 'Projekt-Erfolgsrate' },
-];
+};
 
 const CEO_POSTER = 'https://res.cloudinary.com/dbrisux8i/image/upload/v1760346416/image3_l0nj0f.jpg';
 const CEO_VIDEO = '/assets/about/ceo-event.mp4';
 
 /* ---------- CEO-Video-Bühne ---------- */
-function CeoStage() {
+function CeoStage({ copy }: { copy: CeoCopy }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
@@ -135,7 +312,7 @@ function CeoStage() {
             <button
               onClick={toggle}
               className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-gradient-to-t from-black/80 via-black/30 to-black/40 transition-colors hover:from-black/70"
-              aria-label="CEO-Video abspielen"
+              aria-label={copy.playAria}
             >
               <motion.span
                 whileHover={{ scale: 1.08 }}
@@ -154,7 +331,7 @@ function CeoStage() {
               </motion.span>
               <span className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-gray-200">
                 <Volume2 className="h-4 w-4" style={{ color: ACCENT }} />
-                {unavailable ? 'Video folgt in Kürze' : '30 Sekunden — Motto & Vision'}
+                {unavailable ? copy.unavailable : copy.hint}
               </span>
             </button>
           )}
@@ -164,7 +341,7 @@ function CeoStage() {
             <button
               onClick={toggle}
               className="absolute bottom-5 right-5 flex h-12 w-12 items-center justify-center rounded-full bg-black/60 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
-              aria-label={playing ? 'Pausieren' : 'Abspielen'}
+              aria-label={playing ? copy.pauseAria : copy.resumeAria}
             >
               {playing ? <Pause className="h-5 w-5" /> : <Play className="ml-0.5 h-5 w-5" />}
             </button>
@@ -174,11 +351,11 @@ function CeoStage() {
         {/* Untertitel-Leiste */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-6 py-4">
           <div>
-            <p className="font-bold text-white">Gülnur Patan</p>
-            <p className="text-sm text-gray-400">CEO &amp; Gründerin, Quantiva Advisory</p>
+            <p className="font-bold text-white">{copy.name}</p>
+            <p className="text-sm text-gray-400">{copy.role}</p>
           </div>
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-gray-500">
-            Keynote · Motto &amp; Vision · 0:30
+            {copy.meta}
           </p>
         </div>
       </div>
@@ -187,8 +364,7 @@ function CeoStage() {
 }
 
 /* ---------- Verb-Band ---------- */
-function VerbBand() {
-  const words = ['beraten', 'bauen', 'beweisen'];
+function VerbBand({ words }: { words: [string, string, string] }) {
   return (
     <div className="overflow-hidden border-y border-white/10 py-5 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
       <div className="industry-ticker-track flex w-max items-center gap-12">
@@ -222,7 +398,8 @@ function VerbBand() {
   );
 }
 
-export default function AboutRedesign() {
+export default function AboutRedesign({ lang = 'de' }: { lang?: Lang }) {
+  const c = COPY[lang];
   const heroRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
@@ -237,7 +414,7 @@ export default function AboutRedesign() {
   return (
     <div className="min-h-screen bg-[#05070f] text-white">
       <CommandPalette />
-      <Navigation lang="de" items={navigationItems} />
+      <Navigation lang={lang} items={c.nav} />
       <ScrollProgress accent={ACCENT} />
 
       {/* HERO */}
@@ -263,12 +440,12 @@ export default function AboutRedesign() {
             className="font-mono text-xs uppercase tracking-[0.4em]"
             style={{ color: ACCENT }}
           >
-            Über Quantiva
+            {c.hero.kicker}
           </motion.p>
           <h1 className="mt-6 text-[clamp(2.6rem,8vw,7rem)] font-bold uppercase leading-[0.95] tracking-tight">
-            <LetterHeadline text="Proof statt" delay={0.4} />
+            <LetterHeadline text={c.hero.line1} delay={0.4} />
             <span className="block" style={{ color: ACCENT }}>
-              <LetterHeadline text="Promise." delay={1} />
+              <LetterHeadline text={c.hero.line2} delay={1} />
             </span>
           </h1>
           <motion.p
@@ -277,8 +454,7 @@ export default function AboutRedesign() {
             transition={{ duration: 0.8, delay: 1.6, ease: EASE }}
             className="mt-8 max-w-2xl text-lg text-gray-300 md:text-xl"
           >
-            Wir sind Beratung und Venture Studio in einem Haus: Wir begleiten Transformation —
-            und bauen die Produkte, die Entscheidungen beweisbar machen.
+            {c.hero.sub}
           </motion.p>
         </motion.div>
 
@@ -300,43 +476,42 @@ export default function AboutRedesign() {
       {/* MANIFEST */}
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-40">
         <p className="mb-10 font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
-          <span style={{ color: ACCENT }}>01</span> — Das Manifest
+          <span style={{ color: ACCENT }}>01</span> — {c.manifesto.label}
         </p>
-        <ScrollStatement text="Zu viele Programme werden auf Basis von Meinungen gestartet und auf Basis von Folien für erfolgreich erklärt. Wir haben Quantiva gegründet, um das umzudrehen: Jede Empfehlung, jedes Produkt und jede Entscheidung muss einem Beweis standhalten — messbar, auditierbar, ehrlich." />
+        <ScrollStatement text={c.manifesto.statement} />
       </section>
 
       {/* CEO-VIDEO */}
       <section className="relative overflow-hidden border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <p className="text-center font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
-            <span style={{ color: ACCENT }}>02</span> — Die Botschaft
+            <span style={{ color: ACCENT }}>02</span> — {c.message.label}
           </p>
           <h2 className="mt-4 text-center text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
-            <MaskedHeadline text="Unsere CEO. Unser Warum." />
+            <MaskedHeadline text={c.message.title} />
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-center text-gray-400">
-            Gülnur Patan über das Motto und die Vision von Quantiva — in 30 Sekunden,
-            live vor Publikum.
+            {c.message.sub}
           </p>
           <div className="mt-14">
-            <CeoStage />
+            <CeoStage copy={c.ceo} />
           </div>
         </div>
       </section>
 
-      <VerbBand />
+      <VerbBand words={c.verbs} />
 
       {/* ZWEI SÄULEN */}
       <section className="py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
-            <span style={{ color: ACCENT }}>03</span> — Ein Haus, zwei Kräfte
+            <span style={{ color: ACCENT }}>03</span> — {c.pillarsSection.label}
           </p>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
-            <MaskedHeadline text="Beraten und Bauen" />
+            <MaskedHeadline text={c.pillarsSection.title} />
           </h2>
           <div className="mt-14 grid gap-6 md:grid-cols-2">
-            {PILLARS.map((p, i) => (
+            {c.pillars.map((p, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 40 }}
@@ -375,10 +550,10 @@ export default function AboutRedesign() {
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
           <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
-            <span style={{ color: ACCENT }}>04</span> — Woran wir uns messen lassen
+            <span style={{ color: ACCENT }}>04</span> — {c.principlesLabel}
           </p>
           <div className="mt-12 divide-y divide-white/10 border-y border-white/10">
-            {PRINCIPLES.map((p, i) => (
+            {c.principles.map((p, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -407,7 +582,7 @@ export default function AboutRedesign() {
       {/* STATS */}
       <section className="border-t border-white/10 py-20 md:py-24">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-10 px-6 md:grid-cols-4">
-          {STATS.map((s, i) => (
+          {c.stats.map((s, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 24 }}
@@ -440,22 +615,21 @@ export default function AboutRedesign() {
         </span>
         <div className="relative mx-auto max-w-3xl px-6 text-center">
           <h2 className="text-[clamp(2rem,5vw,4rem)] font-bold uppercase tracking-tight">
-            <MaskedHeadline text="Lassen Sie uns etwas beweisen." />
+            <MaskedHeadline text={c.cta.title} />
           </h2>
           <p className="mt-6 text-lg text-gray-400">
-            Ob Transformation oder Produktidee: Wir starten mit dem Problem — und hören erst auf,
-            wenn die Wirkung belegt ist.
+            {c.cta.sub}
           </p>
           <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-            <ShineButton href="/de#contact" accent={ACCENT}>
-              Mit uns sprechen
+            <ShineButton href={c.cta.primaryHref} accent={ACCENT}>
+              {c.cta.primaryLabel}
               <ArrowUpRight className="h-4 w-4" />
             </ShineButton>
             <Link
-              href="/de/cases"
+              href={c.cta.secondaryHref}
               className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-7 py-3.5 font-semibold text-white transition hover:bg-white/10"
             >
-              Unsere Projekte
+              {c.cta.secondaryLabel}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

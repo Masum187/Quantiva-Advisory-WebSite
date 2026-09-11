@@ -62,6 +62,46 @@ function FloatingText({ children, delay = 0 }: { children: React.ReactNode; dela
   );
 }
 
+function OrbitText({ children, radius = 100, delay = 0 }: { children: React.ReactNode; radius?: number; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      animate={{ 
+        rotate: 360
+      }}
+      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      className="relative"
+      style={{ width: radius * 2, height: radius * 2 }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        {children}
+      </div>
+    </motion.div>
+  );
+}
+
+function CounterAnimation({ end, duration = 2 }: { end: number; duration?: number }) {
+  const [count, setCount] = useState(0);
+  
+  React.useEffect(() => {
+    let startTime: number;
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / (duration * 1000), 1);
+      setCount(Math.floor(progress * end));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [end, duration]);
+
+  return <span>{count}</span>;
+}
+
 export default function StrategyConsultingPage() {
   const { lang, localePath } = useLanguage();
 
@@ -939,8 +979,7 @@ export default function StrategyConsultingPage() {
                 className="inline-block"
                 whileHover={{ 
                   scale: 1.05,
-                  rotateY: 5,
-                  transition: { duration: 0.3 }
+                  rotateY: 5
                 }}
               >
                 <div className="p-8 rounded-3xl bg-gradient-to-r from-teal-500/20 to-purple-500/20 border border-teal-400/30 backdrop-blur-xl">
