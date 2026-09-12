@@ -374,6 +374,7 @@ export default function AIServicePage() {
                     date={wp.date}
                     image={wp.image}
                     slug={wp.slug}
+                    lang="en"
                   />
                 </motion.div>
               ))}

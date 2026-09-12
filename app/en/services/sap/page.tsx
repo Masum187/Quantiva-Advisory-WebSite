@@ -416,6 +416,7 @@ export default function SAPServicePage() {
                     date={whitepaper.date}
                     image={whitepaper.image}
                     slug={whitepaper.slug}
+                    lang="en"
                   />
                 </motion.div>
               ))}

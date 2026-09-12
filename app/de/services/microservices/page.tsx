@@ -3,8 +3,8 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Boxes, ArrowLeft, ArrowUpRight, CheckCircle, Network, Zap, Shield } from 'lucide-react';
+import WhitepaperCard from '../../../components/WhitepaperCard';
 import ServiceVideoBackground from '../../../components/ServiceVideoBackground';
 import VentureCanvas from '../../../components/pages/projects/VentureCanvas';
 import {
@@ -207,48 +207,54 @@ export default function MicroservicesServicePage() {
     }
   ];
 
-  const studies = [
+  const whitepapers = [
     {
       title: 'ScienceDirect: Enhancing Effectiveness and Security in Microservices Communication (2024)',
       description: 'Untersucht Kommunikationsmodelle, Performance, Fehlerquellen und die organisatorische Wirkung von Microservices. Microservices steigern Flexibilität, erfordern aber einen deutlichen Wandel in Entwicklung und Betrieb.',
       topic: 'Microservices Architecture',
       date: '2024',
-      image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop'
+      image: '/assets/whitepapers/integration/microservices-architecture.jpg',
+      slug: 'integration-microservices-architektur'
     },
     {
       title: 'Arxiv / Computer Science Review: Systematic Mapping Study Microservices Architectures (2021)',
       description: 'Meta-Analyse von 200+ wissenschaftlichen Publikationen; identifiziert zentrale Herausforderungen (Deployment, Service Discovery, Maintainability, Skalierung). Empfehlung: Fokus auf API-Design, Orchestrierung und Governance.',
       topic: 'API Design & Governance',
       date: '2021',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop'
+      image: '/assets/whitepapers/integration/api-design-governance.jpg',
+      slug: 'integration-api-design-governance'
     },
     {
       title: 'Traceable AI / State of API Economy 2025',
       description: 'Marktstudie zu Wachstum und Nutzung von APIs in Unternehmen weltweit. APIs sind Treiber neuer Geschäftsmodelle. Die Zahl der genutzten APIs wächst jährlich um 20–40%.',
       topic: 'API Economy',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=1200&auto=format&fit=crop'
+      image: '/assets/whitepapers/integration/api-economy.jpg',
+      slug: 'integration-api-economy'
     },
     {
       title: 'BusinessWire / API Management 2024',
       description: 'Untersucht den Einfluss von APIs auf Digital Business und IT-Strategien in verschiedenen Branchen. Unternehmen mit "API-first"-Strategie sind innovationsstärker und schneller am Markt.',
       topic: 'Digital Business',
       date: '2024',
-      image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1200&auto=format&fit=crop'
+      image: '/assets/whitepapers/integration/digital-business.jpg',
+      slug: 'integration-digital-business'
     },
     {
       title: 'NIST Special Publication 800-204: Security Strategies for Microservices',
       description: 'Leitfaden zu Architektur- und Betriebsstrategien für Microservices – einschließlich API-Management, Fehlerhandling, Skalierung und Service-Monitoring in DevOps-Umgebungen.',
       topic: 'Security & Operations',
       date: '2024',
-      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop'
+      image: '/assets/whitepapers/integration/api-security-operations.jpg',
+      slug: 'integration-api-security'
     },
     {
       title: '8 Vorhersagen für Application Security & Microservices in 2025',
       description: 'Prognose: Microservices und APIs werden zur Basis von Innovation und Wachstum, erfordern aber neue Skills und Prozesse. KI und Automatisierung treiben den nächsten Evolutionsschritt.',
       topic: 'Future Trends',
       date: '2025',
-      image: 'https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=1200&auto=format&fit=crop'
+      image: '/assets/whitepapers/integration/api-trends.jpg',
+      slug: 'integration-api-trends'
     }
   ];
 
@@ -438,10 +444,10 @@ export default function MicroservicesServicePage() {
         <section className="relative py-24">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <SectionLabel num="03" accent={ACCENT}>
-              Studien & Insights
+              Studien & Whitepaper
             </SectionLabel>
             <h2 className="mt-5 text-4xl font-bold tracking-tight md:text-5xl">
-              <MaskedHeadline text="Aktuelle Studien & Insights" />
+              <MaskedHeadline text="Studien & Whitepaper" />
             </h2>
             <motion.p
               initial={{ opacity: 0 }}
@@ -450,51 +456,27 @@ export default function MicroservicesServicePage() {
               transition={{ duration: 0.7, delay: 0.2, ease: EASE }}
               className="mt-4 max-w-2xl text-lg text-gray-400"
             >
-              Wissenschaftlich fundierte Erkenntnisse zu Microservices und API-Economy
+              Wissenschaftlich fundierte Erkenntnisse zu Microservices und API-Economy — als Whitepaper direkt in Ihr Postfach
             </motion.p>
 
             <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {studies.map((study, index) => (
-                <motion.article
-                  key={study.title}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
+              {whitepapers.map((wp, index) => (
+                <motion.div
+                  key={wp.slug}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-40px' }}
                   transition={{ duration: 0.7, delay: (index % 3) * 0.1, ease: EASE }}
                 >
-                  <SpotlightCard
-                    accent={ACCENT}
-                    className="h-full rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md transition-colors duration-300 hover:border-white/25"
-                  >
-                    <div className="relative h-44 overflow-hidden rounded-t-2xl">
-                      <Image
-                        src={study.image}
-                        alt={study.title}
-                        width={400}
-                        height={176}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover/spot:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                      <span
-                        className="absolute left-4 top-4 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-black"
-                        style={{ background: ACCENT }}
-                      >
-                        {study.topic}
-                      </span>
-                      <span className="absolute right-4 top-4 rounded-full bg-white/15 px-3 py-1 font-mono text-[10px] text-white backdrop-blur-sm">
-                        {study.date}
-                      </span>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-lg font-bold leading-snug">{study.title}</h3>
-                      <p className="mt-3 text-sm leading-relaxed text-gray-400">{study.description}</p>
-                      <p className="mt-4 inline-flex items-center gap-1 text-sm font-semibold" style={{ color: ACCENT }}>
-                        Studie lesen
-                        <ArrowUpRight className="h-4 w-4" />
-                      </p>
-                    </div>
-                  </SpotlightCard>
-                </motion.article>
+                  <WhitepaperCard
+                    title={wp.title}
+                    description={wp.description}
+                    topic={wp.topic}
+                    date={wp.date}
+                    image={wp.image}
+                    slug={wp.slug}
+                  />
+                </motion.div>
               ))}
             </div>
           </div>

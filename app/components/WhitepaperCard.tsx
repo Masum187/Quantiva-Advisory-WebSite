@@ -6,6 +6,67 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Download, FileText, Mail, X, ArrowRight, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 
+type Lang = 'de' | 'en';
+
+const COPY = {
+  de: {
+    requestButton: 'Whitepaper anfordern',
+    closeAria: 'Schließen',
+    dialogAria: 'Whitepaper anfordern',
+    freeDownload: 'Kostenloser Download',
+    whereSend: 'Wohin dürfen wir es senden?',
+    receiveLink: 'Sie erhalten den Download-Link direkt per E-Mail.',
+    firstName: 'Vorname',
+    lastName: 'Nachname',
+    email: 'Geschäftliche E-Mail',
+    company: 'Unternehmen',
+    phone: 'Telefon (optional)',
+    errFirstName: 'Bitte Vornamen angeben',
+    errLastName: 'Bitte Nachnamen angeben',
+    errEmail: 'Bitte gültige E-Mail-Adresse angeben',
+    errCompany: 'Bitte Unternehmen angeben',
+    serverError: 'Der Versand ist fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+    sending: 'Wird gesendet …',
+    submit: 'Per E-Mail erhalten',
+    privacy: 'Ihre Daten werden vertraulich behandelt und nicht weitergegeben.',
+    successTitle: 'Whitepaper ist unterwegs',
+    sentPrefix: 'Wir haben',
+    sentMiddle: 'an',
+    sentSuffix: 'gesendet. Bitte prüfen Sie ggf. auch Ihren Spam-Ordner.',
+    okay: 'Alles klar',
+    pdfEdition: 'PDF · Ausgabe'
+  },
+  en: {
+    requestButton: 'Request whitepaper',
+    closeAria: 'Close',
+    dialogAria: 'Request whitepaper',
+    freeDownload: 'Free download',
+    whereSend: 'Where should we send it?',
+    receiveLink: 'You will receive the download link directly by e-mail.',
+    firstName: 'First name',
+    lastName: 'Last name',
+    email: 'Business e-mail',
+    company: 'Company',
+    phone: 'Phone (optional)',
+    errFirstName: 'Please enter your first name',
+    errLastName: 'Please enter your last name',
+    errEmail: 'Please enter a valid e-mail address',
+    errCompany: 'Please enter your company',
+    serverError: 'Sending failed. Please try again later.',
+    sending: 'Sending …',
+    submit: 'Receive by e-mail',
+    privacy: 'Your data is treated confidentially and never shared.',
+    successTitle: 'Your whitepaper is on its way',
+    sentPrefix: 'We sent',
+    sentMiddle: 'to',
+    sentSuffix: '. Please also check your spam folder if needed.',
+    okay: 'Got it',
+    pdfEdition: 'PDF · Edition'
+  }
+} as const;
+
+type Copy = (typeof COPY)[Lang];
+
 interface WhitepaperCardProps {
   title: string;
   description: string;
@@ -14,6 +75,8 @@ interface WhitepaperCardProps {
   image: string;
   /** Slug des Whitepapers – wird an /api/whitepaper übergeben. */
   slug: string;
+  /** Sprache der UI-Texte (Default: de). */
+  lang?: Lang;
 }
 
 type FormFields = {
@@ -36,12 +99,12 @@ const EMPTY_FORM: FormFields = {
 
 type FieldErrors = Partial<Record<keyof FormFields, string>>;
 
-function validate(form: FormFields): FieldErrors {
+function validate(form: FormFields, t: Copy): FieldErrors {
   const errors: FieldErrors = {};
-  if (form.firstName.trim().length < 2) errors.firstName = 'Bitte Vornamen angeben';
-  if (form.lastName.trim().length < 2) errors.lastName = 'Bitte Nachnamen angeben';
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Bitte gültige E-Mail-Adresse angeben';
-  if (form.company.trim().length < 2) errors.company = 'Bitte Unternehmen angeben';
+  if (form.firstName.trim().length < 2) errors.firstName = t.errFirstName;
+  if (form.lastName.trim().length < 2) errors.lastName = t.errLastName;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = t.errEmail;
+  if (form.company.trim().length < 2) errors.company = t.errCompany;
   return errors;
 }
 
@@ -107,7 +170,8 @@ function RequestModal({
   topic,
   date,
   image,
-  slug
+  slug,
+  t
 }: {
   open: boolean;
   onClose: () => void;
@@ -116,6 +180,7 @@ function RequestModal({
   date: string;
   image: string;
   slug: string;
+  t: Copy;
 }) {
   const [form, setForm] = useState<FormFields>(EMPTY_FORM);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -154,7 +219,7 @@ function RequestModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const nextErrors = validate(form);
+    const nextErrors = validate(form, t);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
@@ -172,7 +237,7 @@ function RequestModal({
       if (!res.ok) {
         setStatus('error');
         setServerError(
-          data.error || 'Der Versand ist fehlgeschlagen. Bitte versuchen Sie es später erneut.'
+          data.error || t.serverError
         );
         return;
       }
@@ -180,7 +245,7 @@ function RequestModal({
       setStatus('success');
     } catch {
       setStatus('error');
-      setServerError('Der Versand ist fehlgeschlagen. Bitte versuchen Sie es später erneut.');
+      setServerError(t.serverError);
     }
   };
 
@@ -196,7 +261,7 @@ function RequestModal({
           className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-6"
           role="dialog"
           aria-modal="true"
-          aria-label={`Whitepaper anfordern: ${title}`}
+          aria-label={`${t.dialogAria}: ${title}`}
         >
           {/* Backdrop */}
           <div
@@ -214,7 +279,7 @@ function RequestModal({
             <button
               type="button"
               onClick={close}
-              aria-label="Schließen"
+              aria-label={t.closeAria}
               className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/40 text-gray-300 backdrop-blur transition hover:bg-white/10 hover:text-white"
             >
               <X className="h-5 w-5" />
@@ -235,18 +300,17 @@ function RequestModal({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
                 >
-                  <h3 className="text-3xl font-bold text-white">Whitepaper ist unterwegs</h3>
+                  <h3 className="text-3xl font-bold text-white">{t.successTitle}</h3>
                   <p className="mx-auto mt-4 max-w-md text-gray-300">
-                    Wir haben <span className="font-semibold text-white">{title}</span> an{' '}
-                    <span className="font-semibold text-teal-300">{sentTo}</span> gesendet.
-                    Bitte prüfen Sie ggf. auch Ihren Spam-Ordner.
+                    {t.sentPrefix} <span className="font-semibold text-white">{title}</span> {t.sentMiddle}{' '}
+                    <span className="font-semibold text-teal-300">{sentTo}</span>{t.sentSuffix}
                   </p>
                   <button
                     type="button"
                     onClick={close}
                     className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-8 py-3.5 font-semibold text-white transition hover:from-teal-400 hover:to-cyan-400"
                   >
-                    Alles klar
+                    {t.okay}
                   </button>
                 </motion.div>
               </div>
@@ -268,20 +332,20 @@ function RequestModal({
                       {topic}
                     </span>
                     <h4 className="mt-3 text-xl font-bold leading-snug text-white">{title}</h4>
-                    <p className="mt-1 text-sm text-gray-400">PDF · Ausgabe {date}</p>
+                    <p className="mt-1 text-sm text-gray-400">{t.pdfEdition} {date}</p>
                   </div>
                 </div>
 
                 {/* Rechte Seite: Formular */}
                 <div className="p-6 sm:p-8">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-teal-300">
-                    Kostenloser Download
+                    {t.freeDownload}
                   </p>
                   <h3 className="mt-2 text-2xl font-bold text-white">
-                    Wohin dürfen wir es senden?
+                    {t.whereSend}
                   </h3>
                   <p className="mt-1.5 text-sm text-gray-400">
-                    Sie erhalten den Download-Link direkt per E-Mail.
+                    {t.receiveLink}
                   </p>
 
                   <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
@@ -299,14 +363,14 @@ function RequestModal({
 
                     <div className="grid grid-cols-2 gap-4">
                       <Field
-                        label="Vorname"
+                        label={t.firstName}
                         autoComplete="given-name"
                         value={form.firstName}
                         error={errors.firstName}
                         onChange={setField('firstName')}
                       />
                       <Field
-                        label="Nachname"
+                        label={t.lastName}
                         autoComplete="family-name"
                         value={form.lastName}
                         error={errors.lastName}
@@ -314,7 +378,7 @@ function RequestModal({
                       />
                     </div>
                     <Field
-                      label="Geschäftliche E-Mail"
+                      label={t.email}
                       type="email"
                       autoComplete="email"
                       value={form.email}
@@ -322,14 +386,14 @@ function RequestModal({
                       onChange={setField('email')}
                     />
                     <Field
-                      label="Unternehmen"
+                      label={t.company}
                       autoComplete="organization"
                       value={form.company}
                       error={errors.company}
                       onChange={setField('company')}
                     />
                     <Field
-                      label="Telefon (optional)"
+                      label={t.phone}
                       type="tel"
                       autoComplete="tel"
                       value={form.phone}
@@ -358,11 +422,11 @@ function RequestModal({
                       {status === 'sending' ? (
                         <>
                           <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                          Wird gesendet …
+                          {t.sending}
                         </>
                       ) : (
                         <>
-                          Per E-Mail erhalten
+                          {t.submit}
                           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </>
                       )}
@@ -370,7 +434,7 @@ function RequestModal({
 
                     <p className="flex items-center justify-center gap-1.5 pt-1 text-center text-[11px] text-gray-500">
                       <ShieldCheck className="h-3.5 w-3.5 text-teal-400/70" />
-                      Ihre Daten werden vertraulich behandelt und nicht weitergegeben.
+                      {t.privacy}
                     </p>
                   </form>
                 </div>
@@ -390,9 +454,11 @@ export default function WhitepaperCard({
   topic,
   date,
   image,
-  slug
+  slug,
+  lang = 'de'
 }: WhitepaperCardProps) {
   const [open, setOpen] = useState(false);
+  const t = COPY[lang];
 
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/30 hover:border-white/50 transition-all duration-500 shadow-2xl">
@@ -438,7 +504,7 @@ export default function WhitepaperCard({
           className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all duration-300 shadow-lg hover:scale-105 font-semibold"
         >
           <Download className="w-5 h-5" />
-          Whitepaper anfordern
+          {t.requestButton}
         </button>
       </div>
 
@@ -450,6 +516,7 @@ export default function WhitepaperCard({
         date={date}
         image={image}
         slug={slug}
+        t={t}
       />
     </article>
   );

@@ -1,0 +1,10 @@
+import { chromium } from 'playwright';
+const EXE = `${process.env.HOME}/Library/Caches/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-mac-arm64/chrome-headless-shell`;
+const browser = await chromium.launch({ executablePath: EXE });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const res = await page.goto('http://localhost:3000/de/services/microservices', { waitUntil: 'domcontentloaded', timeout: 45000 });
+console.log('status', res?.status());
+await page.waitForTimeout(2500);
+console.log(await page.evaluate(() => Array.from(document.querySelectorAll('h2')).map(h => h.innerText.replace(/\n/g, ' '))));
+console.log('wp-imgs:', await page.locator('img[src*="whitepapers/integration"]').count());
+await browser.close();

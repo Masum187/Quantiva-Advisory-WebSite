@@ -83,6 +83,39 @@ export const whitepapers: WhitepaperEntry[] = [
     title: 'Generative AI Business Impact Study (2025)',
     url: `${CLOUD}/v1789081342/12-genai-business-impact-2026_iypxpi.pdf`,
   },
+
+  // ── Systemintegration & Microservices ──────────────────────────────────
+  // Ebenfalls ohne fl_attachment (Strict transformations, siehe oben).
+  {
+    slug: 'integration-microservices-architektur',
+    title: 'Microservices Architecture & Communication Study',
+    url: `${CLOUD}/v1789108767/13-microservices-architektur-2026_qjuo1u.pdf`,
+  },
+  {
+    slug: 'integration-api-design-governance',
+    title: 'API Design & Governance Mapping Study',
+    url: `${CLOUD}/v1789108767/14-api-design-governance-2026_zljb53.pdf`,
+  },
+  {
+    slug: 'integration-api-economy',
+    title: 'State of API Economy 2025',
+    url: `${CLOUD}/v1789108767/15-api-economy-2026_jg4yau.pdf`,
+  },
+  {
+    slug: 'integration-digital-business',
+    title: 'APIs & Digital Business Strategy Report',
+    url: `${CLOUD}/v1789108767/16-digital-business-api-plattformen-2026_e7ksgl.pdf`,
+  },
+  {
+    slug: 'integration-api-security',
+    title: 'Security Strategies for Microservices (NIST SP 800-204)',
+    url: `${CLOUD}/v1789108767/17-api-security-operations-2026_goe6ya.pdf`,
+  },
+  {
+    slug: 'integration-api-trends',
+    title: 'Application Security & Microservices Trends 2025',
+    url: `${CLOUD}/v1789108767/18-api-microservices-trends-2026_rvu1p9.pdf`,
+  },
 ];
 
 export function getWhitepaper(slug: string): WhitepaperEntry | null {
