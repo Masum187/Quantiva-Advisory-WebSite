@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import JsonLd from '../../../components/JsonLd';
 import ContentPostPage from '../../../components/pages/content/ContentPostPage';
+import { articleJsonLd, breadcrumbListJsonLd, SITE_URL } from '../../../lib/seo';
 import { getContentPost, getContentPosts } from '../../../lib/utils/contentHub';
 
 type Params = {
@@ -55,6 +57,29 @@ export default async function ContentPostEn({ params }: { params: PageParams; se
   }
 
   const related = (await getContentPosts('en')).filter((item) => item.slug !== post.slug);
+  const url = `${SITE_URL}/en/content/${post.slug}`;
 
-  return <ContentPostPage lang="en" post={post} related={related} />;
+  return (
+    <>
+      <JsonLd
+        data={articleJsonLd({
+          title: post.title,
+          excerpt: post.excerpt,
+          publishedAt: post.publishedAt,
+          author: post.author,
+          image: post.heroImage,
+          tags: post.tags,
+          url,
+          lang: 'en',
+        })}
+      />
+      <JsonLd
+        data={breadcrumbListJsonLd('en', [
+          { name: 'Content', path: '/content' },
+          { name: post.title, path: `/content/${post.slug}` },
+        ])}
+      />
+      <ContentPostPage lang="en" post={post} related={related} />
+    </>
+  );
 }

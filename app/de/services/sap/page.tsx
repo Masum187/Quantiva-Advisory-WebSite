@@ -214,13 +214,15 @@ export default function SAPServicePage() {
           <video
             key={`video-${index}`}
             src={video}
+            poster={video.replace('/video/upload/', '/video/upload/so_0/').replace('.mp4', '.jpg')}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
               index === currentVideoIndex ? 'z-10 opacity-100' : 'z-0 opacity-0'
             }`}
             muted
             loop
             playsInline
-            preload="auto"
+            autoPlay={index === currentVideoIndex}
+            preload={index === currentVideoIndex ? 'metadata' : 'none'}
           />
         ))}
         {/* Cinematic overlay for readability */}

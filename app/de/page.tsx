@@ -1,27 +1,20 @@
-import QuantivaWebsite from '../components/QuantivaWebsite';
+import JsonLd from '../components/JsonLd';
+import HomeRedesign from '../components/pages/home/HomeRedesign';
+import { organizationJsonLd, pageMeta } from '../lib/seo';
 
-export const metadata = {
+export const metadata = pageMeta({
   title: 'Quantiva Advisory – SAP, Cloud & AI Consulting',
-  description: 'Professionelle Beratung für SAP, Cloud, AI, Integration und Cyber Security. Strategische Beratung, technische Exzellenz und nachhaltige Lösungen für Ihren digitalen Erfolg.',
-  alternates: {
-    canonical: '/de',
-    languages: {
-      'de-DE': '/de',
-      'en-US': '/en',
-    },
-  },
-  openGraph: {
-    locale: 'de_DE',
-    alternateLocale: ['en_US'],
-  },
-};
+  description:
+    'Professionelle Beratung für SAP, Cloud, AI, Integration und Cyber Security. Strategische Beratung, technische Exzellenz und nachhaltige Lösungen für Ihren digitalen Erfolg.',
+  path: '/',
+  lang: 'de',
+});
 
 export default function HomePage() {
-  return <QuantivaWebsite />;
+  return (
+    <>
+      <JsonLd data={organizationJsonLd()} />
+      <HomeRedesign lang="de" />
+    </>
+  );
 }
-
-
-
-
-
-

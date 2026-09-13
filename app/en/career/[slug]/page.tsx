@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import JsonLd from '../../../components/JsonLd';
 import CareerAreaPage from '../../../components/pages/CareerAreaPage';
 import CareerBenefitPage from '../../../components/pages/CareerBenefitPage';
 import { careerAreaSlugs, getCareerArea } from '../../../lib/data/careerAreas';
 import { careerBenefitSlugs, getCareerBenefit } from '../../../lib/data/careerBenefits';
+import { breadcrumbListJsonLd, careerChildBreadcrumb } from '../../../lib/seo';
 
 export const dynamicParams = false;
 
@@ -45,12 +47,22 @@ export default async function CareerSlugEnPage({ params }: { params: PageParams 
 
   const area = getCareerArea(slug);
   if (area) {
-    return <CareerAreaPage lang="en" slug={area.slug} />;
+    return (
+      <>
+        <JsonLd data={breadcrumbListJsonLd('en', careerChildBreadcrumb('en', area.en.title, `/career/${slug}`))} />
+        <CareerAreaPage lang="en" slug={area.slug} />
+      </>
+    );
   }
 
   const benefit = getCareerBenefit(slug);
   if (benefit) {
-    return <CareerBenefitPage lang="en" slug={benefit.slug} />;
+    return (
+      <>
+        <JsonLd data={breadcrumbListJsonLd('en', careerChildBreadcrumb('en', benefit.en.title, `/career/${slug}`))} />
+        <CareerBenefitPage lang="en" slug={benefit.slug} />
+      </>
+    );
   }
 
   notFound();

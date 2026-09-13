@@ -72,7 +72,7 @@
     "analyze": "ANALYZE=true npm run build",
     "analyze:server": "BUNDLE_ANALYZE=server npm run build",
     "analyze:browser": "BUNDLE_ANALYZE=browser npm run build",
-    "postbuild": "npm run generate:sitemap && npm run generate:og || true && npm run validate:cases:strict"
+    "postbuild": "npm run generate:og || true && npm run validate:cases:strict"
   },
   "eslintConfig": {
     "extends": [

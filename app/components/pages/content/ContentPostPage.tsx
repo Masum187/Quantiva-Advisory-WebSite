@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Clock, Share2, Tag } from 'lucide-react';
 import { useLanguage } from '../../QuantivaWebsite';
 import type { ContentPost } from '../../../lib/utils/contentHub';
-import Script from 'next/script';
+import SiteNav from '../../SiteNav';
 
 interface ContentPostPageProps {
   lang: 'de' | 'en';
@@ -43,30 +43,10 @@ export default function ContentPostPage({ lang, post, related }: ContentPostPage
   const { localePath } = useLanguage();
   const dict = t[lang];
   const paragraphs = post.body?.split(/\n\n+/).filter(Boolean) ?? [];
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://quantivaadvisory.com';
-  const canonicalPath = localePath(`/content/${post.slug}`);
-  const canonicalUrl = `${siteUrl}${canonicalPath}`;
-
-  const articleJsonLd = useMemo(() => ({
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: post.title,
-    description: post.excerpt,
-    datePublished: post.publishedAt,
-    author: post.author ? [{ '@type': 'Person', name: post.author }] : undefined,
-    image: post.heroImage,
-    url: canonicalUrl,
-    keywords: post.tags?.join(', '),
-    inLanguage: lang === 'de' ? 'de-DE' : 'en-US',
-  }), [post.title, post.excerpt, post.publishedAt, post.author, post.heroImage, post.tags, canonicalUrl, lang]);
 
   return (
     <article className="min-h-screen bg-black text-white">
-      <Script
-        id={`article-jsonld-${post.slug}`}
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
+      <SiteNav lang={lang} variant="solid" />
       <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-slate-900/80 via-black to-black">
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,_rgba(45,212,191,0.2),_transparent_60%)]" />
         <div className="relative mx-auto grid max-w-5xl gap-12 px-6 py-20 lg:grid-cols-[60%_1fr]">
@@ -177,7 +157,7 @@ export default function ContentPostPage({ lang, post, related }: ContentPostPage
                       {item.excerpt}
                     </p>
                   </div>
-                  <div className="mt-5 flex items-center justify-between text-xs text-gray-500">
+                  <div className="mt-5 flex items-center justify-between text-xs text-gray-400">
                     <span className="inline-flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {formatDate(item.publishedAt, lang)}

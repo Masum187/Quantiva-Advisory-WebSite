@@ -165,7 +165,7 @@ export default function NuvoraLayout({
             animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           >
-            <ArrowDown className="h-5 w-5 text-gray-500" />
+            <ArrowDown className="h-5 w-5 text-gray-400" />
           </motion.span>
         </div>
       </section>
@@ -245,7 +245,7 @@ export default function NuvoraLayout({
                     >
                       {s.label.split(' · ')[0]}
                     </span>
-                    <span className="font-mono text-xs uppercase tracking-[0.25em] text-gray-500">
+                    <span className="font-mono text-xs uppercase tracking-[0.25em] text-gray-400">
                       {copy.layerLabel} {i + 1} / {venture.flow.length}
                     </span>
                   </div>
@@ -278,7 +278,7 @@ export default function NuvoraLayout({
                 <span className="h-3 w-3 rounded-full bg-white/15" />
                 <span className="h-3 w-3 rounded-full bg-white/15" />
                 <span className="h-3 w-3 rounded-full bg-white/15" />
-                <span className="ml-3 font-mono text-xs text-gray-500">architecture.contract</span>
+                <span className="ml-3 font-mono text-xs text-gray-400">architecture.contract</span>
               </div>
               <motion.div
                 initial="hidden"

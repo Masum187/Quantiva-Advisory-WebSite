@@ -1,11 +1,14 @@
+import ServiceJsonLd from '../../../components/ServiceJsonLd';
+import { servicePageMeta } from '../../../lib/seo';
 import ChangeManagementPage from '../../../components/pages/services/ChangeManagementPage';
 
-export const metadata = {
-  title: 'Change Management & Training | Quantiva Advisory',
-  description: 'Change management and training for successful transformations. Empower people, shape change.',
-};
+export const metadata = servicePageMeta('en', 'change-management');
 
 export default function Page() {
-  return <ChangeManagementPage lang="en" />;
+  return (
+    <>
+      <ServiceJsonLd lang="en" slug="change-management" />
+      <ChangeManagementPage lang="en" />
+    </>
+  );
 }
-

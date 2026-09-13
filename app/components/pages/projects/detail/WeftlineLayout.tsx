@@ -178,7 +178,7 @@ export default function WeftlineLayout({
             animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           >
-            <ArrowDown className="h-5 w-5 text-gray-500" />
+            <ArrowDown className="h-5 w-5 text-gray-400" />
           </motion.span>
         </div>
       </section>
@@ -364,7 +364,7 @@ export default function WeftlineLayout({
             variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
             className="mt-20 flex flex-wrap items-center gap-3"
           >
-            <span className="mr-2 font-mono text-xs uppercase tracking-[0.3em] text-gray-500">
+            <span className="mr-2 font-mono text-xs uppercase tracking-[0.3em] text-gray-400">
               {copy.packsLabel}
             </span>
             {PACKS.map((pack, i) => (

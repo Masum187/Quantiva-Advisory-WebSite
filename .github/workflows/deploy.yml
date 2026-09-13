@@ -26,16 +26,11 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Verify sitemap generation
+      - name: Verify sitemap route
         run: |
-          echo "Checking generated files..."
-          ls -la public/
-          echo "Sitemap content:"
-          head -10 public/sitemap.xml
-          echo "Robots.txt content:"
-          cat public/robots.txt
-          echo "Next.js build output:"
-          ls -la .next/ 2>/dev/null || echo "No .next directory (expected for static export)"
+          echo "Sitemap and robots are Next.js metadata routes (app/sitemap.ts, app/robots.ts)."
+          echo "Do not expect public/sitemap.xml or public/robots.txt — they would override the routes."
+          ls -la .next/ 2>/dev/null || echo "No .next directory"
 
       # Uncomment and configure for your deployment target:
       

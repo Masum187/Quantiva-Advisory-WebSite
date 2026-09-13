@@ -177,7 +177,7 @@ export default function LimenLayout({
               transition={{ duration: 0.7, ease: EASE }}
               className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left"
             >
-              <p className="font-mono text-xs uppercase tracking-[0.25em] text-gray-500">
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-gray-400">
                 {copy.muslinLabel}
               </p>
               <p className="mt-2 text-lg font-bold text-white">{copy.muslinKind}</p>
@@ -212,7 +212,7 @@ export default function LimenLayout({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2, duration: 0.8 }}
-            className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-gray-500"
+            className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-gray-400"
           >
             {copy.heroCaption}
           </motion.p>
@@ -223,7 +223,7 @@ export default function LimenLayout({
             animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           >
-            <ArrowDown className="h-5 w-5 text-gray-500" />
+            <ArrowDown className="h-5 w-5 text-gray-400" />
           </motion.span>
         </div>
       </section>

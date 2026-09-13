@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { videoPosterFor } from '../lib/videoPoster';
 
 type ServiceVideoBackgroundProps = {
   /** One or more video URLs. With multiple videos, they cross-fade in rotation. */
@@ -34,14 +35,15 @@ export default function ServiceVideoBackground({
         <video
           key={src}
           src={src}
+          poster={videoPosterFor(src)}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
             index === current ? 'opacity-100' : 'opacity-0'
           }`}
-          autoPlay
+          autoPlay={index === current}
           muted
           loop
           playsInline
-          preload={index === 0 ? 'auto' : 'metadata'}
+          preload={index === current ? 'metadata' : 'none'}
         />
       ))}
       <div className={`absolute inset-0 ${overlayClassName}`} />

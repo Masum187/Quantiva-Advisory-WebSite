@@ -4,6 +4,7 @@ import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Bug, ArrowUpRight, CheckCircle } from 'lucide-react';
 import ServiceVideoBackground from '../../ServiceVideoBackground';
+import SiteNav from '../../SiteNav';
 import {
   EASE,
   ScrollProgress,
@@ -146,6 +147,7 @@ export default function TestAutomationPage({ lang }: TestAutomationPageProps) {
 
   return (
     <div className="relative min-h-screen bg-black text-white">
+      <SiteNav lang={lang} variant="solid" />
       <ScrollProgress accent={ACCENT} />
 
       {/* Fixed Background Video (kept), dimmed for console readability */}
@@ -194,7 +196,7 @@ export default function TestAutomationPage({ lang }: TestAutomationPageProps) {
                 <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
                 <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/70" />
                 <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
-                <span className="ml-3 font-mono text-xs text-gray-500">quantiva-qa — test run</span>
+                <span className="ml-3 font-mono text-xs text-gray-400">quantiva-qa — test run</span>
               </div>
               <motion.div
                 className="space-y-2.5 px-5 py-6 font-mono text-sm"
@@ -220,7 +222,7 @@ export default function TestAutomationPage({ lang }: TestAutomationPageProps) {
                 ))}
                 <motion.p
                   variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-                  className="flex items-center pt-2 text-gray-500"
+                  className="flex items-center pt-2 text-gray-400"
                 >
                   <span className="mr-2">$</span>
                   <motion.span
@@ -262,7 +264,7 @@ export default function TestAutomationPage({ lang }: TestAutomationPageProps) {
                 className="group grid gap-4 border-b border-white/10 py-8 pl-5 transition-colors hover:bg-white/[0.03] md:grid-cols-[auto_1fr_auto] md:items-center md:gap-10"
                 style={{ borderLeft: `2px solid ${ACCENT}44` }}
               >
-                <span className="font-mono text-sm text-gray-500">
+                <span className="font-mono text-sm text-gray-400">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <div>

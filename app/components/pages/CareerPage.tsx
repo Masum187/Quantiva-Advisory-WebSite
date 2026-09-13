@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import CareerCardMedia from '../CareerCardMedia';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import Navigation from '../Navigation';
 import {
   ChevronRight, ArrowRight, Users, Heart, TrendingUp,
@@ -14,7 +15,10 @@ import { useLanguage } from '../QuantivaWebsite';
 import { getJobListings, submitJobPosting, JobListing } from '../../lib/utils/jobs';
 import ContactForm from '../ContactForm';
 import { AnimatePresence } from 'framer-motion';
-import Script from 'next/script';
+import { SpotlightCard, GhostNumber, SectionLabel, EASE as CAREER_EASE } from './projects/detail/shared';
+
+// Gemeinsamer Teal-Akzent (wie Startseite/Navigation)
+const CAREER_ACCENT = '#2dd4bf';
 
 // Animation Components
 function SlideIn({ children, direction = 'up', delay = 0, className = '' }: { children: React.ReactNode; direction?: 'up' | 'down' | 'left' | 'right'; delay?: number; className?: string }) {
@@ -70,248 +74,122 @@ function StaggerSlideIn({ children, className = "" }: { children: React.ReactNod
   );
 }
 
-// Career Levels Carousel Component with Swipe Support
-function CareerLevelsCarousel({ levels, lang }: { levels: any[]; lang: string }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [dragStart, setDragStart] = useState<number | null>(null);
-  const [direction, setDirection] = useState<'left' | 'right'>('right');
+// Career Levels Grid – große Bildkarten mit Spotlight-Hover (Redesign)
+// Ambient-Loop-Videos mit den bisherigen Bildern als Poster-Fallback
+const CAREER_LEVEL_MEDIA = [
+  {
+    slug: 'students',
+    poster: '/assets/career/levels/students-poster.jpg',
+    video: '/assets/career/levels/students.mp4',
+  },
+  {
+    slug: 'graduates',
+    poster: '/assets/career/levels/graduates-poster.jpg',
+    video: '/assets/career/levels/graduates.mp4',
+  },
+  {
+    slug: 'professionals',
+    poster: '/assets/career/levels/professionals-poster.jpg',
+    video: '/assets/career/levels/professionals.mp4',
+  },
+  {
+    slug: 'leaders',
+    poster: '/assets/career/levels/leaders-poster.jpg',
+    video: '/assets/career/levels/leaders.mp4',
+  },
+] as const;
 
-  const carouselData = [
-    {
-      image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop',
-      gradient: 'from-purple-900/90 via-purple-800/70 to-transparent',
-      icon: GraduationCap,
-      iconBg: 'bg-white/20',
-      ctaText: lang === 'de' ? 'Praktika entdecken' : 'Discover Internships',
-      ctaBg: 'bg-white/10 border-white/30 hover:bg-white/20 hover:border-white/50',
-      ctaTextColor: 'text-white',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=800&auto=format&fit=crop',
-      gradient: 'from-black/95 via-black/60 to-transparent',
-      icon: Lightbulb,
-      iconBg: 'bg-teal-500/30',
-      ctaText: lang === 'de' ? 'Einstiegsprogramme' : 'Entry Programs',
-      ctaBg: 'bg-teal-500/20 border-teal-400/40 hover:bg-teal-500/30 hover:border-teal-400/60',
-      ctaTextColor: 'text-teal-300',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop',
-      gradient: 'from-black/95 via-black/60 to-transparent',
-      icon: Target,
-      iconBg: 'bg-blue-500/30',
-      ctaText: lang === 'de' ? 'Karrierewege' : 'Career Paths',
-      ctaBg: 'bg-blue-500/20 border-blue-400/40 hover:bg-blue-500/30 hover:border-blue-400/60',
-      ctaTextColor: 'text-blue-300',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1200&auto=format&fit=crop',
-      gradient: 'from-orange-900/90 via-orange-800/70 to-transparent',
-      icon: Award,
-      iconBg: 'bg-white/20',
-      ctaText: lang === 'de' ? 'Leadership-Programme' : 'Leadership Programs',
-      ctaBg: 'bg-white/10 border-white/30 hover:bg-white/20 hover:border-white/50',
-      ctaTextColor: 'text-white',
-    },
-  ];
-
-  // Auto-rotate effect
-  React.useEffect(() => {
-    if (isHovered) {
-      setProgress(0);
-      return;
-    }
-
-    const duration = 5000; // 5 seconds
-    const interval = 50; // Update every 50ms
-    const increment = (interval / duration) * 100;
-
-    const progressTimer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setCurrentIndex((current) => (current + 1) % carouselData.length);
-          return 0;
-        }
-        return prev + increment;
-      });
-    }, interval);
-
-    return () => clearInterval(progressTimer);
-  }, [currentIndex, isHovered, carouselData.length]);
-
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
-    setProgress(0);
+function CareerLevelCard({
+  level,
+  index,
+  ctaText,
+  href,
+}: {
+  level: { title: string; description: string };
+  index: number;
+  ctaText: string;
+  href: string;
+}) {
+  const media = CAREER_LEVEL_MEDIA[index % CAREER_LEVEL_MEDIA.length];
+  const onMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+    el.style.setProperty('--my', `${e.clientY - rect.top}px`);
   };
-
-  const goToPrevious = () => {
-    setDirection('left');
-    setCurrentIndex((current) => (current - 1 + carouselData.length) % carouselData.length);
-    setProgress(0);
-  };
-
-  const goToNext = () => {
-    setDirection('right');
-    setCurrentIndex((current) => (current + 1) % carouselData.length);
-    setProgress(0);
-  };
-
-  // Keyboard navigation
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') goToPrevious();
-      if (e.key === 'ArrowRight') goToNext();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Touch/Mouse drag handlers
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    setDragStart(clientX);
-    setIsHovered(true);
-  };
-
-  const handleDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
-    if (dragStart === null) return;
-    
-    const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
-    const diff = dragStart - clientX;
-    
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        // Swipe left → next slide (comes from right)
-        goToNext();
-      } else {
-        // Swipe right → previous slide (comes from left)
-        goToPrevious();
-      }
-    }
-    
-    setDragStart(null);
-    setIsHovered(false);
-  };
-
-  const currentCard = carouselData[currentIndex];
-  const currentLevel = levels[currentIndex];
-  const Icon = currentCard.icon;
 
   return (
-    <div className="relative">
-      {/* Previous Button */}
-      <button
-        onClick={goToPrevious}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-white hover:bg-black/70 hover:scale-110 transition-all duration-300 flex items-center justify-center group"
-        aria-label="Previous slide"
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.8, delay: index * 0.08, ease: CAREER_EASE }}
+    >
+      <Link
+        href={href}
+        onMouseMove={onMouseMove}
+        className="group relative block h-[380px] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] transition-colors duration-300 hover:border-teal-400/40 md:h-[440px]"
       >
-        <ChevronRight className="h-6 w-6 rotate-180 group-hover:-translate-x-1 transition-transform" />
-      </button>
-
-      {/* Next Button */}
-      <button
-        onClick={goToNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-white hover:bg-black/70 hover:scale-110 transition-all duration-300 flex items-center justify-center group"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
-      </button>
-
-      {/* Main Carousel Card */}
-      <div
-        className="relative h-[500px] md:h-[600px] rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing select-none"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onMouseDown={handleDragStart}
-        onMouseUp={handleDragEnd}
-        onTouchStart={handleDragStart}
-        onTouchEnd={handleDragEnd}
-      >
-        <motion.img
-          key={currentIndex}
-          src={currentCard.image}
-          alt={currentLevel.title}
-          className="absolute inset-0 w-full h-full object-cover"
-          initial={{ 
-            x: direction === 'right' ? 100 : -100,
-            scale: 1.1, 
-            opacity: 0 
-          }}
-          animate={{ 
-            x: 0,
-            scale: 1, 
-            opacity: 1 
-          }}
-          exit={{ 
-            x: direction === 'right' ? -100 : 100,
-            scale: 0.9,
-            opacity: 0 
-          }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
-        />
-        <div className={`absolute inset-0 bg-gradient-to-r ${currentCard.gradient}`}></div>
-
-        {/* Content */}
-        <motion.div
-          key={`content-${currentIndex}`}
-          className="relative h-full flex flex-col justify-end p-8 md:p-12"
-          initial={{ 
-            opacity: 0, 
-            x: direction === 'right' ? 50 : -50 
-          }}
-          animate={{ 
-            opacity: 1, 
-            x: 0 
-          }}
-          transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
-        >
-          <div className="mb-6">
-            <div className={`w-16 h-16 rounded-full ${currentCard.iconBg} backdrop-blur-sm flex items-center justify-center mb-6`}>
-              <Icon className="h-8 w-8 text-white" />
-            </div>
-          </div>
-          <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">{currentLevel.title}</h3>
-          <p className="text-xl text-gray-100 mb-8 leading-relaxed max-w-3xl">{currentLevel.description}</p>
-          <button className={`self-start inline-flex items-center px-8 py-4 ${currentCard.ctaBg} ${currentCard.ctaTextColor} backdrop-blur-sm border rounded-lg font-semibold transition-all duration-300 group/btn`}>
-            {currentCard.ctaText}
-            <ArrowRight className="ml-2 h-5 w-5 group-hover/btn:translate-x-2 transition-transform" />
-          </button>
-        </motion.div>
-
-        {/* Progress Bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
-          <div
-            className="h-full bg-white/80 transition-all duration-50"
-            style={{ width: `${progress}%` }}
-          ></div>
+        <div className="absolute inset-0">
+          <CareerCardMedia
+            image={media.poster}
+            video={media.video}
+            alt={level.title}
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
         </div>
-      </div>
+        {/* Dark scrim */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10" />
+        {/* Mouse-follow glow */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[5] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          style={{
+            background:
+              'radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(45,212,191,0.14) 0%, transparent 65%)',
+          }}
+        />
+        <div className="relative z-10 flex h-full flex-col justify-end p-8">
+          <span className="font-mono text-xs uppercase tracking-[0.25em] text-teal-400">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <h3 className="mt-3 text-2xl font-bold tracking-tight text-white md:text-3xl">
+            {level.title}
+          </h3>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-gray-300">
+            {level.description}
+          </p>
+          <span className="mt-6 inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-[0.25em] text-gray-400 transition-colors duration-300 group-hover:text-teal-300">
+            {ctaText}
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </span>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
 
-      {/* Navigation Dots */}
-      <div className="flex justify-center gap-3 mt-8">
-        {carouselData.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`relative h-3 rounded-full transition-all duration-300 ${
-              index === currentIndex ? 'w-12 bg-teal-500' : 'w-3 bg-white/30 hover:bg-white/50'
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          >
-            {index === currentIndex && (
-              <div className="absolute inset-0 rounded-full bg-white/50 animate-pulse"></div>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Slide Counter */}
-      <div className="text-center mt-4 text-gray-400 font-semibold">
-        {currentIndex + 1} / {carouselData.length}
-      </div>
+function CareerLevelsGrid({ levels, lang }: { levels: { title: string; description: string }[]; lang: string }) {
+  const ctas = [
+    lang === 'de' ? 'Praktika entdecken' : 'Discover Internships',
+    lang === 'de' ? 'Einstiegsprogramme' : 'Entry Programs',
+    lang === 'de' ? 'Karrierewege' : 'Career Paths',
+    lang === 'de' ? 'Leadership-Programme' : 'Leadership Programs',
+  ];
+  return (
+    <div className="grid gap-6 md:grid-cols-2">
+      {levels.map((level, index) => {
+        const media = CAREER_LEVEL_MEDIA[index % CAREER_LEVEL_MEDIA.length];
+        return (
+          <CareerLevelCard
+            key={level.title}
+            level={level}
+            index={index}
+            ctaText={ctas[index % ctas.length]}
+            href={`/${lang}/career/${media.slug}`}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -348,8 +226,6 @@ export default function CareerPage() {
   const [departmentFilter, setDepartmentFilter] = useState<string>('all');
   const [seniorityFilter, setSeniorityFilter] = useState<string>('all');
   const [remoteFilter, setRemoteFilter] = useState<string>('all');
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://quantivaadvisory.com';
-
   useEffect(() => {
     let mounted = true;
     setJobLoading(true);
@@ -424,45 +300,6 @@ export default function CareerPage() {
     };
   }, [jobListings]);
 
-  const jobPostingJsonLd = useMemo(() => {
-    return jobListings.map((job) => ({
-      '@context': 'https://schema.org',
-      '@type': 'JobPosting',
-      title: job.title,
-      description: job.description,
-      datePosted: job.publishedAt,
-      employmentType: job.employmentType,
-      jobLocationType: job.remote ? 'TELECOMMUTE' : 'ON_SITE',
-      hiringOrganization: {
-        '@type': 'Organization',
-        name: 'Quantiva Advisory',
-        sameAs: siteUrl,
-      },
-      jobLocation: job.location
-        ? {
-            '@type': 'Place',
-            address: {
-              '@type': 'PostalAddress',
-              addressLocality: job.location,
-              addressCountry: 'DE',
-            },
-          }
-        : undefined,
-      applicantLocationRequirements: job.remote
-        ? {
-            '@type': 'Country',
-            name: 'Germany',
-          }
-        : undefined,
-      identifier: {
-        '@type': 'PropertyValue',
-        name: 'Quantiva Advisory',
-        value: job.id,
-      },
-      url: `${siteUrl}${localePath(`/career`)}#${job.id}`,
-    }));
-  }, [jobListings, localePath, siteUrl]);
-
   // Navigation items
   const navigationItems = [
     { id: 'home', label: 'Home', href: localePath('/') },
@@ -486,8 +323,31 @@ export default function CareerPage() {
   const [elevenLabsKey, setElevenLabsKey] = useState('');
   const [selectedElevenLabsVoice, setSelectedElevenLabsVoice] = useState('jccKWdITZiywXGZfLmCo');
   const { scrollYProgress } = useScroll();
+  const reduceMotion = useReducedMotion();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.3], [1, 0.95]);
+  const heroVideoRef = React.useRef<HTMLVideoElement>(null);
+  const [heroMuted, setHeroMuted] = useState(true);
+
+  const toggleHeroSound = () => {
+    const el = heroVideoRef.current;
+    if (!el) return;
+    if (heroMuted) {
+      el.currentTime = 0;
+      el.muted = false;
+      setHeroMuted(false);
+      void el.play();
+    } else {
+      el.muted = true;
+      setHeroMuted(true);
+    }
+  };
+
+  React.useEffect(() => {
+    const el = heroVideoRef.current;
+    if (!el || !reduceMotion) return;
+    el.pause();
+  }, [reduceMotion]);
 
   // Load available voices
   React.useEffect(() => {
@@ -957,11 +817,6 @@ export default function CareerPage() {
 
   return (
     <>
-      <Script
-        id="job-postings-jsonld"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
-      />
       {/* Navigation */}
       <div className="relative z-10">
         <Navigation lang={lang} items={navigationItems} />
@@ -970,19 +825,64 @@ export default function CareerPage() {
       {/* Hero: full-bleed welcome video with headline and CTAs */}
       <section className="relative z-10 bg-black">
         <motion.div
-          style={{ opacity: heroOpacity, scale: heroScale }}
+          style={{ opacity: reduceMotion ? 1 : heroOpacity, scale: reduceMotion ? 1 : heroScale }}
           className="relative h-[100svh] min-h-[640px] w-full overflow-hidden"
         >
-        {/* Full-screen background video */}
+        {/* Full-screen background video (Willkommens-Botschaft) */}
         <video
+          ref={heroVideoRef}
           className="absolute inset-0 h-full w-full object-cover"
-          src="https://res.cloudinary.com/dbrisux8i/video/upload/du_3.45/v1762015286/openart-video_b6992003_1761933215657_wgjmwh.mp4"
-          autoPlay
+          src="/assets/career/welcome-hero.mp4"
+          poster="/assets/career/welcome-hero-poster.jpg"
+          autoPlay={!reduceMotion}
           muted
           loop
           playsInline
-          aria-hidden="true"
-        />
+          preload={reduceMotion ? 'none' : 'metadata'}
+        >
+          <track
+            kind="captions"
+            src="/assets/career/welcome-hero.de.vtt"
+            srcLang="de"
+            label="Deutsch"
+            default={lang === 'de'}
+          />
+          <track
+            kind="captions"
+            src="/assets/career/welcome-hero.en.vtt"
+            srcLang="en"
+            label="English"
+            default={lang === 'en'}
+          />
+        </video>
+
+        {/* Sound toggle for the welcome message */}
+        <button
+          type="button"
+          onClick={toggleHeroSound}
+          className="absolute right-6 top-24 z-20 inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/40 px-4 py-2 text-xs font-medium uppercase tracking-widest text-white backdrop-blur-md transition hover:border-teal-400/60 hover:text-teal-300 md:right-10"
+          aria-pressed={!heroMuted}
+        >
+          {heroMuted ? (
+            <>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
+                <path d="M11 5 6 9H2v6h4l5 4V5z" strokeLinejoin="round" />
+                <line x1="23" y1="9" x2="17" y2="15" strokeLinecap="round" />
+                <line x1="17" y1="9" x2="23" y2="15" strokeLinecap="round" />
+              </svg>
+              {lang === 'de' ? 'Botschaft anhören' : 'Hear the message'}
+            </>
+          ) : (
+            <>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
+                <path d="M11 5 6 9H2v6h4l5 4V5z" strokeLinejoin="round" />
+                <path d="M15.5 8.5a5 5 0 0 1 0 7" strokeLinecap="round" />
+                <path d="M18.5 5.5a9 9 0 0 1 0 13" strokeLinecap="round" />
+              </svg>
+              {lang === 'de' ? 'Ton aus' : 'Sound off'}
+            </>
+          )}
+        </button>
 
         {/* Readability overlays (left/bottom darker where the copy sits) */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/20" />
@@ -1007,7 +907,7 @@ export default function CareerPage() {
               <div className="flex flex-col gap-4 sm:flex-row">
                 <a
                   href={localePath('/#contact')}
-                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-teal-500 to-purple-500 text-white text-lg font-semibold rounded-xl hover:shadow-lg hover:shadow-teal-500/50 transition-all duration-300"
+                  className="inline-flex items-center justify-center rounded-full bg-teal-400 px-8 py-4 text-lg font-semibold text-black transition-all duration-300 hover:bg-teal-300 hover:shadow-lg hover:shadow-teal-500/30"
                 >
                   {t.heroCTA}
                   <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
@@ -1197,175 +1097,79 @@ export default function CareerPage() {
             </div>
           </div>
 
-          {/* Career Levels Section - Rotating Carousel */}
-          <div className="mb-24">
+          {/* Career Levels Section - Redesigned Grid */}
+          <div className="relative mb-24">
+            <GhostNumber index={1} />
             <SlideIn direction="up" delay={0.1}>
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              <div className="mb-16">
+                <SectionLabel num="02" accent={CAREER_ACCENT}>
+                  {lang === 'de' ? 'Karrierestufen' : 'Career Levels'}
+                </SectionLabel>
+                <h2 className="mt-6 max-w-4xl text-4xl font-bold tracking-tight text-white md:text-6xl">
                   {t.levelsTitle}
                 </h2>
-                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                  {lang === 'de' 
-                    ? 'Egal, an welchem Punkt deiner Karriere du dich befindest' 
-                    : 'No matter where you are in your career journey'}
-                </p>
               </div>
             </SlideIn>
 
-            {/* Rotating Carousel */}
-            <CareerLevelsCarousel levels={t.levels} lang={lang} />
+            <CareerLevelsGrid levels={t.levels} lang={lang} />
           </div>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <SlideIn key={stat.label} direction="up" delay={index * 0.1}>
-                <div className="text-center group">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-teal-500/20 to-purple-500/20 border border-teal-500/30 flex items-center justify-center group-hover:border-teal-400/60 transition-all">
-                    <Icon className="w-8 h-8 text-teal-400" />
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
-                  <div className="text-gray-400 text-sm">{stat.label}</div>
-                </div>
-              </SlideIn>
-            );
-          })}
+        {/* Stats Section - Editorial band */}
+        <div className="mb-24 grid grid-cols-2 border-t border-white/10 md:grid-cols-4">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7, delay: index * 0.08, ease: CAREER_EASE }}
+              className={`px-6 py-10 md:py-14 ${index > 0 ? 'md:border-l md:border-white/10' : ''} ${index % 2 === 1 ? 'border-l border-white/10 md:border-l' : ''}`}
+            >
+              <div className="text-4xl font-bold text-teal-400 md:text-5xl">{stat.value}</div>
+              <div className="mt-3 font-mono text-xs uppercase tracking-[0.25em] text-gray-400">{stat.label}</div>
+            </motion.div>
+          ))}
         </div>
 
-        {/* Benefits Section - Modern 3D Design */}
-        <div className="mb-24">
+        {/* Benefits Section - Editorial Spotlight Cards */}
+        <div className="relative mb-24">
+          <GhostNumber index={2} />
           <SlideIn direction="up">
-            <div className="text-center mb-20">
-              <motion.div 
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-teal-500/20 to-purple-500/20 border border-teal-500/30 mb-8 backdrop-blur-sm"
-                whileHover={{ scale: 1.05, rotateY: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Heart className="w-6 h-6 text-teal-400" />
-                <span className="text-white font-semibold">Unsere Benefits</span>
-              </motion.div>
-              <motion.h2 
-                className="text-4xl md:text-6xl font-bold text-white mb-6"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                Warum <span className="bg-gradient-to-r from-teal-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Quantiva</span>?
-              </motion.h2>
-              <motion.p 
-                className="text-xl text-gray-300 max-w-3xl mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
+            <div className="mb-16">
+              <SectionLabel num="03" accent={CAREER_ACCENT}>
+                {lang === 'de' ? 'Unsere Benefits' : 'Our Benefits'}
+              </SectionLabel>
+              <h2 className="mt-6 text-4xl font-bold tracking-tight text-white md:text-6xl">
+                Warum <span className="text-teal-400">Quantiva</span>?
+              </h2>
+              <p className="mt-5 max-w-3xl text-lg text-gray-400">
                 Wir bieten mehr als nur einen Job - wir bieten eine Karriere mit Zukunft.
-              </motion.p>
+              </p>
             </div>
           </SlideIn>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {benefits.map((benefit, index) => {
               const Icon = benefit.icon;
               return (
                 <motion.div
                   key={benefit.title}
-                  initial={{ opacity: 0, y: 50, rotateX: -15 }}
-                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                  transition={{ 
-                    duration: 0.6, 
-                    delay: index * 0.1,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  whileHover={{ 
-                    y: -10, 
-                    rotateY: 5, 
-                    rotateX: 5,
-                    scale: 1.02,
-                    transition: { duration: 0.3 }
-                  }}
-                  className="group perspective-1000"
+                  initial={{ opacity: 0, y: 32 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.7, delay: index * 0.08, ease: CAREER_EASE }}
+                  className="h-full"
                 >
-                  <div className="relative h-full p-8 rounded-3xl bg-gradient-to-br from-black/40 via-black/20 to-black/40 border border-white/10 backdrop-blur-xl transform-gpu transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-teal-500/20 group-hover:border-teal-400/30">
-                    {/* 3D Background Effects */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 via-purple-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div className="absolute -inset-1 bg-gradient-to-r from-teal-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
-                    
-                    {/* Floating Particles Effect */}
-                    <div className="absolute inset-0 overflow-hidden rounded-3xl">
-                      <motion.div
-                        className="absolute w-2 h-2 bg-teal-400/30 rounded-full"
-                        animate={{
-                          x: [0, 100, 0],
-                          y: [0, -50, 0],
-                          opacity: [0, 1, 0],
-                          scale: [0, 1, 0]
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          delay: index * 0.5
-                        }}
-                        style={{ top: '20%', left: '10%' }}
-                      />
-                      <motion.div
-                        className="absolute w-1 h-1 bg-purple-400/40 rounded-full"
-                        animate={{
-                          x: [0, -80, 0],
-                          y: [0, 60, 0],
-                          opacity: [0, 1, 0],
-                          scale: [0, 1, 0]
-                        }}
-                        transition={{
-                          duration: 4,
-                          repeat: Infinity,
-                          delay: index * 0.7
-                        }}
-                        style={{ top: '60%', right: '15%' }}
-                      />
+                  <SpotlightCard
+                    accent={CAREER_ACCENT}
+                    className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-8 transition-colors duration-300 hover:border-teal-400/40"
+                  >
+                    <div className="inline-flex rounded-lg bg-teal-400/10 p-2.5">
+                      <Icon className="h-6 w-6 text-teal-400" />
                     </div>
-
-                    <div className="relative z-10">
-                      {/* 3D Icon Container */}
-                      <motion.div 
-                        className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${benefit.color}/20 border border-white/20 flex items-center justify-center group-hover:border-teal-400/50 backdrop-blur-sm relative overflow-hidden`}
-                        whileHover={{ 
-                          rotateY: 360,
-                          scale: 1.1,
-                          transition: { duration: 0.6 }
-                        }}
-                      >
-                        {/* Icon Glow Effect */}
-                        <div className={`absolute inset-0 bg-gradient-to-br ${benefit.color}/30 rounded-3xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
-                        <Icon className="w-10 h-10 text-white relative z-10 group-hover:text-teal-300 transition-colors duration-300" />
-                      </motion.div>
-
-                      {/* Content */}
-                      <motion.h3 
-                        className="text-xl font-bold text-white mb-4 mt-6 group-hover:text-teal-300 transition-colors duration-300"
-                        whileHover={{ x: 5 }}
-                      >
-                        {benefit.title}
-                      </motion.h3>
-                      <motion.p 
-                        className="text-gray-300 text-sm leading-relaxed group-hover:text-gray-200 transition-colors duration-300"
-                        whileHover={{ x: 5 }}
-                      >
-                        {benefit.description}
-                      </motion.p>
-
-                      {/* Hover Arrow */}
-                      <motion.div
-                        className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
-                        <ArrowRight className="w-5 h-5 text-teal-400" />
-                      </motion.div>
-                    </div>
-                  </div>
+                    <h3 className="mt-6 text-lg font-semibold text-white">{benefit.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-gray-400">{benefit.description}</p>
+                  </SpotlightCard>
                 </motion.div>
               );
             })}
@@ -1373,17 +1177,17 @@ export default function CareerPage() {
         </div>
 
         {/* Open Positions */}
-        <div className="mb-24">
+        <div className="relative mb-24">
+          <GhostNumber index={3} />
           <SlideIn direction="up">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-teal-500/20 to-purple-500/20 border border-teal-500/30 mb-8">
-                <Target className="w-6 h-6 text-teal-400" />
-                <span className="text-white font-semibold">{lang === 'de' ? 'Offene Positionen' : 'Open Positions'}</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                {lang === 'de' ? 'Aktuelle' : 'Current'} <span className="bg-gradient-to-r from-teal-400 to-purple-400 bg-clip-text text-transparent">{lang === 'de' ? 'Stellenangebote' : 'Job Openings'}</span>
+            <div className="mb-16">
+              <SectionLabel num="04" accent={CAREER_ACCENT}>
+                {lang === 'de' ? 'Offene Positionen' : 'Open Positions'}
+              </SectionLabel>
+              <h2 className="mt-6 text-4xl font-bold tracking-tight text-white md:text-6xl">
+                {lang === 'de' ? 'Aktuelle' : 'Current'} <span className="text-teal-400">{lang === 'de' ? 'Stellenangebote' : 'Job Openings'}</span>
               </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              <p className="mt-5 max-w-3xl text-lg text-gray-400">
                 {lang === 'de' ? 'Entdecken Sie unsere aktuellen Stellenangebote und finden Sie Ihre perfekte Position.' : 'Discover our current job openings and find your perfect position.'}
               </p>
             </div>
@@ -1391,7 +1195,7 @@ export default function CareerPage() {
 
           {/* Job Filters */}
           <SlideIn direction="up" delay={0.2}>
-            <div className="mb-12 rounded-3xl border border-white/10 bg-black/40 p-6 backdrop-blur-sm">
+            <div className="mb-12 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                 {/* Search */}
                 <div className="lg:col-span-2">
@@ -1400,7 +1204,7 @@ export default function CareerPage() {
                     placeholder={lang === 'de' ? 'Suche nach Position oder Stichwort...' : 'Search for position or keyword...'}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-xl border border-white/20 bg-black/60 px-4 py-3 text-white placeholder:text-gray-500 focus:border-teal-400/50 focus:outline-none focus:ring-2 focus:ring-teal-400/30"
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white placeholder:text-gray-500 transition-colors focus:border-teal-400/50 focus:outline-none"
                   />
                 </div>
                 
@@ -1408,7 +1212,7 @@ export default function CareerPage() {
                 <select
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
-                  className="rounded-xl border border-white/20 bg-black/60 px-4 py-3 text-white focus:border-teal-400/50 focus:outline-none focus:ring-2 focus:ring-teal-400/30"
+                  className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white transition-colors [color-scheme:dark] focus:border-teal-400/50 focus:outline-none [&>option]:bg-[#04060b] [&>option]:text-white"
                 >
                   <option value="all">{lang === 'de' ? 'Alle Standorte' : 'All Locations'}</option>
                   {filterOptions.locations.map((loc) => (
@@ -1420,7 +1224,7 @@ export default function CareerPage() {
                 <select
                   value={departmentFilter}
                   onChange={(e) => setDepartmentFilter(e.target.value)}
-                  className="rounded-xl border border-white/20 bg-black/60 px-4 py-3 text-white focus:border-teal-400/50 focus:outline-none focus:ring-2 focus:ring-teal-400/30"
+                  className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white transition-colors [color-scheme:dark] focus:border-teal-400/50 focus:outline-none [&>option]:bg-[#04060b] [&>option]:text-white"
                 >
                   <option value="all">{lang === 'de' ? 'Alle Bereiche' : 'All Departments'}</option>
                   {filterOptions.departments.map((dept) => (
@@ -1432,7 +1236,7 @@ export default function CareerPage() {
                 <select
                   value={seniorityFilter}
                   onChange={(e) => setSeniorityFilter(e.target.value)}
-                  className="rounded-xl border border-white/20 bg-black/60 px-4 py-3 text-white focus:border-teal-400/50 focus:outline-none focus:ring-2 focus:ring-teal-400/30"
+                  className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white transition-colors [color-scheme:dark] focus:border-teal-400/50 focus:outline-none [&>option]:bg-[#04060b] [&>option]:text-white"
                 >
                   <option value="all">{lang === 'de' ? 'Alle Level' : 'All Levels'}</option>
                   {filterOptions.seniorities.map((sen) => (
@@ -1442,8 +1246,8 @@ export default function CareerPage() {
               </div>
               
               {/* Filter Summary */}
-              <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="text-gray-400">
+              <div className="mt-4 flex items-center justify-between">
+                <span className="font-mono text-xs uppercase tracking-[0.25em] text-gray-400">
                   {filteredJobs.length} {lang === 'de' ? 'Position(en) gefunden' : 'position(s) found'}
                 </span>
                 {(searchQuery || locationFilter !== 'all' || departmentFilter !== 'all' || seniorityFilter !== 'all') && (
@@ -1455,7 +1259,7 @@ export default function CareerPage() {
                       setSeniorityFilter('all');
                       setRemoteFilter('all');
                     }}
-                    className="text-teal-400 hover:text-teal-300 transition-colors"
+                    className="font-mono text-xs uppercase tracking-[0.25em] text-teal-400 transition-colors hover:text-teal-300"
                   >
                     {lang === 'de' ? 'Filter zurücksetzen' : 'Reset filters'}
                   </button>
@@ -1464,106 +1268,103 @@ export default function CareerPage() {
             </div>
           </SlideIn>
 
-          <div className="space-y-8">
+          <div className="space-y-6">
             {jobLoading ? (
-              <div className="rounded-3xl border border-white/15 bg-black/30 p-10 text-center text-gray-400">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-10 text-center text-gray-400">
                 {lang === 'de' ? 'Lade offene Positionen …' : 'Loading job openings …'}
               </div>
             ) : jobError ? (
-              <div className="rounded-3xl border border-red-500/40 bg-red-500/10 p-10 text-center text-red-200">
+              <div className="rounded-2xl border border-red-500/40 bg-red-500/10 p-10 text-center text-red-200">
                 {jobError}
               </div>
             ) : filteredJobs.length === 0 ? (
-              <div className="rounded-3xl border border-white/15 bg-black/30 p-10 text-center text-gray-400">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-10 text-center text-gray-400">
                 {lang === 'de' ? 'Keine Positionen gefunden. Bitte Filter anpassen.' : 'No positions found. Please adjust filters.'}
               </div>
             ) : (
               filteredJobs.map((job, index) => (
                 <SlideIn key={job.id} direction="up" delay={index * 0.1}>
-                  <div className="group">
-                    <div className="relative p-8 rounded-3xl bg-black/20 border border-white/20 backdrop-blur-sm transform-gpu transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-white/10">
-                      <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-transparent rounded-3xl"></div>
-                      <div className="relative z-10">
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+                  <SpotlightCard
+                    accent={CAREER_ACCENT}
+                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 transition-colors duration-300 hover:border-teal-400/40"
+                  >
+                    <div className="relative z-10">
+                        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6 gap-4">
                           <div className="flex-1">
-                            <div className="flex items-start justify-between gap-4 mb-3">
-                              <h3 className="text-2xl font-bold text-white">{job.title}</h3>
+                            <div className="flex items-start justify-between gap-4 mb-4">
+                              <h3 className="text-2xl font-bold tracking-tight text-white">{job.title}</h3>
                               {job.salary && (
-                                <span className="rounded-full border border-purple-400/40 bg-purple-500/20 px-4 py-1.5 text-sm font-semibold text-purple-200 whitespace-nowrap">
+                                <span className="whitespace-nowrap font-mono text-sm text-teal-300">
                                   {job.salary}
                                 </span>
                               )}
                             </div>
-                            <div className="flex flex-wrap items-center gap-4 text-gray-300 text-sm">
-                              <span className="flex items-center gap-2">
-                                <Globe className="w-4 h-4" />
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="rounded-full border border-white/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.15em] text-gray-400">
                                 {job.location}
                               </span>
-                              <span className="flex items-center gap-2">
-                                <Users className="w-4 h-4" />
+                              <span className="rounded-full border border-white/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.15em] text-gray-400">
                                 {job.employmentType}
                               </span>
                               {job.department ? (
-                                <span className="flex items-center gap-2">
-                                  <BriefcaseIcon className="w-4 h-4" />
+                                <span className="rounded-full border border-white/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.15em] text-gray-400">
                                   {job.department}
                                 </span>
                               ) : null}
                               {job.seniority && (
-                                <span className="rounded-full border border-teal-400/30 bg-teal-500/10 px-3 py-1 text-xs uppercase tracking-wider text-teal-300">
+                                <span className="rounded-full border border-teal-400/40 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.15em] text-teal-300">
                                   {job.seniority}
                                 </span>
                               )}
                               {job.remote && (
-                                <span className="rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1 text-xs uppercase tracking-wider text-blue-300">
+                                <span className="rounded-full border border-teal-400/40 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.15em] text-teal-300">
                                   Remote
                                 </span>
                               )}
                             </div>
                           </div>
                           <button
-                            className="mt-4 lg:mt-0 px-6 py-3 bg-gradient-to-r from-teal-500 to-purple-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-teal-500/50 transition-all duration-300"
+                            className="self-start rounded-full border border-teal-400/60 px-6 py-3 font-semibold text-teal-300 transition-all duration-300 hover:bg-teal-400 hover:text-black"
                             onClick={() => handleJobApply(job)}
                           >
                             {lang === 'de' ? 'Jetzt bewerben' : 'Apply now'}
                           </button>
                         </div>
 
-                        <p className="text-gray-300 mb-6 leading-relaxed">
+                        <p className="text-gray-400 mb-6 leading-relaxed">
                           {job.description}
                         </p>
 
                         <div className="grid md:grid-cols-2 gap-6">
                           <div>
-                            <h4 className="text-lg font-semibold text-white mb-3">
+                            <h4 className="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-gray-400">
                               {lang === 'de' ? 'Anforderungen' : 'Requirements'}
                             </h4>
                             <ul className="space-y-2">
                               {job.requirements.map((req, reqIndex) => (
-                                <li key={reqIndex} className="flex items-center gap-2 text-gray-300">
-                                  <div className="w-2 h-2 bg-teal-400 rounded-full"></div>
+                                <li key={reqIndex} className="flex items-center gap-3 text-sm text-gray-300">
+                                  <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400"></div>
                                   {req}
                                 </li>
                               ))}
                             </ul>
                           </div>
                           <div>
-                            <h4 className="text-lg font-semibold text-white mb-3">
+                            <h4 className="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-gray-400">
                               Benefits
                             </h4>
                             <ul className="space-y-2">
                               {job.benefits.map((benefit, benefitIndex) => (
-                                <li key={benefitIndex} className="flex items-center gap-2 text-gray-300">
-                                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                                <li key={benefitIndex} className="flex items-center gap-3 text-sm text-gray-300">
+                                  <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400"></div>
                                   {benefit}
                                 </li>
                               ))}
                             </ul>
                           </div>
                         </div>
-                      </div>
                     </div>
-                  </div>
+                  </SpotlightCard>
                 </SlideIn>
               ))
             )}
@@ -1571,31 +1372,68 @@ export default function CareerPage() {
         </div>
 
         {/* Culture Section */}
-        <div className="mb-24">
+        <div className="relative mb-24">
+          <GhostNumber index={4} />
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <SlideIn direction="left">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/20 to-purple-500/20 rounded-3xl blur-3xl"></div>
-                <div className="relative rounded-3xl overflow-hidden">
+              <motion.div
+                className="relative group"
+                whileHover={{ y: -8 }}
+                transition={{ duration: 0.5, ease: CAREER_EASE }}
+              >
+                {/* Teal glow behind the stack */}
+                <div
+                  aria-hidden="true"
+                  className="absolute -inset-6 rounded-3xl blur-3xl transition-opacity duration-700 group-hover:opacity-100 opacity-70"
+                  style={{ background: `${CAREER_ACCENT}1f` }}
+                ></div>
+
+                {/* Back cards, slightly offset and rotated */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 translate-x-6 -translate-y-5 rotate-[3.5deg] rounded-2xl border border-white/10 bg-white/[0.02] transition-transform duration-700 group-hover:translate-x-8 group-hover:-translate-y-6"
+                ></div>
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 translate-x-3 -translate-y-2.5 rotate-[1.75deg] rounded-2xl border border-white/10 bg-white/[0.02] transition-transform duration-700 group-hover:translate-x-4 group-hover:-translate-y-3"
+                ></div>
+
+                {/* Main photo card */}
+                <div
+                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-black"
+                  style={{ boxShadow: `0 40px 120px -40px ${CAREER_ACCENT}4d` }}
+                >
                   <Image
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop"
+                    src="/assets/career/culture.jpg"
                     alt="Team Culture"
-                    width={600}
-                    height={400}
-                    className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-300"
+                    width={1600}
+                    height={1195}
+                    className="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                  {/* Film grain / noise overlay */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
+                    style={{
+                      backgroundImage:
+                        "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                    }}
+                  ></div>
                 </div>
-              </div>
+              </motion.div>
             </SlideIn>
 
             <SlideIn direction="right">
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                    Unsere <span className="bg-gradient-to-r from-teal-400 to-purple-400 bg-clip-text text-transparent">Kultur</span>
+                  <SectionLabel num="05" accent={CAREER_ACCENT}>
+                    {lang === 'de' ? 'Kultur' : 'Culture'}
+                  </SectionLabel>
+                  <h2 className="mt-6 mb-6 text-4xl font-bold tracking-tight text-white md:text-5xl">
+                    Unsere <span className="text-teal-400">Kultur</span>
                   </h2>
-                  <p className="text-lg text-gray-300 leading-relaxed mb-8">
+                  <p className="text-lg text-gray-400 leading-relaxed mb-8">
                     Bei Quantiva Advisory schaffen wir ein Arbeitsumfeld, das Innovation, 
                     Kollaboration und persönliches Wachstum fördert. Wir glauben daran, 
                     dass die besten Lösungen entstehen, wenn talentierte Menschen zusammenarbeiten.
@@ -1603,175 +1441,37 @@ export default function CareerPage() {
                 </div>
 
                 <div className="space-y-6">
-                  {/* Innovation First - Pulsing Lightbulb */}
-                  <div className="flex items-start gap-4">
-                    <motion.div 
-                      className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/30 to-teal-600/20 border border-teal-400/40 flex items-center justify-center flex-shrink-0 relative overflow-hidden"
-                      animate={{
-                        rotateY: [0, 180, 360],
-                        scale: [1, 1.2, 1],
-                        boxShadow: [
-                          '0 0 20px rgba(20, 184, 166, 0.5)',
-                          '0 0 40px rgba(20, 184, 166, 0.8)',
-                          '0 0 20px rgba(20, 184, 166, 0.5)'
-                        ]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
+                  {[
+                    {
+                      title: 'Innovation First',
+                      description: 'Wir fördern kreatives Denken und experimentieren mit neuen Technologien.',
+                    },
+                    {
+                      title: 'Teamwork',
+                      description: 'Zusammenarbeit und gegenseitige Unterstützung stehen im Mittelpunkt.',
+                    },
+                    {
+                      title: 'Lernkultur',
+                      description: 'Kontinuierliche Weiterbildung und persönliche Entwicklung werden gefördert.',
+                    },
+                  ].map((value, index) => (
+                    <motion.div
+                      key={value.title}
+                      initial={{ opacity: 0, y: 24 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: '-60px' }}
+                      transition={{ duration: 0.7, delay: index * 0.08, ease: CAREER_EASE }}
+                      className="flex items-start gap-5 border-t border-white/10 pt-6"
                     >
-                      {/* Inner Glow Effect */}
-                      <motion.div
-                        className="absolute inset-1 rounded-xl bg-white/20"
-                        animate={{
-                          scale: [0.8, 1.2, 0.8],
-                          opacity: [0.3, 0.7, 0.3]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      />
-                      
-                      {/* Icon with Flickering Effect */}
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.1, 1],
-                          rotate: [0, 5, -5, 0]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        <Lightbulb className="w-6 h-6 text-teal-400 relative z-10" />
-                      </motion.div>
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] font-mono text-sm text-teal-400">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white mb-2">{value.title}</h3>
+                        <p className="text-gray-400">{value.description}</p>
+                      </div>
                     </motion.div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2">Innovation First</h3>
-                      <p className="text-gray-300">Wir fördern kreatives Denken und experimentieren mit neuen Technologien.</p>
-                    </div>
-                  </div>
-
-                  {/* Teamwork - Floating People */}
-                  <div className="flex items-start gap-4">
-                    <motion.div 
-                      className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/30 to-purple-600/20 border border-purple-400/40 flex items-center justify-center flex-shrink-0 relative overflow-hidden"
-                      animate={{
-                        y: [-5, 5, -5],
-                        rotateZ: [-5, 5, -5],
-                        scale: [1, 1.1, 1],
-                        boxShadow: [
-                          '0 0 20px rgba(168, 85, 247, 0.5)',
-                          '0 0 40px rgba(168, 85, 247, 0.8)',
-                          '0 0 20px rgba(168, 85, 247, 0.5)'
-                        ]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 0.5
-                      }}
-                    >
-                      {/* Inner Glow Effect */}
-                      <motion.div
-                        className="absolute inset-1 rounded-xl bg-white/20"
-                        animate={{
-                          scale: [0.8, 1.2, 0.8],
-                          opacity: [0.3, 0.7, 0.3]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: 0.3
-                        }}
-                      />
-                      
-                      {/* Icon with Bouncing Effect */}
-                      <motion.div
-                        animate={{
-                          y: [-2, 2, -2],
-                          rotate: [-2, 2, -2]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: 0.2
-                        }}
-                      >
-                        <Users className="w-6 h-6 text-purple-400 relative z-10" />
-                      </motion.div>
-                    </motion.div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2">Teamwork</h3>
-                      <p className="text-gray-300">Zusammenarbeit und gegenseitige Unterstützung stehen im Mittelpunkt.</p>
-                    </div>
-                  </div>
-
-                  {/* Lernkultur - Spinning Graduation Cap */}
-                  <div className="flex items-start gap-4">
-                    <motion.div 
-                      className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/30 to-blue-600/20 border border-blue-400/40 flex items-center justify-center flex-shrink-0 relative overflow-hidden"
-                      animate={{
-                        rotate: [0, 360],
-                        scaleX: [1, -1, 1],
-                        y: [0, -10, 0],
-                        boxShadow: [
-                          '0 0 20px rgba(59, 130, 246, 0.5)',
-                          '0 0 40px rgba(59, 130, 246, 0.8)',
-                          '0 0 20px rgba(59, 130, 246, 0.5)'
-                        ]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 1
-                      }}
-                    >
-                      {/* Inner Glow Effect */}
-                      <motion.div
-                        className="absolute inset-1 rounded-xl bg-white/20"
-                        animate={{
-                          scale: [0.8, 1.2, 0.8],
-                          opacity: [0.3, 0.7, 0.3]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: 0.6
-                        }}
-                      />
-                      
-                      {/* Icon with Tassel Swing */}
-                      <motion.div
-                        animate={{
-                          rotate: [0, 10, -10, 0],
-                          scale: [1, 1.05, 1]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: 0.4
-                        }}
-                      >
-                        <GraduationCap className="w-6 h-6 text-blue-400 relative z-10" />
-                      </motion.div>
-                    </motion.div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2">Lernkultur</h3>
-                      <p className="text-gray-300">Kontinuierliche Weiterbildung und persönliche Entwicklung werden gefördert.</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </SlideIn>
@@ -1779,13 +1479,14 @@ export default function CareerPage() {
         </div>
 
         {/* Wellbeing Section - Accenture Style */}
-        <div className="mb-24">
+        <div className="relative mb-24">
+          <GhostNumber index={5} />
           <SlideIn direction="up" delay={0.1}>
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-5">
                 {t.wellbeingTitle}
               </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              <p className="text-lg text-gray-400 max-w-3xl mx-auto">
                 {t.wellbeingSubtitle}
               </p>
             </div>
@@ -1955,7 +1656,7 @@ export default function CareerPage() {
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <a
                 href={localePath('/#contact')}
-                className="px-10 py-5 bg-gradient-to-r from-teal-500 to-purple-500 text-white text-lg font-semibold rounded-xl hover:shadow-lg hover:shadow-teal-500/50 transition-all duration-300"
+                className="rounded-full bg-teal-400 px-10 py-5 text-lg font-semibold text-black transition-all duration-300 hover:bg-teal-300 hover:shadow-lg hover:shadow-teal-500/30"
               >
                 {t.ctaButton}
               </a>

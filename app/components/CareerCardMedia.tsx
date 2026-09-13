@@ -44,6 +44,7 @@ export default function CareerCardMedia({
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          el.preload = 'metadata';
           el.play().catch(() => {});
         } else {
           el.pause();
@@ -67,7 +68,7 @@ export default function CareerCardMedia({
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       aria-label={alt}
       className={`absolute inset-0 h-full w-full ${className}`}
     />

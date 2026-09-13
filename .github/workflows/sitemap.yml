@@ -1,55 +1,13 @@
 name: Sitemap Generator
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'app/lib/data/cases.json'
-      - 'app/lib/data/content.json'
-      - 'app/lib/data/taxonomy.json'
-      - 'app/components/**/*'
-      - 'scripts/update-sitemap-lastmod.mjs'
-      - 'sitemap.mjs'
-  schedule:
-    # Runs daily at 2 AM UTC
-    - cron: '0 2 * * *'
   workflow_dispatch:
 
 jobs:
-  generate-sitemap:
+  notice:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-      
-      - name: Generate sitemap with updated lastmod
-        run: npm run sitemap:update
-      
-      - name: Check for changes
-        id: git-check
+      - name: Sitemap is a Next.js Metadata Route
         run: |
-          git diff --exit-code public/sitemap.xml || echo "changed=true" >> $GITHUB_OUTPUT
-      
-      - name: Commit and push sitemap
-        if: steps.git-check.outputs.changed == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add public/sitemap.xml
-          git commit -m "chore: auto-update sitemap.xml lastmod [skip ci]"
-          git push
+          echo "Sitemap is served by app/sitemap.ts at /sitemap.xml."
+          echo "Do not write public/sitemap.xml — it would override the complete route."

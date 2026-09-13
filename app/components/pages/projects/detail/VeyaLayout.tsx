@@ -142,14 +142,14 @@ export default function VeyaLayout({
             animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           >
-            <ArrowDown className="h-5 w-5 text-gray-500" />
+            <ArrowDown className="h-5 w-5 text-gray-400" />
           </motion.span>
         </div>
       </section>
 
       {/* STATEMENT — editorial zentriert */}
       <section className="mx-auto max-w-3xl px-6 py-32 text-center md:py-44">
-        <p className="mb-12 font-mono text-xs uppercase tracking-[0.4em] text-gray-500">
+        <p className="mb-12 font-mono text-xs uppercase tracking-[0.4em] text-gray-400">
           {copy.thesis}
         </p>
         <ScrollStatement
@@ -161,7 +161,7 @@ export default function VeyaLayout({
       {/* PROBLEME — drei schmale Spalten mit Trennlinien */}
       <section className="border-t border-white/10 py-28 md:py-36">
         <div className="mx-auto max-w-6xl px-6">
-          <p className="text-center font-mono text-xs uppercase tracking-[0.4em] text-gray-500">
+          <p className="text-center font-mono text-xs uppercase tracking-[0.4em] text-gray-400">
             {copy.demarcation}
           </p>
           <h2 className="mt-6 text-center text-[clamp(1.8rem,4vw,3.2rem)] font-extralight tracking-wide">
@@ -191,7 +191,7 @@ export default function VeyaLayout({
       {/* FLOW — aufsteigende Treppe */}
       <section className="border-t border-white/10 py-28 md:py-36">
         <div className="mx-auto max-w-5xl px-6">
-          <p className="text-center font-mono text-xs uppercase tracking-[0.4em] text-gray-500">
+          <p className="text-center font-mono text-xs uppercase tracking-[0.4em] text-gray-400">
             {copy.graphLabel}
           </p>
           <h2 className="mt-6 text-center text-[clamp(1.8rem,4vw,3.2rem)] font-extralight tracking-wide">
@@ -212,7 +212,7 @@ export default function VeyaLayout({
                   style={{ marginLeft: `${indent}%`, width: `${100 - indent * 1.4}%` }}
                 >
                   <div className="group flex items-center gap-6 border-t border-white/25 py-7 transition-colors hover:border-white md:gap-10">
-                    <span className="font-mono text-sm text-gray-500">{ROMAN[i]}</span>
+                    <span className="font-mono text-sm text-gray-400">{ROMAN[i]}</span>
                     <div className="flex-1">
                       <h3 className="text-xl font-light tracking-wide text-white md:text-2xl">
                         {s.label}
@@ -232,7 +232,7 @@ export default function VeyaLayout({
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.6 }}
-            className="mt-10 text-right font-mono text-xs uppercase tracking-[0.3em] text-gray-500"
+            className="mt-10 text-right font-mono text-xs uppercase tracking-[0.3em] text-gray-400"
           >
             {copy.cycleNote}
           </motion.p>
@@ -242,7 +242,7 @@ export default function VeyaLayout({
       {/* PRINZIPIEN — Constitution, zentriert */}
       <section className="border-t border-white/10 py-28 md:py-36">
         <div className="mx-auto max-w-2xl px-6 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.4em] text-gray-500">
+          <p className="font-mono text-xs uppercase tracking-[0.4em] text-gray-400">
             {copy.constitution}
           </p>
           <div className="mt-16 space-y-12">

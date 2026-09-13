@@ -250,12 +250,13 @@ const COPY: Record<Lang, AboutCopy> = {
   },
 };
 
-const CEO_POSTER = 'https://res.cloudinary.com/dbrisux8i/image/upload/v1760346416/image3_l0nj0f.jpg';
+const CEO_POSTER = '/assets/about/ceo-event-poster.jpg';
 const CEO_VIDEO = '/assets/about/ceo-event.mp4';
 
 /* ---------- CEO-Video-Bühne ---------- */
-function CeoStage({ copy }: { copy: CeoCopy }) {
+function CeoStage({ copy, lang }: { copy: CeoCopy; lang: Lang }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const reduceMotion = useReducedMotion();
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
@@ -299,12 +300,26 @@ function CeoStage({ copy }: { copy: CeoCopy }) {
             ref={videoRef}
             className="h-full w-full object-cover"
             poster={CEO_POSTER}
-            preload="metadata"
+            preload={reduceMotion ? 'none' : 'metadata'}
             playsInline
             onEnded={() => setPlaying(false)}
             onError={() => setUnavailable(true)}
           >
             <source src={CEO_VIDEO} type="video/mp4" />
+            <track
+              kind="captions"
+              src="/assets/about/ceo-event.vtt"
+              srcLang="de"
+              label="Deutsch"
+              default={lang === 'de'}
+            />
+            <track
+              kind="captions"
+              src="/assets/about/ceo-event.en.vtt"
+              srcLang="en"
+              label="English"
+              default={lang === 'en'}
+            />
           </video>
 
           {/* Overlay vor dem Start */}
@@ -324,7 +339,7 @@ function CeoStage({ copy }: { copy: CeoCopy }) {
                   aria-hidden="true"
                   className="absolute inset-0 rounded-full"
                   style={{ border: `1px solid ${ACCENT}88` }}
-                  animate={{ scale: [1, 1.6], opacity: [0.8, 0] }}
+                  animate={reduceMotion ? undefined : { scale: [1, 1.6], opacity: [0.8, 0] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
                 />
                 <Play className="ml-1 h-9 w-9" fill="currentColor" />
@@ -354,7 +369,7 @@ function CeoStage({ copy }: { copy: CeoCopy }) {
             <p className="font-bold text-white">{copy.name}</p>
             <p className="text-sm text-gray-400">{copy.role}</p>
           </div>
-          <p className="font-mono text-xs uppercase tracking-[0.25em] text-gray-500">
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-gray-400">
             {copy.meta}
           </p>
         </div>
@@ -468,14 +483,14 @@ export default function AboutRedesign({ lang = 'de' }: { lang?: Lang }) {
             animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           >
-            <ArrowDown className="h-5 w-5 text-gray-500" />
+            <ArrowDown className="h-5 w-5 text-gray-400" />
           </motion.span>
         </motion.div>
       </section>
 
       {/* MANIFEST */}
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-40">
-        <p className="mb-10 font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
+        <p className="mb-10 font-mono text-xs uppercase tracking-[0.35em] text-gray-400">
           <span style={{ color: ACCENT }}>01</span> — {c.manifesto.label}
         </p>
         <ScrollStatement text={c.manifesto.statement} />
@@ -484,7 +499,7 @@ export default function AboutRedesign({ lang = 'de' }: { lang?: Lang }) {
       {/* CEO-VIDEO */}
       <section className="relative overflow-hidden border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
-          <p className="text-center font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
+          <p className="text-center font-mono text-xs uppercase tracking-[0.35em] text-gray-400">
             <span style={{ color: ACCENT }}>02</span> — {c.message.label}
           </p>
           <h2 className="mt-4 text-center text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
@@ -494,7 +509,7 @@ export default function AboutRedesign({ lang = 'de' }: { lang?: Lang }) {
             {c.message.sub}
           </p>
           <div className="mt-14">
-            <CeoStage copy={c.ceo} />
+            <CeoStage copy={c.ceo} lang={lang} />
           </div>
         </div>
       </section>
@@ -504,7 +519,7 @@ export default function AboutRedesign({ lang = 'de' }: { lang?: Lang }) {
       {/* ZWEI SÄULEN */}
       <section className="py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
-          <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
+          <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-400">
             <span style={{ color: ACCENT }}>03</span> — {c.pillarsSection.label}
           </p>
           <h2 className="mt-4 text-[clamp(1.9rem,4.5vw,3.6rem)] font-bold uppercase tracking-tight">
@@ -549,7 +564,7 @@ export default function AboutRedesign({ lang = 'de' }: { lang?: Lang }) {
       {/* PRINZIPIEN */}
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-6">
-          <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
+          <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-400">
             <span style={{ color: ACCENT }}>04</span> — {c.principlesLabel}
           </p>
           <div className="mt-12 divide-y divide-white/10 border-y border-white/10">

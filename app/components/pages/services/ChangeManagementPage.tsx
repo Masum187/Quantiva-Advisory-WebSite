@@ -4,6 +4,7 @@ import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Users, BookOpen, ArrowUpRight, Target, Lightbulb } from 'lucide-react';
 import ServiceVideoBackground from '../../ServiceVideoBackground';
+import SiteNav from '../../SiteNav';
 import {
   EASE,
   ScrollProgress,
@@ -141,6 +142,7 @@ export default function ChangeManagementPage({ lang }: ChangeManagementPageProps
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <SiteNav lang={lang} variant="solid" />
       <ScrollProgress accent={ACCENT} />
 
       {/* Fixed Background Video */}
@@ -172,7 +174,7 @@ export default function ChangeManagementPage({ lang }: ChangeManagementPageProps
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.8, ease: EASE }}
-                className="pr-8 text-right font-mono text-xs uppercase tracking-[0.4em] text-gray-500"
+                className="pr-8 text-right font-mono text-xs uppercase tracking-[0.4em] text-gray-400"
               >
                 {content.split.before}
               </motion.p>

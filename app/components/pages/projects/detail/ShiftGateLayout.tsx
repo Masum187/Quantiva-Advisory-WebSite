@@ -124,7 +124,7 @@ export default function ShiftGateLayout({
                 transition={{ duration: 0.9, delay: 0.15, ease: EASE }}
                 className="block"
               >
-                <span className="text-gray-500">/</span> Shift
+                <span className="text-gray-400">/</span> Shift
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, y: 30 }}
@@ -132,7 +132,7 @@ export default function ShiftGateLayout({
                 transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
                 className="block"
               >
-                Gate<span className="text-gray-500"> AI</span>
+                Gate<span className="text-gray-400"> AI</span>
               </motion.span>
             </h1>
             <motion.p
@@ -169,7 +169,7 @@ export default function ShiftGateLayout({
               <span className="h-3 w-3 rounded-full bg-white/20" />
               <span className="h-3 w-3 rounded-full bg-white/20" />
               <span className="h-3 w-3 rounded-full bg-white/20" />
-              <span className="ml-3 font-mono text-xs text-gray-500">shiftgate — evidence.log</span>
+              <span className="ml-3 font-mono text-xs text-gray-400">shiftgate — evidence.log</span>
             </div>
             <motion.div
               initial="hidden"
@@ -207,7 +207,7 @@ export default function ShiftGateLayout({
             animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           >
-            <ArrowDown className="h-5 w-5 text-gray-500" />
+            <ArrowDown className="h-5 w-5 text-gray-400" />
           </motion.span>
         </div>
       </section>
@@ -215,7 +215,7 @@ export default function ShiftGateLayout({
       {/* STATEMENT — Prüfbericht-Rahmen */}
       <section className="mx-auto max-w-4xl px-6 py-28 md:py-36">
         <div className="border border-white/15 p-8 md:p-14">
-          <p className="mb-8 flex items-center justify-between font-mono text-xs uppercase tracking-[0.3em] text-gray-500">
+          <p className="mb-8 flex items-center justify-between font-mono text-xs uppercase tracking-[0.3em] text-gray-400">
             <span>{copy.findingLabel}</span>
             <span>{copy.confidentiality}</span>
           </p>
@@ -239,7 +239,7 @@ export default function ShiftGateLayout({
                 transition={{ duration: 0.8, ease: EASE }}
                 className="group grid gap-4 border-l-2 border-white/25 pl-6 transition-colors hover:border-white md:grid-cols-[160px_1fr] md:gap-10"
               >
-                <p className="font-mono text-xs uppercase leading-loose tracking-[0.2em] text-gray-500">
+                <p className="font-mono text-xs uppercase leading-loose tracking-[0.2em] text-gray-400">
                   {copy.caseFile}
                   <br />
                   <span className="text-2xl font-bold text-white">
@@ -272,7 +272,7 @@ export default function ShiftGateLayout({
                 transition={{ duration: 0.7, ease: EASE }}
               >
                 <div className="rounded-lg border border-white/15 bg-white/[0.03] p-6 font-mono transition-colors hover:border-white/40 md:p-8">
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-400">
                     block {String(i + 1).padStart(2, '0')} ·{' '}
                     <span className="text-gray-400">
                       #
@@ -292,7 +292,7 @@ export default function ShiftGateLayout({
                     transition={{ duration: 0.5, ease: EASE }}
                     className="mx-auto h-10 w-px origin-top bg-white/30"
                   >
-                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-[10px] text-gray-500">
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-[10px] text-gray-400">
                       ⛓
                     </span>
                   </motion.div>
@@ -306,7 +306,7 @@ export default function ShiftGateLayout({
       {/* PRINZIPIEN — Protokoll */}
       <section className="border-t border-white/10 py-24 md:py-32">
         <div className="mx-auto max-w-4xl px-6">
-          <p className="mb-10 font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
+          <p className="mb-10 font-mono text-xs uppercase tracking-[0.35em] text-gray-400">
             {copy.protocolLabel}
           </p>
           <div className="space-y-6">

@@ -158,7 +158,7 @@ export default function ProcuveraLayout({
           >
             <motion.p
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-              className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.3em] text-gray-500"
+              className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.3em] text-gray-400"
             >
               <span>{copy.riskBoard}</span>
               <motion.span
@@ -201,7 +201,7 @@ export default function ProcuveraLayout({
             })}
             <motion.p
               variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-              className="pt-1 text-center font-mono text-xs uppercase tracking-[0.25em] text-gray-500"
+              className="pt-1 text-center font-mono text-xs uppercase tracking-[0.25em] text-gray-400"
             >
               {copy.flagsCaption}
             </motion.p>
@@ -213,7 +213,7 @@ export default function ProcuveraLayout({
             animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           >
-            <ArrowDown className="h-5 w-5 text-gray-500" />
+            <ArrowDown className="h-5 w-5 text-gray-400" />
           </motion.span>
         </div>
       </section>

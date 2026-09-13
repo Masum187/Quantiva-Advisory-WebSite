@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Boxes, ArrowLeft, ArrowUpRight, CheckCircle, Network, Zap, Shield } from 'lucide-react';
 import WhitepaperCard from '../../../components/WhitepaperCard';
 import ServiceVideoBackground from '../../../components/ServiceVideoBackground';
+import SiteNav from '../../../components/SiteNav';
 import VentureCanvas from '../../../components/pages/projects/VentureCanvas';
 import {
   EASE,
@@ -260,6 +261,7 @@ export default function MicroservicesServicePage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <SiteNav lang="de" variant="solid" />
       <ScrollProgress accent={ACCENT} />
 
       {/* Fixed Background Video */}

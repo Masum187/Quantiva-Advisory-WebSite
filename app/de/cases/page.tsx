@@ -1,18 +1,22 @@
 import type { Metadata } from 'next';
+import JsonLd from '../../components/JsonLd';
 import VenturesOverview from '../../components/pages/projects/VenturesOverview';
+import { breadcrumbListJsonLd, OG_CASES, pageMeta } from '../../lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Projekte & Ventures – Quantiva Advisory',
+export const metadata: Metadata = pageMeta({
+  title: 'Projekte & Ventures',
   description:
     'Das Venture-Portfolio der Quantiva GmbH: SolutionGate, ShiftGate AI, LUMENA AI, Procuvera, LIMEN, Veya, Nuvora und WEFTLINE. Proof statt Promise.',
-  openGraph: {
-    title: 'Projekte & Ventures – Quantiva Advisory',
-    description:
-      'Acht Produkte, ein Prinzip: Jede Aussage braucht einen Beleg. Das Venture-Portfolio der Quantiva GmbH.',
-    type: 'website',
-  },
-};
+  path: '/cases',
+  lang: 'de',
+  image: OG_CASES,
+});
 
 export default function CasesPage() {
-  return <VenturesOverview />;
+  return (
+    <>
+      <JsonLd data={breadcrumbListJsonLd('de', [{ name: 'Projekte', path: '/cases' }])} />
+      <VenturesOverview />
+    </>
+  );
 }

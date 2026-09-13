@@ -7,6 +7,7 @@ import { Calendar, Clock, Download, FileText, Filter, Newspaper, Search, Tag } f
 import { AnimatedCard } from '../../services/AnimatedCard';
 import { useLanguage } from '../../QuantivaWebsite';
 import type { ContentPost, ContentType } from '../../../lib/utils/contentHub';
+import SiteNav from '../../SiteNav';
 
 interface ContentHubPageProps {
   lang: 'de' | 'en';
@@ -113,6 +114,7 @@ export default function ContentHubPage({ lang, posts }: ContentHubPageProps) {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <SiteNav lang={lang} variant="solid" />
       <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-teal-900/40 via-black to-black">
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,_rgba(45,212,191,0.25),_transparent_60%)]" />
         <div className="relative mx-auto max-w-5xl px-6 py-24 text-center">
@@ -340,7 +342,7 @@ export default function ContentHubPage({ lang, posts }: ContentHubPageProps) {
                       <p className="mt-2 text-sm text-gray-400 line-clamp-3">
                         {post.excerpt}
                       </p>
-                      <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                      <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-gray-400">
                         <span className="inline-flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           {formatDate(post.publishedAt, lang)}
@@ -404,7 +406,7 @@ export default function ContentHubPage({ lang, posts }: ContentHubPageProps) {
                           {post.excerpt}
                         </p>
                       </div>
-                      <div className="mt-5 flex items-center justify-between text-xs text-gray-500">
+                      <div className="mt-5 flex items-center justify-between text-xs text-gray-400">
                         <span className="inline-flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           {formatDate(post.publishedAt, lang)}

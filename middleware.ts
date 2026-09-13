@@ -3,6 +3,20 @@ import { NextRequest, NextResponse } from 'next/server';
 const locales = ['de', 'en'];
 const defaultLocale = 'de';
 
+function htmlLangFromPath(pathname: string): string {
+  const parts = pathname.split('/').filter(Boolean);
+  if (parts[0] === 'en' || parts[1] === 'en') return 'en';
+  return 'de';
+}
+
+function nextWithHtmlLang(request: NextRequest, locale: string) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-html-lang', locale);
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+}
+
 function getLocale(request: NextRequest): string {
   // Check if locale is in pathname
   const pathname = request.nextUrl.pathname;
@@ -33,14 +47,35 @@ function getLocale(request: NextRequest): string {
   return defaultLocale;
 }
 
+function isNoIndexPath(pathname: string): boolean {
+  return (
+    pathname === '/v2' ||
+    pathname.startsWith('/v2/') ||
+    pathname === '/v3' ||
+    pathname.startsWith('/v3/') ||
+    pathname.includes('/ai-test') ||
+    pathname.includes('/cms') ||
+    pathname.includes('/video-generation')
+  );
+}
+
+function withOptionalNoIndex(response: NextResponse, pathname: string) {
+  if (isNoIndexPath(pathname)) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  }
+  return response;
+}
+
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Skip middleware for static files and API routes
+  // Skip middleware for static files, metadata routes, and API routes
   if (
     pathname.includes('/api/') ||
     pathname.includes('/_next/') ||
     pathname.includes('/static/') ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/robots.txt' ||
     pathname.match(/\.(ico|png|jpg|jpeg|svg|gif|webp|css|js)$/)
   ) {
     return NextResponse.next();
@@ -53,7 +88,10 @@ export function middleware(request: NextRequest) {
     pathname === '/v3' ||
     pathname.startsWith('/v3/')
   ) {
-    return NextResponse.next();
+    return withOptionalNoIndex(
+      nextWithHtmlLang(request, htmlLangFromPath(pathname)),
+      pathname
+    );
   }
 
   // Check if pathname already has a locale
@@ -62,14 +100,16 @@ export function middleware(request: NextRequest) {
   );
 
   if (pathnameHasLocale) {
-    return NextResponse.next();
+    return withOptionalNoIndex(
+      nextWithHtmlLang(request, htmlLangFromPath(pathname)),
+      pathname
+    );
   }
 
-  // Redirect to locale-prefixed URL
+  // Locale prefix on the incoming request URL — never a hardcoded host.
   const locale = getLocale(request);
-  const response = NextResponse.redirect(
-    new URL(`/${locale}${pathname}`, request.url)
-  );
+  const suffix = pathname === '/' ? '' : pathname;
+  const response = NextResponse.redirect(new URL(`/${locale}${suffix}`, request.url));
 
   // Set locale cookie
   response.cookies.set('NEXT_LOCALE', locale, {

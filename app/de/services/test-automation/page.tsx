@@ -1,11 +1,14 @@
+import ServiceJsonLd from '../../../components/ServiceJsonLd';
+import { servicePageMeta } from '../../../lib/seo';
 import TestAutomationPage from '../../../components/pages/services/TestAutomationPage';
 
-export const metadata = {
-  title: 'Testautomatisierung | Quantiva Advisory',
-  description: 'Intelligente Testautomatisierung für fehlerfreie Software. CI/CD-Integration, Performance Testing, Security Testing.',
-};
+export const metadata = servicePageMeta('de', 'test-automation');
 
 export default function Page() {
-  return <TestAutomationPage lang="de" />;
+  return (
+    <>
+      <ServiceJsonLd lang="de" slug="test-automation" />
+      <TestAutomationPage lang="de" />
+    </>
+  );
 }
-

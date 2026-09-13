@@ -13,6 +13,6 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci --legacy-peer-deps
-      - run: npm run build   # erzeugt automatisch sitemap.xml via postbuild
-      - run: ls -la public && head -10 public/sitemap.xml || echo "sitemap.xml not found in public"
+      - run: npm run build
+      - run: echo "Sitemap is served by app/sitemap.ts (do not write public/sitemap.xml)"
 

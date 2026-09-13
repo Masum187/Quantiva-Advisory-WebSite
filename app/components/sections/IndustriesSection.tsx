@@ -51,6 +51,7 @@ function IndustryCardMedia({
       ([entry]) => {
         videos.forEach((v) => {
           if (entry.isIntersecting) {
+            v.preload = 'metadata';
             v.play().catch(() => {});
           } else {
             v.pause();
@@ -83,11 +84,11 @@ function IndustryCardMedia({
         <video
           key={src}
           src={src}
-          poster={sources.length === 1 ? image : undefined}
+          poster={src.replace(/\.mp4$/, '-poster.jpg')}
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           className="h-full min-w-0 flex-1 object-cover transition-transform duration-700 group-hover:scale-110"
         />
       ))}

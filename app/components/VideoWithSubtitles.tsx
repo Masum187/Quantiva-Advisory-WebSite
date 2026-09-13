@@ -166,6 +166,7 @@ export default function VideoWithSubtitles({
         muted={muted}
         loop={loop}
         playsInline
+        preload="metadata"
         className="w-full h-full object-cover rounded-lg"
         onLoadStart={() => setIsLoading(true)}
         onCanPlay={() => setIsLoading(false)}

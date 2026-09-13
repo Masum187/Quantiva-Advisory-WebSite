@@ -15,6 +15,7 @@ export default function ClientVideo({ src, className = '' }: ClientVideoProps) {
       muted
       loop
       playsInline
+      preload="metadata"
       className={className}
       onError={(e) => {
         console.error('Video failed to load, using fallback image');

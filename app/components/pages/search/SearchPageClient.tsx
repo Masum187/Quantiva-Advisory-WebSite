@@ -6,6 +6,7 @@ import elasticlunr from 'elasticlunr';
 import { motion } from 'framer-motion';
 import { Search, ArrowRight, Sparkles } from 'lucide-react';
 import type { SearchItem } from '../../../lib/utils/searchIndex';
+import SiteNav from '../../SiteNav';
 
 interface SearchPageClientProps {
   items: SearchItem[];
@@ -67,6 +68,7 @@ export default function SearchPageClient({ items, lang }: SearchPageClientProps)
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <SiteNav lang={lang} variant="solid" />
       <section className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-purple-900/40 via-black to-black py-28">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(168,85,247,0.2),_transparent_55%)]" />
         <div className="relative mx-auto max-w-4xl px-6 text-center">

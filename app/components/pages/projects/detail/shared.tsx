@@ -18,6 +18,7 @@ import {
 } from 'framer-motion';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import type { Venture, Lang } from '../../../../lib/data/projects';
+import SiteNav from '../../../SiteNav';
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -43,6 +44,8 @@ export function Topbar({
   lang?: Lang;
 }) {
   return (
+    <>
+    <SiteNav lang={lang} variant="solid" />
     <div className="relative z-10 flex items-center justify-between gap-6 px-6 pt-8 md:px-12">
       <Link
         href={`/${lang}/cases`}
@@ -51,10 +54,11 @@ export function Topbar({
         <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
         Portfolio
       </Link>
-      <span className="truncate text-right font-mono text-xs uppercase tracking-[0.25em] text-gray-500">
+      <span className="truncate text-right font-mono text-xs uppercase tracking-[0.25em] text-gray-400">
         {label}
       </span>
     </div>
+    </>
   );
 }
 
@@ -263,7 +267,7 @@ export function MarqueeBand({ venture }: { venture: Venture }) {
                 >
                   {venture.name}
                 </span>
-                <span className="font-mono text-sm uppercase tracking-[0.35em] text-gray-500">
+                <span className="font-mono text-sm uppercase tracking-[0.35em] text-gray-400">
                   {venture.verb}
                 </span>
                 <span style={{ color: venture.accent }} className="text-xs">
@@ -428,7 +432,7 @@ export function NextFooter({
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500"
+          className="font-mono text-xs uppercase tracking-[0.35em] text-gray-400"
         >
           {copy.nextProject}
         </motion.p>
@@ -480,7 +484,7 @@ export function SectionLabel({
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.7, ease: EASE }}
-      className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500"
+      className="font-mono text-xs uppercase tracking-[0.35em] text-gray-400"
     >
       <span style={{ color: accent }}>{num}</span> — {children}
     </motion.p>

@@ -120,12 +120,13 @@ export default function CyberSecurityServicePage() {
       <div className="fixed inset-0 z-0" aria-hidden="true">
         <video
           src="https://res.cloudinary.com/dbrisux8i/video/upload/v1760385739/kling_20251014_Text_to_Video_Scene_1__M_930_0_1_djdrj2.mp4"
+          poster="https://res.cloudinary.com/dbrisux8i/video/upload/so_0/v1760385739/kling_20251014_Text_to_Video_Scene_1__M_930_0_1_djdrj2.jpg"
           className="h-full w-full object-cover"
           autoPlay
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
         />
         <div className="absolute inset-0 bg-black/75" />
       </div>

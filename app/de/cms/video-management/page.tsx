@@ -232,6 +232,7 @@ export default function VideoManagement() {
                       src={video.url}
                       className="w-full h-full object-cover"
                       poster=""
+                      preload="none"
                       onMouseEnter={(e) => e.currentTarget.play()}
                       onMouseLeave={(e) => e.currentTarget.pause()}
                     />
@@ -415,6 +416,7 @@ export default function VideoManagement() {
                   src={selectedVideo.url}
                   controls
                   className="w-full rounded-lg mb-4"
+                  preload="metadata"
                 />
                 
                 <div className="grid grid-cols-2 gap-4 text-sm">

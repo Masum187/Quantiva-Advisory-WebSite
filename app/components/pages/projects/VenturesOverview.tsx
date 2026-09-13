@@ -130,7 +130,7 @@ export default function VenturesOverview({ lang = 'de' }: { lang?: Lang }) {
             <div key={clone} className="flex items-center gap-10" aria-hidden={clone === 1}>
               {ventures.map((v) => (
                 <span key={v.slug} className="flex items-center gap-10 whitespace-nowrap">
-                  <span className="font-mono text-sm uppercase tracking-[0.3em] text-gray-500">
+                  <span className="font-mono text-sm uppercase tracking-[0.3em] text-gray-400">
                     {v.verb}
                   </span>
                   <span style={{ color: v.accent }} className="text-xs">
@@ -173,7 +173,7 @@ export default function VenturesOverview({ lang = 'de' }: { lang?: Lang }) {
                 style={{ background: '#0a0f1d', color: active.accent }}
               >
                 <span>{active.category}</span>
-                <span className="font-mono text-gray-500">{active.verb}</span>
+                <span className="font-mono text-gray-400">{active.verb}</span>
               </div>
             </motion.div>
           )}
@@ -219,7 +219,7 @@ export default function VenturesOverview({ lang = 'de' }: { lang?: Lang }) {
                         {v.name}
                       </span>
                     </span>
-                    <span className="mt-2 block text-sm text-gray-500 md:text-base">
+                    <span className="mt-2 block text-sm text-gray-400 md:text-base">
                       {v.tagline}
                     </span>
                   </span>
@@ -252,7 +252,7 @@ export default function VenturesOverview({ lang = 'de' }: { lang?: Lang }) {
           transition={{ duration: 0.8, ease: EASE }}
           className="mt-24 text-center"
         >
-          <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-500">
+          <p className="font-mono text-xs uppercase tracking-[0.35em] text-gray-400">
             {copy.machineLabel}
           </p>
           <p className="mx-auto mt-6 max-w-3xl text-2xl font-light leading-relaxed text-gray-300">

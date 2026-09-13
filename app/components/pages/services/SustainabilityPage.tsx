@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Leaf, TrendingDown, BarChart, CheckCircle, ArrowUpRight, Recycle, Sun } from 'lucide-react';
 import ServiceVideoBackground from '../../ServiceVideoBackground';
 import VentureCanvas from '../projects/VentureCanvas';
+import SiteNav from '../../SiteNav';
 import {
   EASE,
   ScrollProgress,
@@ -157,11 +158,12 @@ export default function SustainabilityPage({ lang }: SustainabilityPageProps) {
 
   return (
     <div className="relative min-h-screen bg-black text-white">
+      <SiteNav lang={lang} variant="solid" />
       <ScrollProgress accent={ACCENT} />
 
       {/* Fixed Background Video (kept) */}
       <ServiceVideoBackground
-        videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1761924430/video_f85758c6_1761914591442_yszhud.mp4"]}
+        videos={["/assets/services/sustainability-bg.mp4"]}
         overlayClassName="bg-black/55"
       />
 

@@ -124,13 +124,14 @@ export default function AIServicePage() {
       {/* Fixed Background Video */}
       <div className="fixed inset-0 z-0">
         <video
-          src="https://res.cloudinary.com/dbrisux8i/video/upload/v1760346462/kling_20251012_Video_to_Audio__1718_0_ti4mch.mp4"
+          src="/assets/services/ai-bg.mp4"
+          poster="/assets/services/ai-bg-poster.jpg"
           className="w-full h-full object-cover"
           autoPlay
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
         />
         {/* Minimal Video Overlay - Only for text readability */}
         <div className="absolute inset-0 bg-black/5"></div>

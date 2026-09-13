@@ -5,6 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import Image from 'next/image';
 import { ArrowRight, ArrowUpRight, Phone } from 'lucide-react';
 import type { IndustryDetail } from '../../../lib/data/industryDetails';
+import SiteNav from '../../SiteNav';
 
 interface IndustryLandingPageProps {
   industry: IndustryDetail;
@@ -141,6 +142,7 @@ export default function IndustryLandingPage({ industry, lang }: IndustryLandingP
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <SiteNav lang={lang} variant="solid" />
       {/* ---------- Hero: full-bleed video, giant display type ---------- */}
       <section ref={heroRef} className="relative h-[100svh] min-h-[640px] overflow-hidden">
         <motion.div style={{ scale: videoScale }} className="absolute inset-0">
@@ -148,12 +150,13 @@ export default function IndustryLandingPage({ industry, lang }: IndustryLandingP
             <video
               ref={videoRef}
               src={heroVideo}
+              poster={heroVideo.replace(/\.mp4$/, '-poster.jpg')}
               className="h-full w-full object-cover"
               muted
               loop
               playsInline
               autoPlay
-              preload="auto"
+              preload="metadata"
               onError={() => setVideoOk(false)}
               aria-hidden="true"
             />
@@ -352,7 +355,7 @@ export default function IndustryLandingPage({ industry, lang }: IndustryLandingP
               </h3>
               <p className="text-gray-400 md:text-lg">{capability.description}</p>
               <ArrowUpRight
-                className="hidden h-6 w-6 justify-self-end text-white/30 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-teal-300 md:block"
+                className="hidden h-6 w-6 justify-self-end text-white/60 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-teal-300 md:block"
                 aria-hidden="true"
               />
             </motion.div>

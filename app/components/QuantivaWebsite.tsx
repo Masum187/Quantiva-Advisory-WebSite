@@ -343,11 +343,13 @@ function AboutTeaser() {
               <div className="relative w-full h-[400px] overflow-hidden">
                 <video
                   src="https://res.cloudinary.com/dbrisux8i/video/upload/v1760346430/kling_20251009_Image_to_Video_A_confiden_4908_0_bimwvi.mp4"
+                  poster="https://res.cloudinary.com/dbrisux8i/video/upload/so_0/v1760346430/kling_20251009_Image_to_Video_A_confiden_4908_0_bimwvi.jpg"
                   className="w-full h-full object-cover"
                   autoPlay
                   muted
                   loop
                   playsInline
+                  preload="metadata"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 
@@ -1168,6 +1170,7 @@ export function CaseDetailPage() {
             muted
             loop
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (

@@ -49,6 +49,7 @@ export default function VideoCard({
               muted
               loop
               playsInline
+              preload="metadata"
               onError={(e) => {
                 console.error('Video error:', e);
               }}

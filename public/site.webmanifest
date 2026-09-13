@@ -1,13 +1,28 @@
 {
   "name": "Quantiva Advisory",
   "short_name": "Quantiva",
-  "description": "SAP, Cloud & AI Excellence - Your trusted partner for digital transformation",
+  "description": "SAP, Cloud & AI Consulting – Proof statt Promise.",
   "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
     {
       "src": "/logo192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/logo512.png",
@@ -16,9 +31,10 @@
       "purpose": "any maskable"
     }
   ],
-  "theme_color": "#0f766e",
-  "background_color": "#f0fdfa",
+  "theme_color": "#04060b",
+  "background_color": "#04060b",
   "display": "standalone",
   "start_url": "/",
-  "scope": "/"
+  "scope": "/",
+  "lang": "de"
 }

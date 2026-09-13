@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import ServiceVideoBackground from '../../../components/ServiceVideoBackground';
+import SiteNav from '../../../components/SiteNav';
 import {
   EASE,
   ScrollProgress,
@@ -52,6 +53,7 @@ export default function DigitalStrategyServicePage() {
 
   return (
     <div className="relative min-h-screen overflow-x-clip bg-black">
+      <SiteNav lang="de" variant="solid" />
       <ScrollProgress accent={ACCENT} />
       <ServiceVideoBackground videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1762103900/grok-video-dda3f51a-7efb-453a-a311-9467a101e4a0_rteefh.mp4"]} />
 

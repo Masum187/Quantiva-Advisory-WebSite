@@ -4,6 +4,7 @@ import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Database, Users, TrendingUp, Settings, CheckCircle, ArrowUpRight } from 'lucide-react';
 import ServiceVideoBackground from '../../ServiceVideoBackground';
+import SiteNav from '../../SiteNav';
 import {
   EASE,
   ScrollProgress,
@@ -144,11 +145,12 @@ export default function ERPCRMPage({ lang }: ERPCRMPageProps) {
 
   return (
     <div className="relative min-h-screen bg-black text-white">
+      <SiteNav lang={lang} variant="solid" />
       <ScrollProgress accent={ACCENT} />
 
       {/* Fixed Background Video (kept) */}
       <ServiceVideoBackground
-        videos={["https://res.cloudinary.com/dbrisux8i/video/upload/v1760435634/kling_20251014_Text_to_Video_Title__The_4174_2_llyqsp.mp4"]}
+        videos={["/assets/services/erp-crm-bg.mp4"]}
         overlayClassName="bg-black/60"
       />
 
@@ -230,7 +232,7 @@ export default function ERPCRMPage({ lang }: ERPCRMPageProps) {
                         <Icon className="h-7 w-7" />
                       </span>
                       <div>
-                        <p className="font-mono text-xs uppercase tracking-[0.3em] text-gray-500">
+                        <p className="font-mono text-xs uppercase tracking-[0.3em] text-gray-400">
                           Layer {String(i + 1).padStart(2, '0')}
                         </p>
                         <h3 className="mt-2 text-2xl font-bold md:text-3xl">{service.title}</h3>

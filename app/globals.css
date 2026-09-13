@@ -347,4 +347,26 @@ html {
   }
 }
 
+@keyframes route-load-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(380%);
+  }
+}
+
+.route-loading-bar {
+  animation: route-load-sweep 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-loading-bar {
+    animation: none;
+    width: 100%;
+    opacity: 0.45;
+    transform: none;
+  }
+}
+
 

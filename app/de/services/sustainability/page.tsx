@@ -1,11 +1,14 @@
+import ServiceJsonLd from '../../../components/ServiceJsonLd';
+import { servicePageMeta } from '../../../lib/seo';
 import SustainabilityPage from '../../../components/pages/services/SustainabilityPage';
 
-export const metadata = {
-  title: 'Sustainability Consulting | Quantiva Advisory',
-  description: 'Nachhaltige Transformation für zukunftsfähige Unternehmen. ESG-Strategie, CO₂-Bilanzierung, CSRD-Reporting.',
-};
+export const metadata = servicePageMeta('de', 'sustainability');
 
 export default function Page() {
-  return <SustainabilityPage lang="de" />;
+  return (
+    <>
+      <ServiceJsonLd lang="de" slug="sustainability" />
+      <SustainabilityPage lang="de" />
+    </>
+  );
 }
-

@@ -248,6 +248,7 @@ export default function VideoGenerationPage() {
                     controls
                     className="w-full rounded-xl border border-gray-700"
                     poster=""
+                    preload="metadata"
                   >
                     Ihr Browser unterstützt das Video-Element nicht.
                   </video>

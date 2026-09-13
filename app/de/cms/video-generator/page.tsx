@@ -384,6 +384,7 @@ export default function CMSVideoGenerator() {
                         controls
                         className="w-full rounded-lg mb-3"
                         poster=""
+                        preload="none"
                       />
 
                       {/* Video Info */}
