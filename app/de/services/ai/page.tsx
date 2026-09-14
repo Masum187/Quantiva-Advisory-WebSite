@@ -65,42 +65,42 @@ export default function AIServicePage() {
   // PDF-URLs liegen server-seitig in app/lib/data/whitepapers.ts.
   const whitepapers = [
     {
-      title: 'AI Use Case Discovery Whitepaper (2025)',
+      title: 'AI Use Case Discovery Whitepaper (2026)',
       description: 'Strategien zur Identifikation & Umsetzung von KI-Anwendungsfällen, inkl. Marktbeispiele und Self-Assessment für Unternehmen.',
       topic: 'Use Case Discovery',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/use-case-discovery.jpg',
       slug: 'ai-use-case-discovery'
     },
     {
-      title: 'AI Compliance & Guardrails (2025)',
+      title: 'AI Compliance & Guardrails (2026)',
       description: 'Überblick zu regulatorischen Anforderungen (EU AI Act, ISO 42001, NIST RMF) und den aktuellen Trends in der AI-Governance.',
       topic: 'Compliance & Guardrails',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/compliance-guardrails.jpg',
       slug: 'ai-compliance-guardrails'
     },
     {
-      title: 'MLOps & GenAI Summit Case Studies (2025)',
+      title: 'MLOps & GenAI Summit Case Studies (2026)',
       description: 'Erfahrungsberichte & Best Practices zu GenAI, MLOps und Agentic AI in der Praxis. Lessons Learned aus erfolgreichen Implementierungen.',
       topic: 'MLOps & GenAI',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/mlops-genai.jpg',
       slug: 'ai-mlops-genai-cases'
     },
     {
-      title: 'AI Use Case Erfolgsfaktoren (2025)',
+      title: 'AI Use Case Erfolgsfaktoren (2026)',
       description: 'Analysen zeigen: Strukturierte Discovery-Prozesse sind entscheidend für den Business Impact von KI-Projekten und verhindern Ressourcenverschwendung.',
       topic: 'Success Factors',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/success-factors.jpg',
       slug: 'ai-use-case-erfolgsfaktoren'
     },
     {
-      title: 'EU AI Act Implementation Guide (2025)',
+      title: 'EU AI Act Implementation Guide (2026)',
       description: 'Praktische Anleitung zur Umsetzung der EU AI Act Anforderungen in Unternehmen. Compliance-Framework und Best Practices.',
       topic: 'EU AI Act',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/eu-ai-act.jpg',
       slug: 'ai-eu-ai-act-guide'
     }

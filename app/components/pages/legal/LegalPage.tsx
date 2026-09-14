@@ -36,7 +36,7 @@ const COPY: Record<
             'Quantiva Advisory',
             `Website: https://${SITE_DOMAIN}`,
             `E-Mail: ${CONTACT_EMAIL}`,
-            'Ladungsfähige Anschrift: Angaben vorgesehen, werden ergänzt, sobald sie amtlich vorliegen.',
+            'Ladungsfähige Anschrift: Kontakt erfolgt derzeit elektronisch über die oben genannte E-Mail-Adresse. Die Anschrift wird veröffentlicht, sobald sie feststeht.',
           ],
         },
         {
@@ -48,7 +48,7 @@ const COPY: Record<
         {
           heading: 'Weitere Pflichtangaben nach § 5 DDG',
           paragraphs: [
-            'Vertretungsberechtigte Person, Handelsregister (Gericht und Nummer) und Umsatzsteuer-Identifikationsnummer werden ergänzt, sobald die Eintragungen vorliegen. Es werden keine Register-, Steuer- oder Adressdaten fingiert.',
+            'Vertretung, Handelsregister (Gericht und Nummer) und Umsatzsteuer-Identifikationsnummer sind noch nicht veröffentlicht. Es werden keine Register-, Steuer- oder Adressdaten vorweggenommen.',
           ],
         },
         {
@@ -97,7 +97,7 @@ const COPY: Record<
         {
           heading: 'Analytics (nur nach Einwilligung)',
           paragraphs: [
-            'Vercel Analytics und Vercel Speed Insights werden ausschließlich nach Ihrer ausdrücklichen Einwilligung geladen. Ohne Zustimmung wird kein Tracking-Skript eingebunden. Ablehnen bedeutet, dass diese Komponenten nicht gemountet werden. Sie können Ihre Wahl jederzeit über den Banner oder den Link „Cookie-Einstellungen“ auf dieser Seite ändern.',
+            'Vercel Analytics und Vercel Speed Insights werden ausschließlich nach Ihrer ausdrücklichen Einwilligung geladen. Ohne Zustimmung wird kein Tracking-Skript eingebunden. Widerrufen Sie eine zuvor erteilte Einwilligung, wird die Seite neu geladen, damit bereits geladene Tracking-Skripte vollständig entfernt werden. Der Widerruf gilt mit dem Speichern und nach dem Neuladen. Sie können Ihre Wahl jederzeit über den Banner oder den Link „Cookie-Einstellungen“ auf dieser Seite ändern.',
           ],
         },
         {
@@ -134,7 +134,7 @@ const COPY: Record<
             'Quantiva Advisory',
             `Website: https://${SITE_DOMAIN}`,
             `Email: ${CONTACT_EMAIL}`,
-            'Service address: details are intended and will be added once officially available.',
+            'Service address: contact is currently electronic via the email above. The postal address will be published once it is confirmed.',
           ],
         },
         {
@@ -146,7 +146,7 @@ const COPY: Record<
         {
           heading: 'Further details required by § 5 DDG',
           paragraphs: [
-            'Authorised representative, commercial register (court and number) and VAT identification number will be added once those filings are available. No register, tax or address data is invented.',
+            'Authorised representative, commercial register (court and number) and VAT identification number are not published yet. No register, tax or address data is assumed in advance.',
           ],
         },
         {
@@ -195,7 +195,7 @@ const COPY: Record<
         {
           heading: 'Analytics (opt-in only)',
           paragraphs: [
-            'Vercel Analytics and Vercel Speed Insights load only after your explicit consent. No tracking script is embedded beforehand. Declining keeps those components unmounted. You can change your choice at any time via the banner or the “Open cookie settings” link on this page.',
+            'Vercel Analytics and Vercel Speed Insights load only after your explicit consent. No tracking script is embedded beforehand. If you withdraw a previous consent, the page reloads so already injected tracking scripts are fully removed. Withdrawal takes effect on save and after reload. You can change your choice at any time via the banner or the “Open cookie settings” link on this page.',
           ],
         },
         {

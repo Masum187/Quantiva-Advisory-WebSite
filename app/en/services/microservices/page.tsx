@@ -226,10 +226,10 @@ export default function MicroservicesServicePage() {
       slug: 'integration-api-design-governance'
     },
     {
-      title: 'Traceable AI / State of API Economy 2025',
+      title: 'Traceable AI / State of API Economy 2026',
       description: 'Market study on the growth and use of APIs in companies worldwide. APIs are drivers of new business models. The number of APIs in use grows by 20–40% annually.',
       topic: 'API Economy',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/integration/api-economy.jpg',
       slug: 'integration-api-economy'
     },
@@ -250,10 +250,10 @@ export default function MicroservicesServicePage() {
       slug: 'integration-api-security'
     },
     {
-      title: '8 Predictions for Application Security & Microservices in 2025',
+      title: '8 Predictions for Application Security & Microservices in 2026',
       description: 'Forecast: microservices and APIs are becoming the foundation of innovation and growth, but require new skills and processes. AI and automation drive the next evolutionary step.',
       topic: 'Future Trends',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/integration/api-trends.jpg',
       slug: 'integration-api-trends'
     }

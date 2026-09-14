@@ -65,42 +65,42 @@ export default function AIServicePage() {
   // PDF URLs live server-side in app/lib/data/whitepapers.ts.
   const whitepapers = [
     {
-      title: 'AI Use Case Discovery Whitepaper (2025)',
+      title: 'AI Use Case Discovery Whitepaper (2026)',
       description: 'Strategies for identifying and implementing AI use cases, including market examples and a self-assessment for enterprises.',
       topic: 'Use Case Discovery',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/use-case-discovery.jpg',
       slug: 'ai-use-case-discovery'
     },
     {
-      title: 'AI Compliance & Guardrails (2025)',
+      title: 'AI Compliance & Guardrails (2026)',
       description: 'Overview of regulatory requirements (EU AI Act, ISO 42001, NIST RMF) and current trends in AI governance.',
       topic: 'Compliance & Guardrails',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/compliance-guardrails.jpg',
       slug: 'ai-compliance-guardrails'
     },
     {
-      title: 'MLOps & GenAI Summit Case Studies (2025)',
+      title: 'MLOps & GenAI Summit Case Studies (2026)',
       description: 'Field reports and best practices on GenAI, MLOps, and agentic AI in practice. Lessons learned from successful implementations.',
       topic: 'MLOps & GenAI',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/mlops-genai.jpg',
       slug: 'ai-mlops-genai-cases'
     },
     {
-      title: 'AI Use Case Success Factors (2025)',
+      title: 'AI Use Case Success Factors (2026)',
       description: 'Analyses show: structured discovery processes are decisive for the business impact of AI projects and prevent wasted resources.',
       topic: 'Success Factors',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/success-factors.jpg',
       slug: 'ai-use-case-erfolgsfaktoren'
     },
     {
-      title: 'EU AI Act Implementation Guide (2025)',
+      title: 'EU AI Act Implementation Guide (2026)',
       description: 'Practical guidance for implementing EU AI Act requirements in enterprises. Compliance framework and best practices.',
       topic: 'EU AI Act',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/ai/eu-ai-act.jpg',
       slug: 'ai-eu-ai-act-guide'
     }

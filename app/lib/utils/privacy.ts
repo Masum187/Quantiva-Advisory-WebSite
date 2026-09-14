@@ -30,13 +30,37 @@ export function hasAnalyticsConsent(): boolean {
   return readConsentCookie() === 'true';
 }
 
+type AnalyticsWindow = Window & {
+  va?: { q?: unknown[] } | ((...args: unknown[]) => void);
+  vaq?: unknown[];
+};
+
+function stopInjectedAnalytics() {
+  if (typeof document === 'undefined') return;
+
+  document
+    .querySelectorAll('script[src*="va.vercel-scripts.com"], script[src*="vitals"]')
+    .forEach((el) => el.remove());
+
+  const analyticsWindow = window as AnalyticsWindow;
+  analyticsWindow.va = () => undefined;
+  analyticsWindow.vaq = [];
+}
+
 export function setAnalyticsConsent(consent: boolean) {
   if (typeof window === 'undefined') return;
 
+  const previouslyAllowed = hasAnalyticsConsent();
   const value = consent ? 'true' : 'false';
   localStorage.setItem(ANALYTICS_CONSENT_KEY, value);
   writeConsentCookie(value);
   window.dispatchEvent(new CustomEvent(ANALYTICS_CONSENT_EVENT, { detail: { consent } }));
+
+  // Injected Vercel scripts survive React unmount; reload after true→false.
+  if (!consent && previouslyAllowed) {
+    stopInjectedAnalytics();
+    window.location.reload();
+  }
 }
 
 export function requestConsentBanner() {

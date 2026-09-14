@@ -152,10 +152,10 @@ export default function SAPServicePage() {
 
   const whitepapers = [
     {
-      title: 'SAP S/4HANA Transformation Guide 2025',
+      title: 'SAP S/4HANA Transformation Guide 2026',
       description: 'Umfassender Leitfaden für die S/4HANA-Transformation mit Best Practices, ROI-Berechnung und Migrationsstrategien.',
       topic: 'S/4HANA Transformation',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/sap/s4hana.jpg',
       slug: 'sap-s4hana-transformation'
     },
@@ -163,7 +163,7 @@ export default function SAPServicePage() {
       title: 'SAP BTP Integration Patterns Whitepaper',
       description: 'Moderne Integrationsmuster und Best Practices für SAP Business Technology Platform mit Architektur-Entscheidungen.',
       topic: 'BTP Integration',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/sap/btp.jpg',
       slug: 'sap-btp-integration'
     },
@@ -171,7 +171,7 @@ export default function SAPServicePage() {
       title: 'SAP Cloud ALM Best Practices',
       description: 'Application Lifecycle Management für Cloud- und hybride SAP-Umgebungen mit praktischen Implementierungshilfen.',
       topic: 'Cloud ALM',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/sap/cloud-alm.jpg',
       slug: 'sap-cloud-alm'
     },
@@ -179,15 +179,15 @@ export default function SAPServicePage() {
       title: 'KI & SAP Joule Integration Guide',
       description: 'Roadmap zur Integration von GenAI/Joule in SAP-Lösungen mit Best Practices und Implementierungsstrategien.',
       topic: 'KI & Joule Integration',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/sap/ki-joule.jpg',
       slug: 'sap-ki-joule'
     },
     {
-      title: 'SAP Fiori UX Design Guidelines 2025',
+      title: 'SAP Fiori UX Design Guidelines 2026',
       description: 'Neueste UX-Standards und Design-Prinzipien für SAP Fiori Anwendungen mit User Experience Best Practices.',
       topic: 'Fiori UX Design',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/sap/fiori-ux.jpg',
       slug: 'sap-fiori-ux'
     },
@@ -195,7 +195,7 @@ export default function SAPServicePage() {
       title: 'SAP Test Automation Framework',
       description: 'Best Practices für automatisierte SAP-Tests von der Anforderungsaufnahme bis zum Monitoring in Cloud-Umgebungen.',
       topic: 'Test Automation',
-      date: '2025',
+      date: '2026',
       image: '/assets/whitepapers/sap/test-automation.jpg',
       slug: 'sap-test-automation'
     }

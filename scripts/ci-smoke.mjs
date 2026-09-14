@@ -58,6 +58,14 @@ for (const path of protectedApis) {
   if (res.status !== 403) {
     failures.push(`${path} GET → ${res.status} (expected 403)`);
   }
+  const post = await get(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: '{}',
+  });
+  if (post.status !== 403) {
+    failures.push(`${path} POST → ${post.status} (expected 403)`);
+  }
 }
 
 const wpSource = readFileSync(join(root, 'app/lib/data/whitepapers.ts'), 'utf8');

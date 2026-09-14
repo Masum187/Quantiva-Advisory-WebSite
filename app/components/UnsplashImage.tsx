@@ -86,7 +86,7 @@ export default function UnsplashImage({
     <div className={`relative ${className}`}>
       {/* Image */}
       <Image
-        src={imageError ? '/assets/placeholder.jpg' : imageUrl}
+        src={imageError ? '/assets/og/og-default.jpg' : imageUrl}
         alt={alt}
         fill={fill}
         width={!fill ? width : undefined}

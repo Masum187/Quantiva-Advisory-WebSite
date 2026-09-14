@@ -90,15 +90,16 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
                 <>
                   Mit Ihrer Einwilligung nutzen wir <strong>Vercel Analytics</strong> und{' '}
                   <strong>Speed Insights</strong>. Ohne Zustimmung wird kein Tracking-Skript geladen.
-                  Ablehnen bedeutet: die Komponenten werden nicht eingebunden. Sie können Ihre Wahl
-                  jederzeit über den Banner oder die Datenschutzerklärung ändern.
+                  Widerrufen Sie eine zuvor erteilte Einwilligung, wird die Seite neu geladen, damit
+                  bereits geladene Skripte entfernt werden. Sie können Ihre Wahl jederzeit über den
+                  Banner oder die Datenschutzerklärung ändern.
                 </>
               ) : (
                 <>
                   With your consent we use <strong>Vercel Analytics</strong> and{' '}
                   <strong>Speed Insights</strong>. No tracking script is loaded until you accept.
-                  Decline keeps those components unmounted. You can change your choice later via the
-                  banner or the privacy policy.
+                  Withdrawing a previous consent reloads the page so already injected scripts are
+                  removed. You can change your choice later via the banner or the privacy policy.
                 </>
               )}
             </p>
