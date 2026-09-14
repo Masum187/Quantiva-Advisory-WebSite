@@ -94,7 +94,7 @@ export const industryDetails: IndustryDetail[] = [
       role: 'Industry Lead Manufacturing',
       image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=300&auto=format&fit=crop',
       email: 'm.weber@quantivaadvisory.com',
-      phone: '+49 89 1234 5678',
+      phone: undefined,
     },
   },
   {
@@ -145,7 +145,7 @@ export const industryDetails: IndustryDetail[] = [
       role: 'Industry Lead Manufacturing',
       image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=300&auto=format&fit=crop',
       email: 'michael.weber@quantivaadvisory.com',
-      phone: '+49 89 1234 5678',
+      phone: undefined,
     },
   },
   {
@@ -196,7 +196,7 @@ export const industryDetails: IndustryDetail[] = [
       role: 'Partnerin Financial Services',
       image: 'https://res.cloudinary.com/dbrisux8i/image/upload/v1760346416/image3_l0nj0f.jpg',
       email: 'g.patan@quantivaadvisory.com',
-      phone: '+49 69 9876 5432',
+      phone: undefined,
     },
   },
   {
@@ -247,7 +247,7 @@ export const industryDetails: IndustryDetail[] = [
       role: 'Partner Financial Services',
       image: 'https://res.cloudinary.com/dbrisux8i/image/upload/v1760346416/image3_l0nj0f.jpg',
       email: 'gulnur.patan@quantivaadvisory.com',
-      phone: '+49 69 9876 5432',
+      phone: undefined,
     },
   },
   {

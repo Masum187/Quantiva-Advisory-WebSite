@@ -1,15 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { CAREERS_EMAIL, CONTACT_EMAIL } from '../../lib/contact';
+import { escapeHtml, mailConfigured, sendMail } from '../../lib/mail';
 
-// Rate limiting (simple in-memory, use Redis in production)
 const requestCounts = new Map<string, { count: number; resetAt: number }>();
 
-const RATE_LIMIT = 10; // 10 requests
-const RATE_WINDOW = 60 * 60 * 1000; // per hour
+const RATE_LIMIT = 10;
+const RATE_WINDOW = 60 * 60 * 1000;
+
+const contactSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  email: z.email(),
+  message: z.string().trim().min(10).max(5000),
+  honeypot: z.string().optional(),
+  lang: z.enum(['de', 'en']).optional(),
+  recaptchaToken: z.string().optional(),
+  jobTitle: z.string().trim().max(200).optional(),
+  jobId: z.string().trim().max(80).optional(),
+});
 
 function getRateLimitKey(req: NextRequest): string {
   const forwarded = req.headers.get('x-forwarded-for');
   const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
-  return ip;
+  return ip ?? 'unknown';
 }
 
 function checkRateLimit(key: string): boolean {
@@ -32,7 +45,6 @@ function checkRateLimit(key: string): boolean {
 async function verifyRecaptcha(token?: string) {
   const secret = process.env.RECAPTCHA_SECRET_KEY;
   if (!secret) {
-    console.warn('reCAPTCHA secret key not configured');
     return true;
   }
 
@@ -49,7 +61,7 @@ async function verifyRecaptcha(token?: string) {
       body: `secret=${secret}&response=${token}`,
     });
 
-    const data = await response.json();
+    const data = (await response.json()) as { success?: boolean; score?: number };
     return Boolean(data.success && (data.score ?? 0) >= 0.5);
   } catch (error) {
     console.error('reCAPTCHA verification failed:', error);
@@ -59,102 +71,113 @@ async function verifyRecaptcha(token?: string) {
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limiting
     const rateLimitKey = getRateLimitKey(req);
     if (!checkRateLimit(rateLimitKey)) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
-    // Parse request body
-    const body = await req.json();
-    const { name, email, message, honeypot, lang, recaptchaToken } = body;
+    const parsed = contactSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid submission' }, { status: 400 });
+    }
 
-    // Honeypot check (bot protection)
+    const { name, email, message, honeypot, lang, recaptchaToken, jobTitle, jobId } = parsed.data;
+    const locale = lang === 'en' ? 'en' : 'de';
+
     if (honeypot) {
-      return NextResponse.json(
-        { error: 'Invalid submission' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid submission' }, { status: 400 });
     }
 
-    // reCAPTCHA validation
     const recaptchaValid = await verifyRecaptcha(recaptchaToken);
     if (!recaptchaValid) {
+      return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 });
+    }
+
+    if (!mailConfigured()) {
       return NextResponse.json(
-        { error: 'reCAPTCHA verification failed' },
-        { status: 400 }
+        {
+          error:
+            locale === 'de'
+              ? 'Der Versand ist derzeit nicht konfiguriert. Bitte schreiben Sie uns direkt per E-Mail.'
+              : 'Mail delivery is not configured. Please contact us directly by email.',
+        },
+        { status: 503 },
       );
     }
 
-    // Validation
-    if (!name || name.length < 2 || name.length > 100) {
-      return NextResponse.json(
-        { error: 'Invalid name' },
-        { status: 400 }
-      );
-    }
+    const isApplication = Boolean(jobTitle || jobId);
+    const notifyTo = isApplication
+      ? process.env.CAREERS_NOTIFY_EMAIL || CAREERS_EMAIL
+      : process.env.LEAD_NOTIFY_EMAIL || CONTACT_EMAIL;
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email' },
-        { status: 400 }
-      );
-    }
+    const safeName = escapeHtml(name);
+    const safeMessage = escapeHtml(message).replace(/\n/g, '<br/>');
+    const safeJob = jobTitle ? escapeHtml(jobTitle) : '';
+    const safeJobId = jobId ? escapeHtml(jobId) : '';
 
-    if (!message || message.length < 10 || message.length > 5000) {
-      return NextResponse.json(
-        { error: 'Invalid message' },
-        { status: 400 }
-      );
-    }
+    const subject = isApplication
+      ? locale === 'de'
+        ? `Neue Bewerbung: ${jobTitle || 'Karriere'}`
+        : `New application: ${jobTitle || 'Careers'}`
+      : locale === 'de'
+        ? `Neue Kontaktanfrage von ${name}`
+        : `New contact request from ${name}`;
 
-    // Log to console (in production, send to email service)
-    console.log('📧 New contact form submission:');
-    console.log(`Name: ${name}`);
-    console.log(`Email: ${email}`);
-    console.log(`Message: ${message}`);
-    console.log(`Language: ${lang || 'unknown'}`);
-    console.log(`Time: ${new Date().toISOString()}`);
-
-    // TODO: Send email using SendGrid, Resend, or Nodemailer
-    // Example with SendGrid:
-    /*
-    const sgMail = require('@sendgrid/mail');
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    
-    await sgMail.send({
-      to: 'info@quantivaadvisory.com',
-      from: 'noreply@quantivaadvisory.com',
-      subject: `New Contact from ${name}`,
-      text: message,
+    const sent = await sendMail({
+      to: notifyTo,
       replyTo: email,
+      subject,
+      html: `
+        <div style="font-family: Arial, Helvetica, sans-serif; color: #1a1a1a; max-width: 560px; margin: 0 auto;">
+          <h2 style="color: #0f766e;">Quantiva Advisory</h2>
+          <p>${isApplication ? (locale === 'de' ? 'Neue Bewerbung' : 'New application') : locale === 'de' ? 'Neue Kontaktanfrage' : 'New contact request'}</p>
+          <table cellpadding="4">
+            <tr><td><b>${locale === 'de' ? 'Name' : 'Name'}</b></td><td>${safeName}</td></tr>
+            <tr><td><b>E-Mail</b></td><td>${escapeHtml(email)}</td></tr>
+            ${
+              isApplication
+                ? `<tr><td><b>${locale === 'de' ? 'Stelle' : 'Role'}</b></td><td>${safeJob || '–'}</td></tr>
+                   <tr><td><b>Job-ID</b></td><td>${safeJobId || '–'}</td></tr>`
+                : ''
+            }
+            <tr><td><b>${locale === 'de' ? 'Nachricht' : 'Message'}</b></td><td>${safeMessage}</td></tr>
+            <tr><td><b>${locale === 'de' ? 'Zeitpunkt' : 'Time'}</b></td><td>${new Date().toISOString()}</td></tr>
+          </table>
+        </div>
+      `,
     });
-    */
 
-    // Success response
-    return NextResponse.json(
-      { 
-        success: true,
-        message: lang === 'de' 
+    if (!sent) {
+      return NextResponse.json(
+        {
+          error:
+            locale === 'de'
+              ? 'Der Versand ist fehlgeschlagen. Bitte versuchen Sie es später erneut.'
+              : 'Delivery failed. Please try again later.',
+        },
+        { status: 502 },
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message:
+        locale === 'de'
           ? 'Vielen Dank für Ihre Nachricht. Wir melden uns in Kürze bei Ihnen.'
-          : 'Thank you for your message. We will get back to you shortly.'
-      },
-      { status: 200 }
-    );
-
+          : 'Thank you for your message. We will get back to you shortly.',
+    });
   } catch (error) {
     console.error('Contact form error:', error);
     return NextResponse.json(
       { error: 'An error occurred. Please try again later.' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
-// OPTIONS method for CORS preflight
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
@@ -165,9 +188,3 @@ export async function OPTIONS() {
     },
   });
 }
-
-
-
-
-
-

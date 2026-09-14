@@ -9,6 +9,7 @@ import type { IndustryShowcase as IndustryItem } from '../../../lib/data/industr
 import type { Lang, Venture } from '../../../lib/data/projects';
 import { videoPosterFor } from '../../../lib/videoPoster';
 import HomeFilmLayer from './HomeFilmLayer';
+import { submitContact, validateContactClient } from '../../../lib/submitContact';
 import {
   ACCENT,
   CALENDLY_URL,
@@ -436,18 +437,47 @@ interface ContactFormState {
   msg: string;
 }
 
-function ContactSection({ copy }: { copy: ContactCopy }) {
+function ContactSection({ copy, lang }: { copy: ContactCopy; lang: Lang }) {
   const [form, setForm] = useState<ContactFormState>({ name: '', email: '', msg: '' });
   const [sent, setSent] = useState<'ok' | 'error' | null>(null);
+  const [errorText, setErrorText] = useState(copy.error);
+  const [sending, setSending] = useState(false);
 
   const onSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      // TODO: An Backend anbinden – aktuell nur Demo:
-      if (form.name && form.email && form.msg) setSent('ok');
-      else setSent('error');
+      const payload = {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        message: form.msg.trim(),
+        lang,
+      };
+      const clientError = validateContactClient(payload);
+      if (clientError) {
+        setSent('error');
+        setErrorText(clientError);
+        return;
+      }
+
+      setSending(true);
+      setSent(null);
+      try {
+        const result = await submitContact(payload);
+        if (!result.ok) {
+          setSent('error');
+          setErrorText(result.error || copy.error);
+          return;
+        }
+        setSent('ok');
+        setForm({ name: '', email: '', msg: '' });
+      } catch {
+        setSent('error');
+        setErrorText(copy.error);
+      } finally {
+        setSending(false);
+      }
     },
-    [form],
+    [copy.error, form, lang],
   );
 
   const lineInput =
@@ -518,7 +548,8 @@ function ContactSection({ copy }: { copy: ContactCopy }) {
           <div className="flex flex-wrap items-center gap-6 sm:col-span-2">
             <button
               type="submit"
-              className="group relative overflow-hidden rounded-full border px-10 py-4 font-semibold uppercase tracking-[0.2em] text-white transition-colors duration-300 hover:text-black"
+              disabled={sending}
+              className="group relative overflow-hidden rounded-full border px-10 py-4 font-semibold uppercase tracking-[0.2em] text-white transition-colors duration-300 hover:text-black disabled:opacity-60"
               style={{ borderColor: ACCENT }}
             >
               <span
@@ -529,7 +560,7 @@ function ContactSection({ copy }: { copy: ContactCopy }) {
               <span className="relative text-sm">{copy.submit}</span>
             </button>
             {sent === 'ok' && <span style={{ color: ACCENT }}>{copy.success}</span>}
-            {sent === 'error' && <span className="text-red-400">{copy.error}</span>}
+            {sent === 'error' && <span className="text-red-400">{errorText}</span>}
           </div>
         </motion.form>
 
@@ -538,10 +569,12 @@ function ContactSection({ copy }: { copy: ContactCopy }) {
             <Mail className="h-4 w-4" style={{ color: ACCENT }} />
             {CONTACT_EMAIL}
           </a>
-          <a href={`tel:${CONTACT_PHONE_HREF}`} className="inline-flex items-center gap-3 font-light transition hover:text-white">
-            <Phone className="h-4 w-4" style={{ color: ACCENT }} />
-            {CONTACT_PHONE_DISPLAY}
-          </a>
+          {CONTACT_PHONE_HREF ? (
+            <a href={`tel:${CONTACT_PHONE_HREF}`} className="inline-flex items-center gap-3 font-light transition hover:text-white">
+              <Phone className="h-4 w-4" style={{ color: ACCENT }} />
+              {CONTACT_PHONE_DISPLAY}
+            </a>
+          ) : null}
         </div>
       </div>
     </section>
@@ -645,30 +678,52 @@ function HomeFooter({ copy }: { copy: FooterCopy }) {
                 {CONTACT_EMAIL}
               </a>
             </li>
+            {CONTACT_PHONE_HREF ? (
+              <li>
+                <a href={`tel:${CONTACT_PHONE_HREF}`} className="transition hover:text-white">
+                  {CONTACT_PHONE_DISPLAY}
+                </a>
+              </li>
+            ) : (
+              <li>{copy.phoneOnRequest}</li>
+            )}
             <li>
-              <a href={`tel:${CONTACT_PHONE_HREF}`} className="transition hover:text-white">
-                {CONTACT_PHONE_DISPLAY}
-              </a>
+              <Link href={copy.legal.imprint.href} className="transition hover:text-white">
+                {copy.legal.imprint.label}
+              </Link>
+            </li>
+            <li>
+              <Link href={copy.legal.privacy.href} className="transition hover:text-white">
+                {copy.legal.privacy.label}
+              </Link>
             </li>
           </ul>
         </div>
-        <div>
-          <h4 className="font-mono text-xs uppercase tracking-[0.3em] text-gray-400">
-            {copy.socialTitle}
-          </h4>
-          <ul className="mt-5 space-y-2.5 text-sm font-light text-gray-300">
-            {SOCIAL_LINKS.map((s) => (
-              <li key={s.label}>
-                <a href={s.href} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  {s.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {SOCIAL_LINKS.length > 0 ? (
+          <div>
+            <h4 className="font-mono text-xs uppercase tracking-[0.3em] text-gray-400">
+              {copy.socialTitle}
+            </h4>
+            <ul className="mt-5 space-y-2.5 text-sm font-light text-gray-300">
+              {SOCIAL_LINKS.map((s) => (
+                <li key={s.label}>
+                  <a href={s.href} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                    {s.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </div>
-      <div className="border-t border-white/5 py-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.25em] text-gray-600">
-        {copy.copyright}
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-white/5 py-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.25em] text-gray-600">
+        <span>{copy.copyright}</span>
+        <Link href={copy.legal.imprint.href} className="transition hover:text-white">
+          {copy.legal.imprint.label}
+        </Link>
+        <Link href={copy.legal.privacy.href} className="transition hover:text-white">
+          {copy.legal.privacy.label}
+        </Link>
       </div>
     </footer>
   );
@@ -802,7 +857,7 @@ export default function HomeBelowFold({
         </div>
       </section>
 
-      <ContactSection copy={copy.contact} />
+      <ContactSection copy={copy.contact} lang={lang} />
       <MeetingSection copy={copy.meeting} />
       <HomeFooter copy={copy.footer} />
     </>

@@ -2,6 +2,7 @@ import { ContentProvider } from '../lib/contexts/ContentContext';
 import { LanguageProvider } from '../components/QuantivaWebsite';
 import LaserCursor from '../components/LaserCursor';
 import FloatingDock from '../components/FloatingDock';
+import CookieBanner from '../components/CookieBanner';
 
 export default function DeLayout({
   children,
@@ -19,6 +20,7 @@ export default function DeLayout({
         </a>
         <LaserCursor />
         <FloatingDock />
+        <CookieBanner lang="de" />
         <main id="main-content" tabIndex={-1}>
           {children}
         </main>

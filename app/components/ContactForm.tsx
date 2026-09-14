@@ -5,11 +5,13 @@ import { motion } from 'framer-motion';
 
 interface ContactFormProps {
   lang: 'de' | 'en';
+  jobTitle?: string;
+  jobId?: string;
 }
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 
-export default function ContactForm({ lang }: ContactFormProps) {
+export default function ContactForm({ lang, jobTitle, jobId }: ContactFormProps) {
   const [status, setStatus] = useState<FormStatus>('idle');
   const [error, setError] = useState('');
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
@@ -84,6 +86,8 @@ export default function ContactForm({ lang }: ContactFormProps) {
       honeypot: formData.get('honeypot') as string,
       lang,
       recaptchaToken,
+      jobTitle,
+      jobId,
     };
 
     // Client-side validation

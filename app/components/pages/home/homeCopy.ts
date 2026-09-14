@@ -6,15 +6,12 @@ export const FILM_HERO = '/assets/home/brand-film-hero.mp4';
 export const FILM_INTERLUDE = '/assets/home/brand-film-interlude.mp4';
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-export const CONTACT_EMAIL = 'info@quantiva.example';
-export const CONTACT_PHONE_DISPLAY = '+49 123 456 7890';
-export const CONTACT_PHONE_HREF = '+491234567890';
-
-export const SOCIAL_LINKS: { label: string; href: string }[] = [
-  { label: 'LinkedIn', href: 'https://linkedin.com/company/quantiva' },
-  { label: 'Twitter', href: 'https://twitter.com/quantiva' },
-  { label: 'GitHub', href: 'https://github.com/quantiva' },
-];
+export {
+  CONTACT_EMAIL,
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_HREF,
+  SOCIAL_LINKS,
+} from '../../../lib/contact';
 
 
 export interface NavItem {
@@ -64,6 +61,8 @@ export interface FooterCopy {
   contactTitle: string;
   socialTitle: string;
   copyright: string;
+  legal: { imprint: NavItem; privacy: NavItem };
+  phoneOnRequest: string;
 }
 
 export interface HomeCopy {
@@ -236,6 +235,11 @@ export const COPY: Record<Lang, HomeCopy> = {
       contactTitle: 'Kontakt',
       socialTitle: 'Folgen Sie uns',
       copyright: '© 2026 Quantiva Advisory. Alle Rechte vorbehalten.',
+      legal: {
+        imprint: { id: 'imprint', label: 'Impressum', href: '/de/impressum' },
+        privacy: { id: 'privacy', label: 'Datenschutz', href: '/de/datenschutz' },
+      },
+      phoneOnRequest: 'Telefon auf Anfrage',
     },
   },
   en: {
@@ -345,6 +349,11 @@ export const COPY: Record<Lang, HomeCopy> = {
       contactTitle: 'Contact',
       socialTitle: 'Follow us',
       copyright: '© 2026 Quantiva Advisory. All rights reserved.',
+      legal: {
+        imprint: { id: 'imprint', label: 'Imprint', href: '/en/imprint' },
+        privacy: { id: 'privacy', label: 'Privacy', href: '/en/privacy' },
+      },
+      phoneOnRequest: 'Phone on request',
     },
   },
 };

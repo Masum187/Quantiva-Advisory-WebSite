@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Clock, Share2, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Download, Share2, Tag } from 'lucide-react';
 import { useLanguage } from '../../QuantivaWebsite';
 import type { ContentPost } from '../../../lib/utils/contentHub';
 import SiteNav from '../../SiteNav';
@@ -18,11 +18,17 @@ const t = {
   de: {
     back: 'Zurück zum Content Hub',
     related: 'Weitere Beiträge',
+    share: 'Teilen',
+    copied: 'Link kopiert',
+    download: 'Download',
     readingTime: (min?: number) => (min ? `${min} Min Lesedauer` : ''),
   },
   en: {
     back: 'Back to Content Hub',
     related: 'Related posts',
+    share: 'Share',
+    copied: 'Link copied',
+    download: 'Download',
     readingTime: (min?: number) => (min ? `${min} min read` : ''),
   },
 };
@@ -43,6 +49,28 @@ export default function ContentPostPage({ lang, post, related }: ContentPostPage
   const { localePath } = useLanguage();
   const dict = t[lang];
   const paragraphs = post.body?.split(/\n\n+/).filter(Boolean) ?? [];
+  const [shareLabel, setShareLabel] = useState(dict.share);
+
+  const handleShare = async () => {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: post.title, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setShareLabel(dict.copied);
+      window.setTimeout(() => setShareLabel(dict.share), 2000);
+    } catch {
+      try {
+        await navigator.clipboard.writeText(url);
+        setShareLabel(dict.copied);
+        window.setTimeout(() => setShareLabel(dict.share), 2000);
+      } catch {
+        /* user cancelled share or clipboard unavailable */
+      }
+    }
+  };
 
   return (
     <article className="min-h-screen bg-black text-white">
@@ -112,9 +140,21 @@ export default function ContentPostPage({ lang, post, related }: ContentPostPage
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-black/30" />
             <div className="absolute bottom-4 left-4 flex gap-3">
-              <button className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-gray-200 hover:border-teal-400/40 hover:text-teal-200">
-                <Share2 className="mr-2 inline h-3 w-3" /> Share
+              <button
+                type="button"
+                onClick={handleShare}
+                className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-gray-200 hover:border-teal-400/40 hover:text-teal-200"
+              >
+                <Share2 className="mr-2 inline h-3 w-3" /> {shareLabel}
               </button>
+              {post.downloadUrl ? (
+                <a
+                  href={post.downloadUrl}
+                  className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-gray-200 hover:border-teal-400/40 hover:text-teal-200"
+                >
+                  <Download className="mr-2 inline h-3 w-3" /> {dict.download}
+                </a>
+              ) : null}
             </div>
           </motion.div>
         </div>

@@ -45,7 +45,6 @@
     "highlight": true,
     "featured": true,
     "author": "Sarah Martinez",
-    "downloadUrl": "/assets/whitepapers/cloud-operating-model-2025.pdf",
     "body": "A modern Cloud Operating Model for mid-market organisations must balance compliance, speed and cost transparency. We share the blueprint we use with European financial services clients: a central Cloud Control Plane, federated landing zones and FinOps routines that deliver weekly insights.\n\nIncluded: standard policy packs, audit artefacts and the communication cadence that keeps business stakeholders aligned." 
   },
   {
@@ -62,7 +61,6 @@
     "highlight": false,
     "featured": false,
     "author": "Leonett Andrew",
-    "downloadUrl": "/assets/reports/cyber-security-playbook-2024.pdf",
     "body": "Security transformation programmes in the mid-market require a pragmatic path: start with policy baselining, automate evidence collection and institutionalise incident drills.\n\nOur playbook covers quick-start tooling, target operating model templates and communication assets that reduce friction between OT and IT security teams." 
   }
 ]

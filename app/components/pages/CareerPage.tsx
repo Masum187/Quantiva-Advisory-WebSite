@@ -1737,7 +1737,7 @@ export default function CareerPage() {
                     ? 'Sende uns kurz deine Kontaktdaten und wir melden uns innerhalb eines Tages.'
                     : 'Share your contact details – we will get back within one business day.'}
                 </p>
-                <ContactForm lang={lang} />
+                <ContactForm lang={lang} jobId={selectedJob.id} jobTitle={selectedJob.title} />
               </div>
             </motion.div>
           </motion.div>

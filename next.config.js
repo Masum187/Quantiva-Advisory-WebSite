@@ -5,13 +5,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com;
-  connect-src 'self' https://*.contentful.com https://api.openai.com https://www.google.com https://www.gstatic.com;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  img-src 'self' data: https://images.unsplash.com https://res.cloudinary.com https://images.ctfassets.net;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://assets.calendly.com https://calendly.com;
+  connect-src 'self' https://*.contentful.com https://api.openai.com https://www.google.com https://www.gstatic.com https://calendly.com https://*.calendly.com https://assets.calendly.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://assets.calendly.com;
+  img-src 'self' data: https://images.unsplash.com https://res.cloudinary.com https://images.ctfassets.net https://*.calendly.com;
   media-src 'self' https://res.cloudinary.com;
   font-src 'self' https://fonts.gstatic.com data:;
-  frame-src https://www.google.com;
+  frame-src https://www.google.com https://calendly.com https://www.calendly.com;
   base-uri 'self';
   form-action 'self';
   frame-ancestors 'self';
@@ -62,7 +62,6 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_CONTENTFUL_SPACE_ID: process.env.REACT_APP_CONTENTFUL_SPACE_ID,
     NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN: process.env.REACT_APP_CONTENTFUL_ACCESS_TOKEN,
-    NEXT_PUBLIC_CONTENTFUL_PREVIEW_TOKEN: process.env.REACT_APP_CONTENTFUL_PREVIEW_TOKEN,
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
     NEXT_PUBLIC_RECAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
   },

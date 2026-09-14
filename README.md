@@ -37,7 +37,7 @@ A modern, responsive website for Quantiva Advisory with internationalization (Ge
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js 20 or higher (see `engines` in package.json)
 - npm or yarn
 
 ### Installation
@@ -82,17 +82,12 @@ This starts:
    npm run build
    ```
 
-2. **Manual sitemap generation**: Generate sitemap independently:
+2. **Manual sitemap generation** (legacy helper; production uses `app/sitemap.ts`):
    ```bash
    npm run generate:sitemap
    ```
 
-3. **Build with sitemap**: Explicitly build with sitemap generation:
-   ```bash
-   npm run build:sitemap
-   ```
-
-4. Start the production server:
+3. Start the production server:
    ```bash
    npm start
    ```
@@ -254,6 +249,10 @@ The website includes a comprehensive validation system for case data:
    
    # Strict validation (errors fail build)
    npm run validate:cases:strict
+
+   # Current venture portfolio (projects.ts)
+   npm run validate:ventures
+   npm run validate:ventures:strict
    ```
 
 4. **Validation Rules**:
@@ -558,5 +557,4 @@ This project is proprietary to Quantiva Advisory.
 ## Contact
 
 For questions or support, contact:
-- Email: info@quantiva.example
-- Phone: +49 123 456 7890
+- Email: info@quantiva-advisory.com

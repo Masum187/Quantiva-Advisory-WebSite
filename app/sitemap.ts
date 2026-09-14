@@ -108,5 +108,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
+  const nowLegal = new Date();
+  entries.push(
+    {
+      url: absoluteUrl('/de/impressum'),
+      lastModified: nowLegal,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+      alternates: { languages: { de: absoluteUrl('/de/impressum'), en: absoluteUrl('/en/imprint'), 'x-default': absoluteUrl('/de/impressum') } },
+    },
+    {
+      url: absoluteUrl('/en/imprint'),
+      lastModified: nowLegal,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+      alternates: { languages: { de: absoluteUrl('/de/impressum'), en: absoluteUrl('/en/imprint'), 'x-default': absoluteUrl('/de/impressum') } },
+    },
+    {
+      url: absoluteUrl('/de/datenschutz'),
+      lastModified: nowLegal,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+      alternates: { languages: { de: absoluteUrl('/de/datenschutz'), en: absoluteUrl('/en/privacy'), 'x-default': absoluteUrl('/de/datenschutz') } },
+    },
+    {
+      url: absoluteUrl('/en/privacy'),
+      lastModified: nowLegal,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+      alternates: { languages: { de: absoluteUrl('/de/datenschutz'), en: absoluteUrl('/en/privacy'), 'x-default': absoluteUrl('/de/datenschutz') } },
+    },
+  );
+
   return entries;
 }

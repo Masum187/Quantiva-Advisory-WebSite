@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
+import { requireAdminApi } from '../../../lib/adminGate';
 
 // Cloudinary Konfiguration
 cloudinary.config({
@@ -9,6 +10,9 @@ cloudinary.config({
 });
 
 export async function POST(req: NextRequest) {
+  const denied = requireAdminApi(req);
+  if (denied) return denied;
+
   try {
     const { prompt, duration = 8, quality = "720p", folder = "generated-videos", title } = await req.json();
 
@@ -105,7 +109,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const denied = requireAdminApi(req);
+  if (denied) return denied;
+
   return Response.json({
     message: "CMS Video Generator API is running",
     status: "ready",

@@ -371,7 +371,7 @@ export default function NewWorkPage() {
                 <ArrowUpRight className="h-4 w-4" />
               </ShineButton>
               <a
-                href="tel:+49123456789"
+                href="mailto:info@quantiva-advisory.com"
                 className="inline-flex items-center gap-2 border-b border-white/30 pb-1 text-sm font-light uppercase tracking-[0.25em] text-gray-300 transition-colors hover:border-white hover:text-white"
               >
                 Kostenloses Beratungsgespräch

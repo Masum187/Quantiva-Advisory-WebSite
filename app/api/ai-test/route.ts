@@ -2,8 +2,12 @@ import { createXai } from "@ai-sdk/xai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { streamText } from "ai";
+import { requireAdminApi } from "../../lib/adminGate";
 
 export async function POST(req: Request) {
+  const denied = requireAdminApi(req);
+  if (denied) return denied;
+
   try {
     const { prompt, provider, model } = await req.json();
 
@@ -94,7 +98,10 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const denied = requireAdminApi(req);
+  if (denied) return denied;
+
   return Response.json({
     message: "AI SDK Test API is running",
     status: "ready",

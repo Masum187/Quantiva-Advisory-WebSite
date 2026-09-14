@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import casesData from "../lib/data/cases.json";
 import { analytics } from "../lib/utils/analytics";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "../lib/contact";
+import { submitContact, validateContactClient } from "../lib/submitContact";
 import { AnimatedCard } from './services/AnimatedCard';
 import IndustriesSection from './sections/IndustriesSection';
 
@@ -49,7 +51,7 @@ const ReferencesSlider = dynamic(() => import('./ReferencesSlider'), {
  * - Analytics: Custom event tracking integrated
  */
 
-const CAREER_FORM_URL = "https://example.com/career-form";
+const CAREER_FORM_URL = "/de/career";
 
 // helpers
 const ORIGIN = (typeof window !== 'undefined' && window.location.origin) || 'https://quantivaadvisory.com';
@@ -416,13 +418,41 @@ function ContactFormSection() {
   const { lang } = useLanguage();
   const contact = useContactContent(lang);
   const [sent, setSent] = useState<null | "ok" | "error">(null);
+  const [errorText, setErrorText] = useState(contact.form.error);
+  const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: An Backend anbinden – aktuell nur Demo:
-    if (form.name && form.email && form.msg) setSent("ok");
-    else setSent("error");
+    const payload = {
+      name: form.name.trim(),
+      email: form.email.trim(),
+      message: form.msg.trim(),
+      lang,
+    };
+    const clientError = validateContactClient(payload);
+    if (clientError) {
+      setSent("error");
+      setErrorText(clientError);
+      return;
+    }
+    setSending(true);
+    setSent(null);
+    try {
+      const result = await submitContact(payload);
+      if (!result.ok) {
+        setSent("error");
+        setErrorText(result.error || contact.form.error);
+        return;
+      }
+      setSent("ok");
+      setForm({ name: "", email: "", msg: "" });
+    } catch {
+      setSent("error");
+      setErrorText(contact.form.error);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -452,17 +482,19 @@ function ContactFormSection() {
                   className="w-full rounded-lg border border-teal-500/30 bg-slate-900/50 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-400" placeholder={contact.form.message} />
               </div>
               <div className="sm:col-span-2 flex flex-wrap items-center gap-3">
-                <button type="submit" className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-5 py-2 font-semibold text-white hover:bg-teal-500 shadow-lg shadow-teal-500/20 transition">
+                <button type="submit" disabled={sending} className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-5 py-2 font-semibold text-white hover:bg-teal-500 shadow-lg shadow-teal-500/20 transition disabled:opacity-60">
                   <Send className="h-4 w-4" /> {contact.form.submit}
                 </button>
                 {sent==="ok" && <span className="text-teal-400">{contact.form.success}</span>}
-                {sent==="error" && <span className="text-red-400">{contact.form.error}</span>}
+                {sent==="error" && <span className="text-red-400">{errorText}</span>}
               </div>
             </form>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 text-gray-300">
-              <a href="mailto:info@quantiva.example" className="inline-flex items-center gap-3 hover:text-teal-400 transition"><Mail className="h-5 w-5 text-teal-400"/>info@quantiva.example</a>
-              <a href="tel:+491234567890" className="inline-flex items-center gap-3 hover:text-teal-400 transition"><Phone className="h-5 w-5 text-teal-400"/>+49 123 456 7890</a>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="inline-flex items-center gap-3 hover:text-teal-400 transition"><Mail className="h-5 w-5 text-teal-400"/>{CONTACT_EMAIL}</a>
+              {CONTACT_PHONE_HREF ? (
+                <a href={`tel:${CONTACT_PHONE_HREF}`} className="inline-flex items-center gap-3 hover:text-teal-400 transition"><Phone className="h-5 w-5 text-teal-400"/>{CONTACT_PHONE_DISPLAY}</a>
+              ) : null}
             </div>
           </div>
         </SlideIn>
@@ -952,19 +984,34 @@ export default function QuantivaWebsite() {
           <div>
             <h4 className="mb-2 font-semibold">{footer.contact.title}</h4>
             <ul className="space-y-1 text-white/90">
-              <li><a className="hover:underline" href={`mailto:${footer.contact.email}`}>{footer.contact.email}</a></li>
-              <li><a className="hover:underline" href={`tel:${footer.contact.phone}`}>{footer.contact.phone}</a></li>
-              <li className="text-white/70">{footer.contact.address}</li>
+              <li><a className="hover:underline" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+              {CONTACT_PHONE_HREF ? (
+                <li><a className="hover:underline" href={`tel:${CONTACT_PHONE_HREF}`}>{CONTACT_PHONE_DISPLAY}</a></li>
+              ) : null}
+              <li>
+                <Link className="hover:underline" href={lang === 'de' ? '/de/impressum' : '/en/imprint'}>
+                  {footer.legal.imprint}
+                </Link>
+              </li>
+              <li>
+                <Link className="hover:underline" href={lang === 'de' ? '/de/datenschutz' : '/en/privacy'}>
+                  {footer.legal.privacy}
+                </Link>
+              </li>
             </ul>
           </div>
-          <div>
-            <h4 className="mb-2 font-semibold">{footer.social.title}</h4>
-            <ul className="space-y-1 text-white/90">
-              <li><a className="hover:underline" href={footer.social.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-              <li><a className="hover:underline" href={footer.social.twitter} target="_blank" rel="noopener noreferrer">Twitter</a></li>
-              <li><a className="hover:underline" href={footer.social.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>
-            </ul>
-          </div>
+          {SOCIAL_LINKS.length > 0 ? (
+            <div>
+              <h4 className="mb-2 font-semibold">{footer.social.title}</h4>
+              <ul className="space-y-1 text-white/90">
+                {SOCIAL_LINKS.map((item) => (
+                  <li key={item.label}>
+                    <a className="hover:underline" href={item.href} target="_blank" rel="noopener noreferrer">{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
         <div className="bg-black/40 py-4 text-center text-sm text-white/80">
           {footer.copyright}

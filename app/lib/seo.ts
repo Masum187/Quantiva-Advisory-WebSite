@@ -249,9 +249,9 @@ export function serviceTitle(lang: SiteLang, slug: string): string {
 }
 
 export const ORGANIZATION_SAME_AS = [
-  'https://linkedin.com/company/quantiva',
-  'https://twitter.com/quantiva',
-  'https://github.com/quantiva',
+  ...(process.env.NEXT_PUBLIC_LINKEDIN_URL ? [process.env.NEXT_PUBLIC_LINKEDIN_URL] : []),
+  ...(process.env.NEXT_PUBLIC_TWITTER_URL ? [process.env.NEXT_PUBLIC_TWITTER_URL] : []),
+  ...(process.env.NEXT_PUBLIC_GITHUB_URL ? [process.env.NEXT_PUBLIC_GITHUB_URL] : []),
 ] as const;
 
 export function organizationJsonLd(): Record<string, unknown> {

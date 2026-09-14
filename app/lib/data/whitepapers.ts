@@ -20,7 +20,7 @@ const CLOUD = 'https://res.cloudinary.com/dbrisux8i/image/upload';
 export const whitepapers: WhitepaperEntry[] = [
   {
     slug: 'sap-s4hana-transformation',
-    title: 'SAP S/4HANA Transformation Guide 2025',
+    title: 'SAP S/4HANA Transformation Guide 2026',
     url: `${CLOUD}/fl_attachment:SAP-S4HANA-Transformation-Guide/v1788989580/01-s4hana-transformation-2026_tyyilv.pdf`,
   },
   {
@@ -40,7 +40,7 @@ export const whitepapers: WhitepaperEntry[] = [
   },
   {
     slug: 'sap-fiori-ux',
-    title: 'SAP Fiori UX Design Guidelines 2025',
+    title: 'SAP Fiori UX Design Guidelines 2026',
     url: `${CLOUD}/fl_attachment:SAP-Fiori-UX-Design-Guidelines/v1788989580/05-fiori-ux-2026_vrhwhs.pdf`,
   },
   {
@@ -55,32 +55,36 @@ export const whitepapers: WhitepaperEntry[] = [
   // Die PDFs werden daher ohne Transformation ausgeliefert (öffnen inline).
   {
     slug: 'ai-use-case-discovery',
-    title: 'AI Use Case Discovery Whitepaper (2025)',
+    title: 'AI Use Case Discovery Whitepaper (2026)',
     url: `${CLOUD}/v1789081342/07-ai-use-case-discovery-2026_drlxye.pdf`,
   },
   {
     slug: 'ai-compliance-guardrails',
-    title: 'AI Compliance & Guardrails (2025)',
+    title: 'AI Compliance & Guardrails (2026)',
     url: `${CLOUD}/v1789081341/08-ai-compliance-guardrails-2026_ohkeol.pdf`,
   },
   {
     slug: 'ai-mlops-genai-cases',
-    title: 'MLOps & GenAI Summit Case Studies (2025)',
+    title: 'MLOps & GenAI Summit Case Studies (2026)',
     url: `${CLOUD}/v1789081342/09-mlops-genai-praxis-2026_ldeb13.pdf`,
   },
   {
     slug: 'ai-use-case-erfolgsfaktoren',
-    title: 'AI Use Case Erfolgsfaktoren (2025)',
+    title: 'AI Use Case Erfolgsfaktoren (2026)',
     url: `${CLOUD}/v1789081342/10-ai-use-case-erfolgsfaktoren-2026_jbfznm.pdf`,
   },
   {
     slug: 'ai-eu-ai-act-guide',
-    title: 'EU AI Act Implementation Guide (2025)',
+    title: 'EU AI Act Implementation Guide (2026)',
     url: `${CLOUD}/v1789081342/11-eu-ai-act-umsetzung-2026_eftdum.pdf`,
   },
   {
     slug: 'ai-genai-business-impact',
-    title: 'Generative AI Business Impact Study (2025)',
+    title: 'Generative AI Business Impact Study (2026)',
+    // No fl_attachment and no /pdf/ path transform — those 401 under
+    // Cloudinary "strict transformations". If HEAD is still 401, the object
+    // itself was uploaded so that `.pdf` is treated as a format conversion
+    // and must be re-uploaded like the other AI PDFs.
     url: `${CLOUD}/v1789081342/12-genai-business-impact-2026_iypxpi.pdf`,
   },
 
@@ -98,7 +102,7 @@ export const whitepapers: WhitepaperEntry[] = [
   },
   {
     slug: 'integration-api-economy',
-    title: 'State of API Economy 2025',
+    title: 'State of API Economy 2026',
     url: `${CLOUD}/v1789108767/15-api-economy-2026_jg4yau.pdf`,
   },
   {
@@ -113,7 +117,7 @@ export const whitepapers: WhitepaperEntry[] = [
   },
   {
     slug: 'integration-api-trends',
-    title: 'Application Security & Microservices Trends 2025',
+    title: 'Application Security & Microservices Trends 2026',
     url: `${CLOUD}/v1789108767/18-api-microservices-trends-2026_rvu1p9.pdf`,
   },
 ];

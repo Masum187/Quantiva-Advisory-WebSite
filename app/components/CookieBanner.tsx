@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { setAnalyticsConsent, privacyConfig } from '../lib/utils/privacy';
 import { X, Shield } from 'lucide-react';
 
-export default function CookieBanner() {
+export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
   const [show, setShow] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
@@ -57,10 +57,12 @@ export default function CookieBanner() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Ihre Privatsphäre ist uns wichtig
+                    {lang === 'de' ? 'Ihre Privatsphäre ist uns wichtig' : 'Your privacy matters to us'}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                    Privacy-friendly Analytics ohne Cookies
+                    {lang === 'de'
+                      ? 'Privacy-friendly Analytics ohne Cookies'
+                      : 'Privacy-friendly analytics without cookies'}
                   </p>
                 </div>
               </div>
@@ -77,9 +79,19 @@ export default function CookieBanner() {
           {/* Content */}
           <div className="px-6 pb-6">
             <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-              Wir nutzen <strong>Vercel Analytics</strong> – eine datenschutzfreundliche Lösung ohne Cookies. 
-              Wir erfassen anonyme Besucherstatistiken und Performance-Daten, um unsere Website zu verbessern. 
-              Keine personenbezogenen Daten, keine Cross-Site-Tracking.
+              {lang === 'de' ? (
+                <>
+                  Wir nutzen <strong>Vercel Analytics</strong> – eine datenschutzfreundliche Lösung ohne Cookies.
+                  Wir erfassen anonyme Besucherstatistiken und Performance-Daten, um unsere Website zu verbessern.
+                  Keine personenbezogenen Daten, kein Cross-Site-Tracking.
+                </>
+              ) : (
+                <>
+                  We use <strong>Vercel Analytics</strong> — a privacy-friendly solution without cookies.
+                  We collect anonymous visitor statistics and performance data to improve the website.
+                  No personal data, no cross-site tracking.
+                </>
+              )}
             </p>
 
             {/* Privacy Features */}
@@ -138,21 +150,24 @@ export default function CookieBanner() {
               onClick={handleAccept}
               className="flex-1 rounded-xl bg-teal-600 px-6 py-3 font-medium text-white hover:bg-teal-500 transition shadow-lg shadow-teal-500/20"
             >
-              Akzeptieren
+              {lang === 'de' ? 'Akzeptieren' : 'Accept'}
             </button>
             <button
               onClick={handleDecline}
               className="flex-1 rounded-xl border border-gray-300 dark:border-gray-700 px-6 py-3 font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
             >
-              Ablehnen
+              {lang === 'de' ? 'Ablehnen' : 'Decline'}
             </button>
           </div>
 
           {/* Footer */}
           <div className="px-6 pb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-            Mehr Informationen in unserer{' '}
-            <Link href="/privacy" className="text-teal-600 dark:text-teal-400 hover:underline">
-              Datenschutzerklärung
+            {lang === 'de' ? 'Mehr Informationen in unserer' : 'More information in our'}{' '}
+            <Link
+              href={lang === 'de' ? '/de/datenschutz' : '/en/privacy'}
+              className="text-teal-600 dark:text-teal-400 hover:underline"
+            >
+              {lang === 'de' ? 'Datenschutzerklärung' : 'privacy policy'}
             </Link>
           </div>
         </div>

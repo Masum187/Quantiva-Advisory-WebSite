@@ -1,6 +1,10 @@
 import { NextRequest } from 'next/server';
+import { requireAdminApi } from '../../lib/adminGate';
 
 export async function POST(req: NextRequest) {
+  const denied = requireAdminApi(req);
+  if (denied) return denied;
+
   try {
     const { prompt, duration = 5, quality = "480p" } = await req.json();
 
@@ -106,7 +110,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const denied = requireAdminApi(req);
+  if (denied) return denied;
+
   return Response.json({
     message: "Video Generation API is running",
     status: "ready",

@@ -171,6 +171,7 @@ function RequestModal({
   date,
   image,
   slug,
+  lang,
   t
 }: {
   open: boolean;
@@ -180,6 +181,7 @@ function RequestModal({
   date: string;
   image: string;
   slug: string;
+  lang: Lang;
   t: Copy;
 }) {
   const [form, setForm] = useState<FormFields>(EMPTY_FORM);
@@ -230,7 +232,7 @@ function RequestModal({
       const res = await fetch('/api/whitepaper', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, ...form })
+        body: JSON.stringify({ slug, lang, ...form })
       });
       const data = await res.json().catch(() => ({}));
 
@@ -516,6 +518,7 @@ export default function WhitepaperCard({
         date={date}
         image={image}
         slug={slug}
+        lang={lang}
         t={t}
       />
     </article>

@@ -15,4 +15,18 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run build
       - run: echo "Sitemap is served by app/sitemap.ts (do not write public/sitemap.xml)"
+      - name: Production smoke checks
+        env:
+          NODE_ENV: production
+        run: |
+          npm start -- --port 3010 &
+          server_pid=$!
+          trap 'kill $server_pid' EXIT
+          for i in $(seq 1 40); do
+            if curl -sf "http://127.0.0.1:3010/de" >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          node scripts/ci-smoke.mjs http://127.0.0.1:3010
 

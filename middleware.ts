@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { denyAdminPage, isAdminAuthorized, isAdminPagePath } from './app/lib/adminGate';
 
 const locales = ['de', 'en'];
 const defaultLocale = 'de';
@@ -68,6 +69,10 @@ function withOptionalNoIndex(response: NextResponse, pathname: string) {
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  if (isAdminPagePath(pathname) && !isAdminAuthorized(request)) {
+    return denyAdminPage();
+  }
 
   // Skip middleware for static files, metadata routes, and API routes
   if (
