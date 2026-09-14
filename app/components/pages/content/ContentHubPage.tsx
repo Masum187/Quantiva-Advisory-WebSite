@@ -234,7 +234,7 @@ export default function ContentHubPage({ lang, posts }: ContentHubPageProps) {
                     <div className="relative h-48 w-full overflow-hidden">
                       <div
                         className="absolute inset-0 scale-105 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style={{ backgroundImage: `url(${post.heroImage || 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop'})` }}
+                        style={{ backgroundImage: `url(${post.heroImage || '/assets/og-default.jpg'})` }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                       {post.contentType && (
@@ -278,7 +278,7 @@ export default function ContentHubPage({ lang, posts }: ContentHubPageProps) {
                 <div className="relative h-64 w-full overflow-hidden sm:h-80">
                   <div
                     className="absolute inset-0 scale-105 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                    style={{ backgroundImage: `url(${heroPost.heroImage || 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop'})` }}
+                    style={{ backgroundImage: `url(${heroPost.heroImage || '/assets/og-default.jpg'})` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 </div>
@@ -330,7 +330,7 @@ export default function ContentHubPage({ lang, posts }: ContentHubPageProps) {
                     <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl">
                       <div
                         className="h-full w-full scale-105 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                        style={{ backgroundImage: `url(${post.heroImage || 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=400&auto=format&fit=crop'})` }}
+                        style={{ backgroundImage: `url(${post.heroImage || '/assets/og-default.jpg'})` }}
                       />
                     </div>
                     <div className="flex-1">
@@ -389,7 +389,7 @@ export default function ContentHubPage({ lang, posts }: ContentHubPageProps) {
                     <div className="relative h-52 w-full overflow-hidden">
                       <div
                         className="absolute inset-0 scale-105 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style={{ backgroundImage: `url(${post.heroImage || 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1200&auto=format&fit=crop'})` }}
+                        style={{ backgroundImage: `url(${post.heroImage || '/assets/og-default.jpg'})` }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                     </div>

@@ -2,7 +2,13 @@
  * Lightweight production smoke checks. Does not send mail.
  * Usage: node scripts/ci-smoke.mjs http://127.0.0.1:3010
  */
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 const base = (process.argv[2] || 'http://127.0.0.1:3010').replace(/\/$/, '');
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const CLOUD = 'https://res.cloudinary.com/dbrisux8i/image/upload';
 
 async function get(pathname, options = {}) {
   const res = await fetch(`${base}${pathname}`, { redirect: 'manual', ...options });
@@ -12,6 +18,19 @@ async function get(pathname, options = {}) {
 async function headExternal(url) {
   const res = await fetch(url, { method: 'HEAD' });
   return res;
+}
+
+function collectPublicWhitepaperUrls(source) {
+  const urls = [];
+  const blocks = source.split(/\{\s*slug:/).slice(1);
+  for (const block of blocks) {
+    if (/\bunavailable:\s*true\b/.test(block)) continue;
+    const tpl = block.match(/url:\s*`\$\{CLOUD\}\/([^`]+)`/);
+    const abs = block.match(/url:\s*['"](https:[^'"]+)['"]/);
+    if (tpl) urls.push(`${CLOUD}/${tpl[1]}`);
+    else if (abs) urls.push(abs[1]);
+  }
+  return urls;
 }
 
 const failures = [];
@@ -28,32 +47,33 @@ for (const path of ['/de/impressum', '/de/datenschutz', '/en/imprint', '/en/priv
   if (res.status !== 200) failures.push(`${path} → ${res.status} (expected 200)`);
 }
 
-const aiGet = await get('/api/ai-test');
-if (aiGet.status === 200) failures.push('/api/ai-test GET without auth returned 200');
-
-const aiPost = await get('/api/ai-test', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ prompt: 'ping' }),
-});
-if (aiPost.status === 200) failures.push('/api/ai-test POST without auth returned 200');
-
-const whitepaperUrl =
-  'https://res.cloudinary.com/dbrisux8i/image/upload/v1789081342/12-genai-business-impact-2026_iypxpi.pdf';
-if (whitepaperUrl.includes('fl_attachment') || whitepaperUrl.includes('/upload/pdf/')) {
-  failures.push('ai-genai URL still uses a forbidden Cloudinary transformation');
-}
-const paper = await headExternal(whitepaperUrl);
-if (paper.status !== 200) {
-  // The Cloudinary object itself still rejects `.pdf` as a format transform.
-  // Keep CI useful: prove a sibling AI PDF in the same folder is reachable.
-  const sibling =
-    'https://res.cloudinary.com/dbrisux8i/image/upload/v1789081342/07-ai-use-case-discovery-2026_drlxye.pdf';
-  const siblingHead = await headExternal(sibling);
-  if (siblingHead.status !== 200) {
-    failures.push(`whitepaper HEAD sibling → ${siblingHead.status}`);
+const protectedApis = [
+  '/api/ai-test',
+  '/api/video-generation',
+  '/api/cms/video-generator',
+  '/api/cms/upload-video',
+];
+for (const path of protectedApis) {
+  const res = await get(path);
+  if (res.status !== 403) {
+    failures.push(`${path} GET → ${res.status} (expected 403)`);
   }
-  console.warn(`whitepaper HEAD ai-genai → ${paper.status} (asset needs Cloudinary re-upload)`);
+}
+
+const wpSource = readFileSync(join(root, 'app/lib/data/whitepapers.ts'), 'utf8');
+const whitepaperUrls = collectPublicWhitepaperUrls(wpSource);
+if (whitepaperUrls.length === 0) {
+  failures.push('whitepapers.ts: no public delivery URLs found');
+}
+
+for (const url of whitepaperUrls) {
+  if (url.includes('/upload/pdf/')) {
+    failures.push(`${url} uses a forbidden Cloudinary /pdf/ transform`);
+  }
+  const paper = await headExternal(url);
+  if (paper.status !== 200) {
+    failures.push(`whitepaper HEAD ${url} → ${paper.status}`);
+  }
 }
 
 if (failures.length) {
@@ -62,4 +82,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('CI smoke passed');
+console.log(`CI smoke passed (${whitepaperUrls.length} whitepaper URLs checked)`);

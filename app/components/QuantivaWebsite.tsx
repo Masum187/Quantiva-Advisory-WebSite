@@ -16,6 +16,8 @@ import casesData from "../lib/data/cases.json";
 import { analytics } from "../lib/utils/analytics";
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF, SOCIAL_LINKS } from "../lib/contact";
 import { submitContact, validateContactClient } from "../lib/submitContact";
+import { ensureRecaptchaScript } from "../lib/recaptchaClient";
+import { localePath as toLocalePath, switchLocalePath } from "../lib/seo";
 import { AnimatedCard } from './services/AnimatedCard';
 import IndustriesSection from './sections/IndustriesSection';
 
@@ -84,14 +86,7 @@ function detectLocale(): Locale {
 }
 
 function replaceLocaleInPath(pathname: string, next: Locale): string {
-  const parts = pathname.split('/');
-  // ["", ...]
-  if (parts.length > 1 && VALID_LOCALES.includes((parts[1] || '') as Locale)) {
-    parts[1] = next;
-  } else {
-    parts.splice(1, 0, next);
-  }
-  return parts.join('/') || `/${next}`;
+  return switchLocalePath(pathname, next);
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
@@ -124,9 +119,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const localePath: LangCtx['localePath'] = useCallback((p) => {
-    // Konsistente Logik für Server und Client
-    const normalizedPath = p.startsWith('/') ? p : `/${p}`;
-    return `/${lang}${normalizedPath}`;
+    return toLocalePath(lang, p);
   }, [lang]);
 
   const value = useMemo(() => ({ lang, setLang, localePath }), [lang, setLang, localePath]);
@@ -421,6 +414,10 @@ function ContactFormSection() {
   const [errorText, setErrorText] = useState(contact.form.error);
   const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
+
+  useEffect(() => {
+    ensureRecaptchaScript();
+  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

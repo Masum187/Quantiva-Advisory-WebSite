@@ -6,9 +6,7 @@
       "highlight": "Planbar. Sicher. Skalierbar.",
       "description": "Wir modernisieren SAP-Landschaften, bauen Cloud-Betriebsmodelle auf und bringen KI-Anwendungen in die Fläche – speziell für mittelständische Marktführer.",
       "ctaPrimary": "Jetzt Beraten lassen",
-      "ctaSecondary": "Projekte ansehen",
-      "backgroundVideo": "/assets/hero-bg.mp4",
-      "backgroundImage": "/assets/hero-fallback.jpg"
+      "ctaSecondary": "Projekte ansehen"
     },
     "en": {
       "title": "Mid-Market Transformation that Delivers",
@@ -16,9 +14,7 @@
       "highlight": "Predictable. Secure. Scalable.",
       "description": "We upgrade SAP cores, build cloud operating models and ship AI use cases that create measurable value for European mid-market leaders.",
       "ctaPrimary": "Get Consulting Now",
-      "ctaSecondary": "View Projects",
-      "backgroundVideo": "/assets/hero-bg.mp4",
-      "backgroundImage": "/assets/hero-fallback.jpg"
+      "ctaSecondary": "View Projects"
     }
   },
   "about": {

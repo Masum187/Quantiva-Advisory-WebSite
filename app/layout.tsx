@@ -5,8 +5,7 @@
 
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import ConsentAnalytics from './components/ConsentAnalytics';
 import {
   localeFromHtmlLangHeader,
   OG_DEFAULT,
@@ -69,8 +68,7 @@ export default async function RootLayout({
     <html lang={locale}>
       <body>
         {children}
-        <Analytics />
-        <SpeedInsights />
+        <ConsentAnalytics />
       </body>
     </html>
   );

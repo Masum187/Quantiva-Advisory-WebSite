@@ -1,14 +1,18 @@
 /**
  * Cookie Banner Component
- * GDPR-compliant consent banner for analytics
- * Privacy-friendly, no cookies, anonymous tracking
+ * GDPR-compliant opt-in banner for analytics
  */
 
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { setAnalyticsConsent, privacyConfig } from '../lib/utils/privacy';
+import {
+  ANALYTICS_CONSENT_KEY,
+  ANALYTICS_CONSENT_REOPEN_EVENT,
+  setAnalyticsConsent,
+  privacyConfig,
+} from '../lib/utils/privacy';
 import { X, Shield } from 'lucide-react';
 
 export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
@@ -16,13 +20,20 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    // Check if user has already made a choice
-    const consent = localStorage.getItem('analytics_consent');
+    const consent = localStorage.getItem(ANALYTICS_CONSENT_KEY);
     if (consent === null) {
-      // No choice made yet, show banner after 1 second
       const timer = setTimeout(() => setShow(true), 1000);
       return () => clearTimeout(timer);
     }
+  }, []);
+
+  useEffect(() => {
+    const reopen = () => {
+      setShowDetails(false);
+      setShow(true);
+    };
+    window.addEventListener(ANALYTICS_CONSENT_REOPEN_EVENT, reopen);
+    return () => window.removeEventListener(ANALYTICS_CONSENT_REOPEN_EVENT, reopen);
   }, []);
 
   if (!show) return null;
@@ -39,16 +50,13 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
 
   return (
     <>
-      {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity"
         onClick={() => setShow(false)}
       />
 
-      {/* Banner */}
       <div className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6 animate-slide-up">
         <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-          {/* Header */}
           <div className="p-6 pb-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -61,8 +69,8 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                     {lang === 'de'
-                      ? 'Privacy-friendly Analytics ohne Cookies'
-                      : 'Privacy-friendly analytics without cookies'}
+                      ? 'Analytics nur nach Ihrer Einwilligung'
+                      : 'Analytics only after your consent'}
                   </p>
                 </div>
               </div>
@@ -76,29 +84,29 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
             </div>
           </div>
 
-          {/* Content */}
           <div className="px-6 pb-6">
             <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
               {lang === 'de' ? (
                 <>
-                  Wir nutzen <strong>Vercel Analytics</strong> – eine datenschutzfreundliche Lösung ohne Cookies.
-                  Wir erfassen anonyme Besucherstatistiken und Performance-Daten, um unsere Website zu verbessern.
-                  Keine personenbezogenen Daten, kein Cross-Site-Tracking.
+                  Mit Ihrer Einwilligung nutzen wir <strong>Vercel Analytics</strong> und{' '}
+                  <strong>Speed Insights</strong>. Ohne Zustimmung wird kein Tracking-Skript geladen.
+                  Ablehnen bedeutet: die Komponenten werden nicht eingebunden. Sie können Ihre Wahl
+                  jederzeit über den Banner oder die Datenschutzerklärung ändern.
                 </>
               ) : (
                 <>
-                  We use <strong>Vercel Analytics</strong> — a privacy-friendly solution without cookies.
-                  We collect anonymous visitor statistics and performance data to improve the website.
-                  No personal data, no cross-site tracking.
+                  With your consent we use <strong>Vercel Analytics</strong> and{' '}
+                  <strong>Speed Insights</strong>. No tracking script is loaded until you accept.
+                  Decline keeps those components unmounted. You can change your choice later via the
+                  banner or the privacy policy.
                 </>
               )}
             </p>
 
-            {/* Privacy Features */}
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                 <Shield className="h-4 w-4 text-teal-400" />
-                <span>Keine Cookies</span>
+                <span>Opt-in</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                 <Shield className="h-4 w-4 text-teal-400" />
@@ -114,7 +122,6 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
               </div>
             </div>
 
-            {/* Details Toggle */}
             {showDetails && (
               <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-xs text-gray-600 dark:text-gray-300 space-y-2">
                 <div>
@@ -144,7 +151,6 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
             </button>
           </div>
 
-          {/* Actions */}
           <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleAccept}
@@ -160,7 +166,6 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
             </button>
           </div>
 
-          {/* Footer */}
           <div className="px-6 pb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
             {lang === 'de' ? 'Mehr Informationen in unserer' : 'More information in our'}{' '}
             <Link
@@ -191,4 +196,3 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
     </>
   );
 }
-

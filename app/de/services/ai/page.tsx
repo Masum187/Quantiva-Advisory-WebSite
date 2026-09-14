@@ -103,14 +103,6 @@ export default function AIServicePage() {
       date: '2025',
       image: '/assets/whitepapers/ai/eu-ai-act.jpg',
       slug: 'ai-eu-ai-act-guide'
-    },
-    {
-      title: 'Generative AI Business Impact Study (2025)',
-      description: 'Umfassende Studie zu den Geschäftsauswirkungen von Generative AI in verschiedenen Industrien und Anwendungsbereichen.',
-      topic: 'GenAI Impact',
-      date: '2025',
-      image: '/assets/whitepapers/ai/genai-impact.jpg',
-      slug: 'ai-genai-business-impact'
     }
   ];
 

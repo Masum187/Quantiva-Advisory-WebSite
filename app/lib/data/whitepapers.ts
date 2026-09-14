@@ -78,15 +78,9 @@ export const whitepapers: WhitepaperEntry[] = [
     title: 'EU AI Act Implementation Guide (2026)',
     url: `${CLOUD}/v1789081342/11-eu-ai-act-umsetzung-2026_eftdum.pdf`,
   },
-  {
-    slug: 'ai-genai-business-impact',
-    title: 'Generative AI Business Impact Study (2026)',
-    // No fl_attachment and no /pdf/ path transform — those 401 under
-    // Cloudinary "strict transformations". If HEAD is still 401, the object
-    // itself was uploaded so that `.pdf` is treated as a format conversion
-    // and must be re-uploaded like the other AI PDFs.
-    url: `${CLOUD}/v1789081342/12-genai-business-impact-2026_iypxpi.pdf`,
-  },
+  // ai-genai-business-impact removed from the public registry: Cloudinary
+  // returns 401 (Transformation /pdf is not allowed) for every delivery URL.
+  // Re-add after the object is re-uploaded like the other AI PDFs.
 
   // ── Systemintegration & Microservices ──────────────────────────────────
   // Ebenfalls ohne fl_attachment (Strict transformations, siehe oben).

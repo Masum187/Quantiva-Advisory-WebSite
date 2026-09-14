@@ -10,6 +10,7 @@ import type { Lang, Venture } from '../../../lib/data/projects';
 import { videoPosterFor } from '../../../lib/videoPoster';
 import HomeFilmLayer from './HomeFilmLayer';
 import { submitContact, validateContactClient } from '../../../lib/submitContact';
+import { ensureRecaptchaScript } from '../../../lib/recaptchaClient';
 import {
   ACCENT,
   CALENDLY_URL,
@@ -442,6 +443,10 @@ function ContactSection({ copy, lang }: { copy: ContactCopy; lang: Lang }) {
   const [sent, setSent] = useState<'ok' | 'error' | null>(null);
   const [errorText, setErrorText] = useState(copy.error);
   const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    ensureRecaptchaScript();
+  }, []);
 
   const onSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {

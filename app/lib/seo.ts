@@ -22,10 +22,44 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${normalized}`;
 }
 
+const LOCALE_PATH_ALIASES: Record<string, Record<SiteLang, string>> = {
+  '/impressum': { de: '/impressum', en: '/imprint' },
+  '/imprint': { de: '/impressum', en: '/imprint' },
+  '/datenschutz': { de: '/datenschutz', en: '/privacy' },
+  '/privacy': { de: '/datenschutz', en: '/privacy' },
+};
+
+function splitPath(path: string): { pathname: string; search: string; hash: string } {
+  const hashIndex = path.indexOf('#');
+  const hash = hashIndex >= 0 ? path.slice(hashIndex) : '';
+  const withoutHash = hashIndex >= 0 ? path.slice(0, hashIndex) : path;
+  const searchIndex = withoutHash.indexOf('?');
+  const search = searchIndex >= 0 ? withoutHash.slice(searchIndex) : '';
+  const pathname = searchIndex >= 0 ? withoutHash.slice(0, searchIndex) : withoutHash;
+  return { pathname, search, hash };
+}
+
+function mapPathname(lang: SiteLang, pathname: string): string {
+  if (pathname === '/' || pathname === '') return '/';
+  const normalized = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  return LOCALE_PATH_ALIASES[normalized]?.[lang] ?? normalized;
+}
+
 export function localePath(lang: SiteLang, path: string): string {
-  if (path === '/' || path === '') return `/${lang}`;
-  const suffix = path.startsWith('/') ? path : `/${path}`;
-  return `/${lang}${suffix}`;
+  const { pathname, search, hash } = splitPath(path);
+  const mapped = mapPathname(lang, pathname);
+  if (mapped === '/' || mapped === '') return `/${lang}${search}${hash}`;
+  const suffix = mapped.startsWith('/') ? mapped : `/${mapped}`;
+  return `/${lang}${suffix}${search}${hash}`;
+}
+
+/** Swap `/de`↔`/en` and map legal slugs (impressum↔imprint, datenschutz↔privacy). */
+export function switchLocalePath(pathname: string, targetLang: SiteLang): string {
+  const { pathname: pathOnly, search, hash } = splitPath(pathname || '/');
+  const segments = pathOnly.split('/').filter(Boolean);
+  const rest = segments[0] === 'de' || segments[0] === 'en' ? segments.slice(1) : segments;
+  const suffix = rest.length ? `/${rest.join('/')}` : '/';
+  return localePath(targetLang, `${suffix}${search}${hash}`);
 }
 
 export function brandedTitle(title: string): string {

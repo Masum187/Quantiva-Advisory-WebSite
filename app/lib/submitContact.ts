@@ -1,4 +1,5 @@
 import { isValidEmail } from './contact';
+import { getRecaptchaToken } from './recaptchaClient';
 
 export type ContactPayload = {
   name: string;
@@ -36,10 +37,11 @@ export function validateContactClient(data: ContactPayload): string | null {
 }
 
 export async function submitContact(data: ContactPayload): Promise<ContactSubmitResult> {
+  const recaptchaToken = data.recaptchaToken ?? (await getRecaptchaToken('contact'));
   const response = await fetch('/api/contact', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ ...data, recaptchaToken }),
   });
 
   const body = (await response.json().catch(() => ({}))) as {

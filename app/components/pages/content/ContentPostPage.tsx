@@ -136,7 +136,7 @@ export default function ContentPostPage({ lang, post, related }: ContentPostPage
           >
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${post.heroImage || 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop'})` }}
+              style={{ backgroundImage: `url(${post.heroImage || '/assets/og-default.jpg'})` }}
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-black/30" />
             <div className="absolute bottom-4 left-4 flex gap-3">

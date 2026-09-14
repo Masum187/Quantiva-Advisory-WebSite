@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import SiteNav from '../../SiteNav';
+import ConsentSettingsLink from '../../ConsentSettingsLink';
 import { CONTACT_EMAIL, SITE_DOMAIN } from '../../../lib/contact';
 import type { SiteLang } from '../../../lib/seo';
 
@@ -30,23 +31,24 @@ const COPY: Record<
       updated: 'Stand: September 2026',
       sections: [
         {
-          heading: 'Angaben gemäß § 5 TMG',
+          heading: 'Angaben gemäß § 5 DDG',
           paragraphs: [
             'Quantiva Advisory',
             `Website: https://${SITE_DOMAIN}`,
             `E-Mail: ${CONTACT_EMAIL}`,
+            'Ladungsfähige Anschrift: Angaben vorgesehen, werden ergänzt, sobald sie amtlich vorliegen.',
           ],
         },
         {
           heading: 'Kontakt',
           paragraphs: [
-            `Anfragen richten Sie bitte an ${CONTACT_EMAIL}. Eine Telefonnummer nennen wir auf Anfrage.`,
+            `Elektronische Kontaktaufnahme: ${CONTACT_EMAIL}. Eine Telefonnummer nennen wir auf Anfrage.`,
           ],
         },
         {
-          heading: 'Weitere Pflichtangaben',
+          heading: 'Weitere Pflichtangaben nach § 5 DDG',
           paragraphs: [
-            'Anschrift, vertretungsberechtigte Person, Handelsregister und USt-IdNr. werden ergänzt, sobald die Eintragungen vorliegen. Es werden keine Register- oder Steuernummern fingiert.',
+            'Vertretungsberechtigte Person, Handelsregister (Gericht und Nummer) und Umsatzsteuer-Identifikationsnummer werden ergänzt, sobald die Eintragungen vorliegen. Es werden keine Register-, Steuer- oder Adressdaten fingiert.',
           ],
         },
         {
@@ -83,25 +85,31 @@ const COPY: Record<
         {
           heading: 'Kontakt- und Bewerbungsformulare',
           paragraphs: [
-            'Wenn Sie uns über ein Formular schreiben, verarbeiten wir Name, E-Mail-Adresse, Nachricht und – bei Bewerbungen – den Stellenbezug, um Ihre Anfrage zu beantworten. Der Versand erfolgt über Brevo und/oder Resend. Ohne diese Angaben können wir die Anfrage nicht bearbeiten.',
+            'Wenn Sie uns über ein Formular schreiben, verarbeiten wir Name, E-Mail-Adresse, Nachricht und – bei Bewerbungen – den Stellenbezug, um Ihre Anfrage zu beantworten. Der Versand erfolgt über Brevo und/oder Resend. Ohne diese Angaben können wir die Anfrage nicht bearbeiten. Zum Schutz vor Missbrauch setzen wir Google reCAPTCHA (v3) ein; dabei werden Daten an Google übermittelt.',
           ],
         },
         {
           heading: 'Whitepaper-Anfragen',
           paragraphs: [
-            'Bei der Anforderung eines Whitepapers verarbeiten wir Vor- und Nachname, geschäftliche E-Mail, Unternehmen und optional Telefon, um den Download-Link zuzusenden und die Anfrage intern zuzuordnen.',
+            'Bei der Anforderung eines Whitepapers verarbeiten wir Vor- und Nachname, geschäftliche E-Mail, Unternehmen und optional Telefon, um den Download-Link zuzusenden und die Anfrage intern zuzuordnen. Der Versand erfolgt über Brevo und/oder Resend. Die PDF-Datei selbst wird über Cloudinary ausgeliefert.',
           ],
         },
         {
-          heading: 'Analytics',
+          heading: 'Analytics (nur nach Einwilligung)',
           paragraphs: [
-            'Mit Ihrer Einwilligung nutzen wir Vercel Analytics. Die Erhebung ist datenschutzfreundlich ausgelegt (keine klassischen Tracking-Cookies, keine personenbezogenen Profile). Sie können die Einwilligung über den Banner ablehnen.',
+            'Vercel Analytics und Vercel Speed Insights werden ausschließlich nach Ihrer ausdrücklichen Einwilligung geladen. Ohne Zustimmung wird kein Tracking-Skript eingebunden. Ablehnen bedeutet, dass diese Komponenten nicht gemountet werden. Sie können Ihre Wahl jederzeit über den Banner oder den Link „Cookie-Einstellungen“ auf dieser Seite ändern.',
           ],
         },
         {
           heading: 'Termine (Calendly)',
           paragraphs: [
             'Wenn Sie einen Termin über das eingebettete Calendly-Widget buchen, gelten zusätzlich die Datenschutzhinweise von Calendly. Es werden die für die Terminvereinbarung erforderlichen Daten an Calendly übermittelt.',
+          ],
+        },
+        {
+          heading: 'Medien und Dateien (Cloudinary)',
+          paragraphs: [
+            'Bilder, Videos und Whitepaper-PDFs werden über Cloudinary ausgeliefert. Beim Abruf dieser Dateien verarbeitet Cloudinary technisch notwendige Verbindungsdaten (z. B. IP-Adresse), um die Inhalte bereitzustellen.',
           ],
         },
         {
@@ -121,23 +129,24 @@ const COPY: Record<
       updated: 'Last updated: September 2026',
       sections: [
         {
-          heading: 'Information according to German TMG § 5',
+          heading: 'Information according to § 5 DDG',
           paragraphs: [
             'Quantiva Advisory',
             `Website: https://${SITE_DOMAIN}`,
             `Email: ${CONTACT_EMAIL}`,
+            'Service address: details are intended and will be added once officially available.',
           ],
         },
         {
           heading: 'Contact',
           paragraphs: [
-            `Please send enquiries to ${CONTACT_EMAIL}. A phone number is available on request.`,
+            `Electronic contact: ${CONTACT_EMAIL}. A phone number is available on request.`,
           ],
         },
         {
-          heading: 'Further statutory details',
+          heading: 'Further details required by § 5 DDG',
           paragraphs: [
-            'Registered office, authorised representative, commercial register and VAT ID will be added once those filings are available. No register or tax numbers are invented.',
+            'Authorised representative, commercial register (court and number) and VAT identification number will be added once those filings are available. No register, tax or address data is invented.',
           ],
         },
         {
@@ -174,25 +183,31 @@ const COPY: Record<
         {
           heading: 'Contact and application forms',
           paragraphs: [
-            'If you write to us via a form, we process your name, email address, message and — for applications — the related role, so we can respond. Delivery uses Brevo and/or Resend. We cannot process the request without this information.',
+            'If you write to us via a form, we process your name, email address, message and — for applications — the related role, so we can respond. Delivery uses Brevo and/or Resend. We cannot process the request without this information. To prevent abuse we use Google reCAPTCHA (v3); this transmits data to Google.',
           ],
         },
         {
           heading: 'Whitepaper requests',
           paragraphs: [
-            'When you request a whitepaper we process first and last name, business email, company and optionally phone in order to send the download link and assign the lead internally.',
+            'When you request a whitepaper we process first and last name, business email, company and optionally phone in order to send the download link and assign the lead internally. Delivery uses Brevo and/or Resend. The PDF itself is served via Cloudinary.',
           ],
         },
         {
-          heading: 'Analytics',
+          heading: 'Analytics (opt-in only)',
           paragraphs: [
-            'With your consent we use Vercel Analytics. Collection is designed to be privacy-friendly (no classic tracking cookies, no personal profiles). You can decline consent in the banner.',
+            'Vercel Analytics and Vercel Speed Insights load only after your explicit consent. No tracking script is embedded beforehand. Declining keeps those components unmounted. You can change your choice at any time via the banner or the “Open cookie settings” link on this page.',
           ],
         },
         {
           heading: 'Meetings (Calendly)',
           paragraphs: [
             'If you book a meeting through the embedded Calendly widget, Calendly’s privacy notice also applies. Data required to schedule the meeting is transmitted to Calendly.',
+          ],
+        },
+        {
+          heading: 'Media and files (Cloudinary)',
+          paragraphs: [
+            'Images, videos and whitepaper PDFs are delivered via Cloudinary. When those files are requested, Cloudinary processes technically necessary connection data (for example IP address) to serve the content.',
           ],
         },
         {
@@ -245,6 +260,9 @@ export default function LegalPage({ lang, kind }: { lang: SiteLang; kind: LegalK
                   {paragraph}
                 </p>
               ))}
+              {kind === 'privacy' && section.heading.toLowerCase().includes('analytics') ? (
+                <ConsentSettingsLink lang={lang} />
+              ) : null}
             </section>
           ))}
         </div>

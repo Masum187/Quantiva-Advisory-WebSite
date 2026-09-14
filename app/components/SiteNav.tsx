@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
+import { switchLocalePath } from '../lib/seo';
 
 const ACCENT = '#2dd4bf';
 
@@ -76,13 +77,7 @@ export default function SiteNav({ lang, variant = 'solid' }: SiteNavProps) {
     setOpen(false);
   }, [pathname]);
 
-  const switchLangHref = (() => {
-    const newLang: Lang = lang === 'de' ? 'en' : 'de';
-    const segments = (pathname || `/${lang}`).split('/');
-    if (segments[1] === lang) segments[1] = newLang;
-    else segments.splice(1, 0, newLang);
-    return segments.join('/') || `/${newLang}`;
-  })();
+  const switchLangHref = switchLocalePath(pathname || `/${lang}`, lang === 'de' ? 'en' : 'de');
 
   const isDark =
     variant === 'solid' || scrolled || open;
