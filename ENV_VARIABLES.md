@@ -1,5 +1,8 @@
 # 🔐 Environment Variables Guide
 
+Aktuelle Betriebs-Variablen (Calendly, Brevo-Listen, Search Console, Revalidate) stehen in [`.env.local.example`](.env.local.example) und in `docs/ops-*.md`.
+
+
 ## Alle Environment Variables für Quantiva Website
 
 ---

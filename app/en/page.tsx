@@ -1,6 +1,6 @@
 import JsonLd from '../components/JsonLd';
 import HomeRedesign from '../components/pages/home/HomeRedesign';
-import { organizationJsonLd, pageMeta } from '../lib/seo';
+import { organizationJsonLd, pageMeta, websiteJsonLd } from '../lib/seo';
 
 export const metadata = pageMeta({
   title: 'Quantiva Advisory – SAP, Cloud & AI Consulting',
@@ -14,6 +14,7 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={organizationJsonLd()} />
+      <JsonLd data={websiteJsonLd('en')} />
       <HomeRedesign lang="en" />
     </>
   );

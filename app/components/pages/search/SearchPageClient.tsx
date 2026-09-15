@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import elasticlunr from 'elasticlunr';
 import { motion } from 'framer-motion';
@@ -14,7 +15,8 @@ interface SearchPageClientProps {
 }
 
 export default function SearchPageClient({ items, lang }: SearchPageClientProps) {
-  const [query, setQuery] = useState('');
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('q') ?? '');
 
   const index = useMemo(() => {
     const idx = elasticlunr<SearchItem>(function () {

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getWhitepaper } from '../../lib/data/whitepapers';
+import { upsertBrevoContact } from '../../lib/leads';
 import { escapeHtml, mailConfigured, sendMail } from '../../lib/mail';
+import { verifyRecaptcha } from '../../lib/recaptchaServer';
 
 /**
  * Whitepaper request endpoint.
@@ -44,7 +46,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { slug, firstName, lastName, email, company, phone, honeypot, lang } = body;
+    const { slug, firstName, lastName, email, company, phone, honeypot, lang, recaptchaToken } = body;
     const locale = lang === 'en' ? 'en' : 'de';
 
     if (honeypot) {
@@ -69,6 +71,14 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
+    const recaptchaValid = await verifyRecaptcha(recaptchaToken);
+    if (!recaptchaValid) {
+      return NextResponse.json(
+        { error: locale === 'de' ? 'Sicherheitsprüfung fehlgeschlagen.' : 'Security check failed.' },
+        { status: 400 },
+      );
+    }
+
     if (!company || company.length < 2 || company.length > 120) {
       return NextResponse.json(
         { error: locale === 'de' ? 'Ungültiger Firmenname' : 'Invalid company name' },
@@ -205,6 +215,18 @@ export async function POST(req: NextRequest) {
         `,
       }).catch((err) => console.error('Lead notification failed:', err));
     }
+
+    await upsertBrevoContact({
+      email,
+      firstName,
+      lastName,
+      company,
+      phone,
+      lang: locale,
+      source: 'whitepaper',
+      list: 'leads',
+      extra: { WHITEPAPER: whitepaper.slug },
+    });
 
     return NextResponse.json({
       success: true,

@@ -1,7 +1,7 @@
 import type { Lang } from '../../../lib/data/projects';
 
 export const ACCENT = '#2dd4bf';
-export const CALENDLY_URL = 'https://calendly.com/quantivaadvisory';
+export { getCalendlyUrl } from '../../../lib/calendly';
 export const FILM_HERO = '/assets/home/brand-film-hero.mp4';
 export const FILM_INTERLUDE = '/assets/home/brand-film-interlude.mp4';
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];

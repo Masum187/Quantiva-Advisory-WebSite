@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, FileText, Mail, X, ArrowRight, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
+import { ensureRecaptchaScript, getRecaptchaToken } from '../lib/recaptchaClient';
 
 type Lang = 'de' | 'en';
 
@@ -201,6 +202,10 @@ function RequestModal({
     }, 350);
   }, [onClose]);
 
+  useEffect(() => {
+    ensureRecaptchaScript();
+  }, []);
+
   // ESC schließt, Body-Scroll sperren
   useEffect(() => {
     if (!open) return;
@@ -229,10 +234,11 @@ function RequestModal({
     setServerError('');
 
     try {
+      const recaptchaToken = await getRecaptchaToken('whitepaper');
       const res = await fetch('/api/whitepaper', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, lang, ...form })
+        body: JSON.stringify({ slug, lang, recaptchaToken, ...form })
       });
       const data = await res.json().catch(() => ({}));
 

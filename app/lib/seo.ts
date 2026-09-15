@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 
-export const SITE_URL = 'https://quantivaadvisory.com';
+export function getSiteUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '');
+  return fromEnv || 'https://quantivaadvisory.com';
+}
+
+export const SITE_URL = getSiteUrl();
 export const SITE_NAME = 'Quantiva Advisory';
 export const OG_DEFAULT = '/assets/og/og-default.jpg';
 export const OG_CASES = '/assets/og/og-cases.jpg';
@@ -296,6 +301,41 @@ export function organizationJsonLd(): Record<string, unknown> {
     url: SITE_URL,
     logo: absoluteUrl(OG_DEFAULT),
     sameAs: [...ORGANIZATION_SAME_AS],
+  };
+}
+
+export function websiteJsonLd(lang: SiteLang): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: SITE_URL,
+    inLanguage: lang === 'de' ? 'de-DE' : 'en-US',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}${localePath(lang, '/search')}?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+}
+
+export function serviceJsonLd(lang: SiteLang, slug: string): Record<string, unknown> {
+  const copy = SERVICE_COPY[slug]?.[lang];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: copy?.title ?? slug,
+    description: copy?.description,
+    url: absoluteUrl(localePath(lang, `/services/${slug}`)),
+    provider: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    areaServed: 'DE',
   };
 }
 

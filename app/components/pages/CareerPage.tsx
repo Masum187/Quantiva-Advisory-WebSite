@@ -12,7 +12,7 @@ import {
   Brain, Cloud, Code, Database, Globe, Zap, Menu, X, BriefcaseIcon
 } from 'lucide-react';
 import { useLanguage } from '../QuantivaWebsite';
-import { getJobListings, submitJobPosting, JobListing } from '../../lib/utils/jobs';
+import { getJobListings, JobListing } from '../../lib/utils/jobs';
 import ContactForm from '../ContactForm';
 import { AnimatePresence } from 'framer-motion';
 import { SpotlightCard, GhostNumber, SectionLabel, EASE as CAREER_EASE } from './projects/detail/shared';
@@ -217,8 +217,6 @@ export default function CareerPage() {
   const [jobLoading, setJobLoading] = useState(true);
   const [jobError, setJobError] = useState<string | null>(null);
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null);
-  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [submissionError, setSubmissionError] = useState<string>('');
   
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
@@ -247,23 +245,6 @@ export default function CareerPage() {
 
   const handleJobApply = async (job: JobListing) => {
     setSelectedJob(job);
-  };
-
-  const handleJobSubmission = async (data: { name: string; email: string; message: string }) => {
-    if (!selectedJob) return;
-    try {
-      setSubmissionStatus('loading');
-      await submitJobPosting({
-        ...selectedJob,
-        description: `${selectedJob.description}\n\n---\nCandidate: ${data.name}\nEmail: ${data.email}\nMessage: ${data.message}`,
-      });
-      setSubmissionStatus('success');
-      setSelectedJob(null);
-      setTimeout(() => setSubmissionStatus('idle'), 3000);
-    } catch (error) {
-      setSubmissionStatus('error');
-      setSubmissionError(error instanceof Error ? error.message : 'Submission failed');
-    }
   };
 
   // Filter logic

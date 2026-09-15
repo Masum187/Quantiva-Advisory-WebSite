@@ -9,11 +9,12 @@ import type { IndustryShowcase as IndustryItem } from '../../../lib/data/industr
 import type { Lang, Venture } from '../../../lib/data/projects';
 import { videoPosterFor } from '../../../lib/videoPoster';
 import HomeFilmLayer from './HomeFilmLayer';
+import { calendlyWidgetUrl, getCalendlyUrl } from '../../../lib/calendly';
+import { analytics } from '../../../lib/utils/analytics';
 import { submitContact, validateContactClient } from '../../../lib/submitContact';
 import { ensureRecaptchaScript } from '../../../lib/recaptchaClient';
 import {
   ACCENT,
-  CALENDLY_URL,
   CONTACT_EMAIL,
   CONTACT_PHONE_DISPLAY,
   CONTACT_PHONE_HREF,
@@ -589,6 +590,9 @@ function ContactSection({ copy, lang }: { copy: ContactCopy; lang: Lang }) {
 /* ---------- Calendly ---------- */
 
 function MeetingSection({ copy }: { copy: MeetingCopy }) {
+  const calendlyUrl = getCalendlyUrl();
+  const widgetUrl = calendlyWidgetUrl();
+
   useEffect(() => {
     const src = 'https://assets.calendly.com/assets/external/widget.js';
     if (!document.querySelector(`script[src="${src}"]`)) {
@@ -631,7 +635,7 @@ function MeetingSection({ copy }: { copy: MeetingCopy }) {
         >
           <div
             className="calendly-inline-widget"
-            data-url={`${CALENDLY_URL}?hide_event_type_details=1&hide_gdpr_banner=1`}
+            data-url={widgetUrl}
             style={{ minWidth: 320, height: 720, width: '100%' }}
           />
         </motion.div>
@@ -639,9 +643,10 @@ function MeetingSection({ copy }: { copy: MeetingCopy }) {
         <div className="mt-8 text-center">
           <p className="mb-4 text-sm text-gray-400">{copy.fallbackHint}</p>
           <a
-            href={CALENDLY_URL}
+            href={calendlyUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => analytics.trackCalendlyOpen('home-meeting')}
             className="inline-flex items-center gap-2 border-b border-white/30 pb-1 text-sm uppercase tracking-[0.2em] text-white transition hover:border-white"
           >
             {copy.fallbackButton}

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { CAREERS_EMAIL, CONTACT_EMAIL } from '../../lib/contact';
+import { CONTACT_EMAIL } from '../../lib/contact';
+import { upsertBrevoContact } from '../../lib/leads';
 import { escapeHtml, mailConfigured, sendMail } from '../../lib/mail';
+import { verifyRecaptcha } from '../../lib/recaptchaServer';
 
 const requestCounts = new Map<string, { count: number; resetAt: number }>();
 
@@ -15,8 +17,6 @@ const contactSchema = z.object({
   honeypot: z.string().optional(),
   lang: z.enum(['de', 'en']).optional(),
   recaptchaToken: z.string().optional(),
-  jobTitle: z.string().trim().max(200).optional(),
-  jobId: z.string().trim().max(80).optional(),
 });
 
 function getRateLimitKey(req: NextRequest): string {
@@ -42,33 +42,6 @@ function checkRateLimit(key: string): boolean {
   return true;
 }
 
-async function verifyRecaptcha(token?: string) {
-  const secret = process.env.RECAPTCHA_SECRET_KEY;
-  if (!secret) {
-    return true;
-  }
-
-  if (!token) {
-    return false;
-  }
-
-  try {
-    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `secret=${secret}&response=${token}`,
-    });
-
-    const data = (await response.json()) as { success?: boolean; score?: number };
-    return Boolean(data.success && (data.score ?? 0) >= 0.5);
-  } catch (error) {
-    console.error('reCAPTCHA verification failed:', error);
-    return false;
-  }
-}
-
 export async function POST(req: NextRequest) {
   try {
     const rateLimitKey = getRateLimitKey(req);
@@ -84,7 +57,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid submission' }, { status: 400 });
     }
 
-    const { name, email, message, honeypot, lang, recaptchaToken, jobTitle, jobId } = parsed.data;
+    const { name, email, message, honeypot, lang, recaptchaToken } = parsed.data;
     const locale = lang === 'en' ? 'en' : 'de';
 
     if (honeypot) {
@@ -108,23 +81,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isApplication = Boolean(jobTitle || jobId);
-    const notifyTo = isApplication
-      ? process.env.CAREERS_NOTIFY_EMAIL || CAREERS_EMAIL
-      : process.env.LEAD_NOTIFY_EMAIL || CONTACT_EMAIL;
+    const notifyTo = process.env.LEAD_NOTIFY_EMAIL || CONTACT_EMAIL;
 
     const safeName = escapeHtml(name);
     const safeMessage = escapeHtml(message).replace(/\n/g, '<br/>');
-    const safeJob = jobTitle ? escapeHtml(jobTitle) : '';
-    const safeJobId = jobId ? escapeHtml(jobId) : '';
 
-    const subject = isApplication
-      ? locale === 'de'
-        ? `Neue Bewerbung: ${jobTitle || 'Karriere'}`
-        : `New application: ${jobTitle || 'Careers'}`
-      : locale === 'de'
-        ? `Neue Kontaktanfrage von ${name}`
-        : `New contact request from ${name}`;
+    const subject =
+      locale === 'de' ? `Neue Kontaktanfrage von ${name}` : `New contact request from ${name}`;
 
     const sent = await sendMail({
       to: notifyTo,
@@ -133,16 +96,10 @@ export async function POST(req: NextRequest) {
       html: `
         <div style="font-family: Arial, Helvetica, sans-serif; color: #1a1a1a; max-width: 560px; margin: 0 auto;">
           <h2 style="color: #0f766e;">Quantiva Advisory</h2>
-          <p>${isApplication ? (locale === 'de' ? 'Neue Bewerbung' : 'New application') : locale === 'de' ? 'Neue Kontaktanfrage' : 'New contact request'}</p>
+          <p>${locale === 'de' ? 'Neue Kontaktanfrage' : 'New contact request'}</p>
           <table cellpadding="4">
-            <tr><td><b>${locale === 'de' ? 'Name' : 'Name'}</b></td><td>${safeName}</td></tr>
+            <tr><td><b>Name</b></td><td>${safeName}</td></tr>
             <tr><td><b>E-Mail</b></td><td>${escapeHtml(email)}</td></tr>
-            ${
-              isApplication
-                ? `<tr><td><b>${locale === 'de' ? 'Stelle' : 'Role'}</b></td><td>${safeJob || '–'}</td></tr>
-                   <tr><td><b>Job-ID</b></td><td>${safeJobId || '–'}</td></tr>`
-                : ''
-            }
             <tr><td><b>${locale === 'de' ? 'Nachricht' : 'Message'}</b></td><td>${safeMessage}</td></tr>
             <tr><td><b>${locale === 'de' ? 'Zeitpunkt' : 'Time'}</b></td><td>${new Date().toISOString()}</td></tr>
           </table>
@@ -161,6 +118,14 @@ export async function POST(req: NextRequest) {
         { status: 502 },
       );
     }
+
+    await upsertBrevoContact({
+      email,
+      name,
+      lang: locale,
+      source: 'contact',
+      list: 'leads',
+    });
 
     return NextResponse.json({
       success: true,

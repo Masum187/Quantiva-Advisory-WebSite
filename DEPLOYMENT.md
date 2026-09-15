@@ -70,6 +70,14 @@
 4. Start the server: `npm start`
 5. Configure reverse proxy (nginx/Apache) for Next.js
 
+## Search Console & Domain
+
+Aktuelle Anleitung: [docs/ops-search-console.md](docs/ops-search-console.md).
+
+- Sitemap kommt von `app/sitemap.ts` (`/sitemap.xml`), nicht mehr von `sitemap.mjs`.
+- `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` / `NEXT_PUBLIC_BING_SITE_VERIFICATION` setzen, sobald die Tokens vorliegen.
+- `quantivaadvisory.com` muss in Vercel als Domain liegen, sonst bleibt die Canonical-Domain 404.
+
 ## 📊 SEO Considerations
 
 ### x-default Strategy

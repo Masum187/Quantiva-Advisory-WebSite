@@ -23,7 +23,7 @@
       "Familienfreundliche Arbeitszeiten"
     ],
     "salary": "80.000 - 110.000 €",
-    "applyUrl": "https://quantivaadvisory.com/de/apply/sap-senior",
+    "applyUrl": "/de/career#sap-senior-consultant",
     "publishedAt": "2025-01-05"
   },
   {
@@ -50,7 +50,7 @@
       "Option auf Anteil am Gewinnbeteiligungsprogramm"
     ],
     "salary": "65.000 - 85.000 €",
-    "applyUrl": "https://quantivaadvisory.com/de/apply/ml-engineer",
+    "applyUrl": "/de/career#ml-engineer-midmarket",
     "publishedAt": "2025-01-18"
   },
   {
@@ -77,7 +77,7 @@
       "Private health insurance"
     ],
     "salary": "€90,000 - €120,000",
-    "applyUrl": "https://quantivaadvisory.com/en/apply/cloud-operating-model",
+    "applyUrl": "/en/career#cloud-operating-model-lead",
     "publishedAt": "2025-01-10"
   },
   {
@@ -104,7 +104,7 @@
       "Mentoring from senior security architects"
     ],
     "salary": "€60,000 - €80,000",
-    "applyUrl": "https://quantivaadvisory.com/en/apply/security-analyst",
+    "applyUrl": "/en/career#security-analyst-iso",
     "publishedAt": "2024-12-15"
   }
 ]

@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache';
 import postsData from '../data/posts.json';
 import { fetchEntries, getAssetUrl, isContentfulEnabled, richTextToPlainText } from './contentful';
 
@@ -63,7 +64,7 @@ const mapFallbackPosts = (lang: SupportedLanguage) =>
     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 
-export async function getContentPosts(lang: SupportedLanguage): Promise<ContentPost[]> {
+async function loadContentPosts(lang: SupportedLanguage): Promise<ContentPost[]> {
   if (!isContentfulEnabled) {
     return mapFallbackPosts(lang);
   }
@@ -82,6 +83,13 @@ export async function getContentPosts(lang: SupportedLanguage): Promise<ContentP
   }
 
   return posts;
+}
+
+export async function getContentPosts(lang: SupportedLanguage): Promise<ContentPost[]> {
+  return unstable_cache(() => loadContentPosts(lang), ['content-posts', lang], {
+    tags: ['content'],
+    revalidate: 300,
+  })();
 }
 
 export async function getContentPost(lang: SupportedLanguage, slug: string): Promise<ContentPost | null> {

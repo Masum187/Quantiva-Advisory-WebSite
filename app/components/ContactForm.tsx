@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { submitContact, validateContactClient } from '../lib/submitContact';
+import { submitApplication, submitContact, validateContactClient } from '../lib/submitContact';
 import { ensureRecaptchaScript } from '../lib/recaptchaClient';
 
 interface ContactFormProps {
@@ -27,6 +27,7 @@ export default function ContactForm({ lang, jobTitle, jobId }: ContactFormProps)
       email: 'E-Mail',
       message: 'Nachricht',
       submit: 'Senden',
+      cv: 'Lebenslauf (PDF oder Word, max. 8 MB)',
       sending: 'Wird gesendet...',
       success: 'Vielen Dank! Wir melden uns in Kürze.',
       errorGeneric: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.',
@@ -36,6 +37,7 @@ export default function ContactForm({ lang, jobTitle, jobId }: ContactFormProps)
       email: 'Email',
       message: 'Message',
       submit: 'Send',
+      cv: 'CV (PDF or Word, max. 8 MB)',
       sending: 'Sending...',
       success: 'Thank you! We will get back to you shortly.',
       errorGeneric: 'An error occurred. Please try again later.',
@@ -49,6 +51,8 @@ export default function ContactForm({ lang, jobTitle, jobId }: ContactFormProps)
     setError('');
 
     const formData = new FormData(form);
+    const isApplication = Boolean(jobTitle || jobId);
+    const cvFile = formData.get('cv');
     const data = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
@@ -57,6 +61,7 @@ export default function ContactForm({ lang, jobTitle, jobId }: ContactFormProps)
       lang,
       jobTitle,
       jobId,
+      cv: cvFile instanceof File && cvFile.size > 0 ? cvFile : undefined,
     };
 
     const clientError = validateContactClient(data);
@@ -67,7 +72,7 @@ export default function ContactForm({ lang, jobTitle, jobId }: ContactFormProps)
     }
 
     try {
-      const result = await submitContact(data);
+      const result = isApplication ? await submitApplication(data) : await submitContact(data);
       if (!result.ok) {
         setStatus('error');
         setError(result.error || t[lang].errorGeneric);
@@ -142,6 +147,22 @@ export default function ContactForm({ lang, jobTitle, jobId }: ContactFormProps)
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors resize-y"
         />
       </div>
+
+      {jobTitle || jobId ? (
+        <div>
+          <label htmlFor="cv" className="block text-sm font-medium text-gray-700 mb-2">
+            {t[lang].cv}
+          </label>
+          <input
+            type="file"
+            id="cv"
+            name="cv"
+            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            disabled={status === 'loading'}
+            className="w-full text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-teal-50 file:px-4 file:py-2 file:text-teal-800"
+          />
+        </div>
+      ) : null}
 
       {/* Honeypot (hidden field for bot protection) */}
       <input

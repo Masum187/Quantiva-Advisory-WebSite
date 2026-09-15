@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import SearchPageClient from '../../components/pages/search/SearchPageClient';
 import { getSearchItems } from '../../lib/utils/searchIndex';
 
@@ -16,5 +17,9 @@ export const metadata: Metadata = {
 
 export default async function SearchPage() {
   const items = await getSearchItems('en');
-  return <SearchPageClient items={items} lang="en" />;
+  return (
+    <Suspense fallback={null}>
+      <SearchPageClient items={items} lang="en" />
+    </Suspense>
+  );
 }

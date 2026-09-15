@@ -17,11 +17,18 @@ function parseSender(from: string): { name: string; email: string } {
   return { name: 'Quantiva Advisory', email: from.trim() };
 }
 
+export type MailAttachment = {
+  filename: string;
+  content: string;
+  contentType?: string;
+};
+
 export async function sendMail(payload: {
   to: string;
   subject: string;
   html: string;
   replyTo?: string;
+  attachments?: MailAttachment[];
 }): Promise<boolean> {
   const from = process.env.MAIL_FROM;
   if (!from) return false;
@@ -41,6 +48,14 @@ export async function sendMail(payload: {
         subject: payload.subject,
         htmlContent: payload.html,
         ...(payload.replyTo ? { replyTo: { email: payload.replyTo } } : {}),
+        ...(payload.attachments?.length
+          ? {
+              attachment: payload.attachments.map((file) => ({
+                name: file.filename,
+                content: file.content,
+              })),
+            }
+          : {}),
       }),
     });
 
@@ -65,6 +80,14 @@ export async function sendMail(payload: {
         subject: payload.subject,
         html: payload.html,
         ...(payload.replyTo ? { reply_to: payload.replyTo } : {}),
+        ...(payload.attachments?.length
+          ? {
+              attachments: payload.attachments.map((file) => ({
+                filename: file.filename,
+                content: file.content,
+              })),
+            }
+          : {}),
       }),
     });
 

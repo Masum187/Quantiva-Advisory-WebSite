@@ -40,6 +40,8 @@ A modern, responsive website for Quantiva Advisory with internationalization (Ge
 - Node.js 20 or higher (see `engines` in package.json)
 - npm or yarn
 
+Betriebs-Playbooks: [Search Console](docs/ops-search-console.md) · [Contentful](docs/ops-content.md) · [Calendly](docs/ops-calendly.md) · [HRIS](docs/ops-hris.md)
+
 ### Installation
 
 1. Clone the repository or navigate to the project directory:
