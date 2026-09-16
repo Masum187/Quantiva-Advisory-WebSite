@@ -108,7 +108,7 @@ async function loadContentPost(lang: SupportedLanguage, slug: string): Promise<C
   }
 
   const post = mapContentfulPost(entries[0], lang);
-  return post ?? mapFallbackPosts(lang).find((item) => item.slug === slug) || null;
+  return post ?? mapFallbackPosts(lang).find((item) => item.slug === slug) ?? null;
 }
 
 export async function getContentPost(lang: SupportedLanguage, slug: string): Promise<ContentPost | null> {
