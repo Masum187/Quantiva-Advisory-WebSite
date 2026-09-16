@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache';
 import jobsData from '../data/jobs.json';
 import { createJobPosting, fetchEntries, isContentfulEnabled } from './contentful';
 import type { SupportedLanguage } from './contentHub';
@@ -54,7 +55,7 @@ const mapFallbackJobs = (lang: SupportedLanguage) =>
     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 
-export async function getJobListings(lang: SupportedLanguage): Promise<JobListing[]> {
+async function loadJobListings(lang: SupportedLanguage): Promise<JobListing[]> {
   if (!isContentfulEnabled) {
     return mapFallbackJobs(lang);
   }
@@ -73,6 +74,13 @@ export async function getJobListings(lang: SupportedLanguage): Promise<JobListin
   }
 
   return jobs;
+}
+
+export async function getJobListings(lang: SupportedLanguage): Promise<JobListing[]> {
+  return unstable_cache(() => loadJobListings(lang), ['job-listings', lang], {
+    tags: ['jobs'],
+    revalidate: 300,
+  })();
 }
 
 export async function submitJobPosting(form: JobListing & { body?: string }) {

@@ -92,13 +92,14 @@ export async function getContentPosts(lang: SupportedLanguage): Promise<ContentP
   })();
 }
 
-export async function getContentPost(lang: SupportedLanguage, slug: string): Promise<ContentPost | null> {
+async function loadContentPost(lang: SupportedLanguage, slug: string): Promise<ContentPost | null> {
   if (!isContentfulEnabled) {
     return mapFallbackPosts(lang).find((post) => post.slug === slug) || null;
   }
 
   const entries = await fetchEntries('contentPost', {
     'fields.slug': slug,
+    'fields.language': lang,
     limit: 1,
   });
 
@@ -107,5 +108,12 @@ export async function getContentPost(lang: SupportedLanguage, slug: string): Pro
   }
 
   const post = mapContentfulPost(entries[0], lang);
-  return post ?? null;
+  return post ?? mapFallbackPosts(lang).find((item) => item.slug === slug) || null;
+}
+
+export async function getContentPost(lang: SupportedLanguage, slug: string): Promise<ContentPost | null> {
+  return unstable_cache(() => loadContentPost(lang, slug), ['content-post', lang, slug], {
+    tags: ['content'],
+    revalidate: 300,
+  })();
 }
