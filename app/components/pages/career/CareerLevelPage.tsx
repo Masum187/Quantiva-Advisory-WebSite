@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import SiteNav from '../../SiteNav';
 import ContactForm from '../../ContactForm';
 import { EASE, SpotlightCard } from '../projects/detail/shared';
-import { getJobListings, type JobListing } from '../../../lib/utils/jobs';
+import type { JobListing } from '../../../lib/utils/jobs';
 import {
   careerLevels,
   getNextCareerLevel,
@@ -38,42 +38,18 @@ const APPLY_MAILTO = 'mailto:careers@quantiva-advisory.com';
 interface CareerLevelPageProps {
   lang: Lang;
   level: CareerLevelSlug;
+  jobs?: JobListing[];
 }
 
-export default function CareerLevelPage({ lang, level }: CareerLevelPageProps) {
+export default function CareerLevelPage({ lang, level, jobs = [] }: CareerLevelPageProps) {
   const data = careerLevels[level];
   const copy = data[lang];
   const next = getNextCareerLevel(level);
   const nextCopy = next[lang];
 
-  const [jobs, setJobs] = useState<JobListing[]>([]);
-  const [jobLoading, setJobLoading] = useState(true);
-  const [jobError, setJobError] = useState<string | null>(null);
+  const jobLoading = false;
+  const jobError = null;
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    setJobLoading(true);
-    getJobListings(lang)
-      .then((listings) => {
-        if (mounted) setJobs(listings);
-      })
-      .catch(() => {
-        if (mounted) {
-          setJobError(
-            lang === 'de'
-              ? 'Stellen konnten nicht geladen werden.'
-              : 'Unable to load job listings.',
-          );
-        }
-      })
-      .finally(() => {
-        if (mounted) setJobLoading(false);
-      });
-    return () => {
-      mounted = false;
-    };
-  }, [lang]);
 
   const filteredJobs = useMemo(
     () => jobs.filter((job) => jobMatchesCareerLevel(job, level)),

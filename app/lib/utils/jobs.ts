@@ -62,7 +62,6 @@ async function loadJobListings(lang: SupportedLanguage): Promise<JobListing[]> {
 
   const entries = await fetchEntries('jobPosting', {
     'fields.language': lang,
-    order: '-fields.publishedAt',
   });
 
   const jobs = (entries || [])

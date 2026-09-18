@@ -1,15 +1,9 @@
 import type { Metadata } from 'next';
-import CareerLevelJsonLd from '../../../components/CareerLevelJsonLd';
-import CareerLevelPage from '../../../components/pages/career/CareerLevelPage';
+import CareerLevelScreen from '../../../components/pages/career/CareerLevelScreen';
 import { careerLevelMetadata } from '../../../lib/careerLevelRoute';
 
 export const metadata: Metadata = careerLevelMetadata('en', 'graduates');
 
 export default function EnCareerGraduatesPage() {
-  return (
-    <>
-      <CareerLevelJsonLd lang="en" slug="graduates" />
-      <CareerLevelPage lang="en" level="graduates" />
-    </>
-  );
+  return <CareerLevelScreen lang="en" slug="graduates" />;
 }

@@ -20,7 +20,7 @@ export default async function Career() {
         <JsonLd key={job.id} data={jobPostingJsonLd(job, 'de')} />
       ))}
       <JsonLd data={breadcrumbListJsonLd('de', careerBreadcrumb('de'))} />
-      <CareerPage />
+      <CareerPage jobs={jobs} />
     </>
   );
 }

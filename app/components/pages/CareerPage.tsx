@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import CareerCardMedia from '../CareerCardMedia';
@@ -12,7 +12,7 @@ import {
   Brain, Cloud, Code, Database, Globe, Zap, Menu, X, BriefcaseIcon
 } from 'lucide-react';
 import { useLanguage } from '../QuantivaWebsite';
-import { getJobListings, JobListing } from '../../lib/utils/jobs';
+import type { JobListing } from '../../lib/utils/jobs';
 import ContactForm from '../ContactForm';
 import { AnimatePresence } from 'framer-motion';
 import { SpotlightCard, GhostNumber, SectionLabel, EASE as CAREER_EASE } from './projects/detail/shared';
@@ -210,12 +210,12 @@ const ELEVENLABS_VOICES = {
   ],
 };
 
-export default function CareerPage() {
+export default function CareerPage({ jobs = [] }: { jobs?: JobListing[] }) {
   const { lang, localePath } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [jobListings, setJobListings] = useState<JobListing[]>([]);
-  const [jobLoading, setJobLoading] = useState(true);
-  const [jobError, setJobError] = useState<string | null>(null);
+  const jobListings = jobs;
+  const jobLoading = false;
+  const jobError = null;
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null);
   
   // Filter states
@@ -224,24 +224,6 @@ export default function CareerPage() {
   const [departmentFilter, setDepartmentFilter] = useState<string>('all');
   const [seniorityFilter, setSeniorityFilter] = useState<string>('all');
   const [remoteFilter, setRemoteFilter] = useState<string>('all');
-  useEffect(() => {
-    let mounted = true;
-    setJobLoading(true);
-    getJobListings(lang)
-      .then((jobs) => {
-        if (mounted) {
-          setJobListings(jobs);
-        }
-      })
-      .catch(() => {
-        if (mounted) setJobError(lang === 'de' ? 'Stellen konnten nicht geladen werden.' : 'Unable to load job listings.');
-      })
-      .finally(() => mounted && setJobLoading(false));
-
-    return () => {
-      mounted = false;
-    };
-  }, [lang]);
 
   const handleJobApply = async (job: JobListing) => {
     setSelectedJob(job);
