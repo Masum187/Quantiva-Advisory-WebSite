@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageCircle, Calendar, FileText, BriefcaseIcon, BookOpen, Phone, Search, X } from 'lucide-react';
+import { MessageCircle, Calendar, FileText, BriefcaseIcon, BookOpen, Phone, X } from 'lucide-react';
 import { useLanguage } from './QuantivaWebsite';
 import { usePathname } from 'next/navigation';
 
@@ -53,13 +53,6 @@ export default function FloatingDock() {
           icon: FileText,
         },
         {
-          id: 'search',
-          label: 'Suche',
-          description: 'Content, Services & Branchen finden',
-          href: localePath('/search'),
-          icon: Search,
-        },
-        {
           id: 'career',
           label: 'Karriere',
           description: 'Offene Stellen ansehen',
@@ -90,13 +83,6 @@ export default function FloatingDock() {
         description: 'See how other clients scale',
         href: localePath('/cases'),
         icon: FileText,
-      },
-      {
-        id: 'search',
-        label: 'Search',
-        description: 'Browse insights & services',
-        href: localePath('/search'),
-        icon: Search,
       },
       {
         id: 'career',

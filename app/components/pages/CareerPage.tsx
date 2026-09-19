@@ -268,7 +268,6 @@ export default function CareerPage({ jobs = [] }: { jobs?: JobListing[] }) {
     { id: 'home', label: 'Home', href: localePath('/') },
     { id: 'about', label: lang === 'de' ? 'Über uns' : 'About', href: localePath('/about') },
     { id: 'services', label: 'Services', href: localePath('/#services') },
-    { id: 'search', label: lang === 'de' ? 'Suche' : 'Search', href: localePath('/search') },
     { id: 'cases', label: lang === 'de' ? 'Projekte' : 'Cases', href: localePath('/cases') },
     { id: 'team', label: 'Team', href: localePath('/team') },
     { id: 'career', label: lang === 'de' ? 'Karriere' : 'Career', href: localePath('/career') },

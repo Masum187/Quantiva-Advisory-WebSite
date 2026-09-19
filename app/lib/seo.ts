@@ -311,14 +311,6 @@ export function websiteJsonLd(lang: SiteLang): Record<string, unknown> {
     name: SITE_NAME,
     url: SITE_URL,
     inLanguage: lang === 'de' ? 'de-DE' : 'en-US',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}${localePath(lang, '/search')}?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 

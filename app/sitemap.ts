@@ -17,7 +17,6 @@ const STATIC_PATHS = [
   '/career',
   '/cases',
   '/strategy-consulting',
-  '/search',
   '/content',
 ] as const;
 
