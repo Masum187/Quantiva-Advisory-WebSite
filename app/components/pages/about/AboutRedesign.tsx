@@ -94,7 +94,8 @@ const COPY: Record<Lang, AboutCopy> = {
       { id: 'services', label: 'Services', href: '/de#services' },
       { id: 'cases', label: 'Projekte', href: '/de/cases' },
       { id: 'team', label: 'Team', href: '/de/team' },
-      { id: 'career', label: 'Karriere', href: '/de#career' },
+      { id: 'content', label: 'Content', href: '/de/content' },
+      { id: 'career', label: 'Karriere', href: '/de/career' },
     ],
     hero: {
       kicker: 'Über Quantiva',
@@ -173,7 +174,8 @@ const COPY: Record<Lang, AboutCopy> = {
       { id: 'services', label: 'Services', href: '/en#services' },
       { id: 'cases', label: 'Cases', href: '/en/cases' },
       { id: 'team', label: 'Team', href: '/en/team' },
-      { id: 'career', label: 'Career', href: '/en#career' },
+      { id: 'content', label: 'Content', href: '/en/content' },
+      { id: 'career', label: 'Career', href: '/en/career' },
     ],
     hero: {
       kicker: 'About Quantiva',

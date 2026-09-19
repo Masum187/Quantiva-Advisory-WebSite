@@ -1,7 +1,6 @@
 import { ContentProvider } from '../lib/contexts/ContentContext';
 import { LanguageProvider } from '../components/QuantivaWebsite';
 import LaserCursor from '../components/LaserCursor';
-import FloatingDock from '../components/FloatingDock';
 import CookieBanner from '../components/CookieBanner';
 
 export default function EnLayout({
@@ -19,7 +18,6 @@ export default function EnLayout({
           Skip to main content
         </a>
         <LaserCursor />
-        <FloatingDock />
         <CookieBanner lang="en" />
         <main id="main-content" tabIndex={-1}>
           {children}

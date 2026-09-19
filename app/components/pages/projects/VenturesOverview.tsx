@@ -29,7 +29,8 @@ const COPY: Record<Lang, OverviewCopy> = {
       { id: 'services', label: 'Services', href: '/de#services' },
       { id: 'cases', label: 'Projekte', href: '/de/cases' },
       { id: 'team', label: 'Team', href: '/de/team' },
-      { id: 'career', label: 'Karriere', href: '/de#career' },
+      { id: 'content', label: 'Content', href: '/de/content' },
+      { id: 'career', label: 'Karriere', href: '/de/career' },
     ],
     heroSub:
       'Acht Produkte, ein Prinzip: Jede Aussage braucht einen Beleg. Vom Einordnen über das Beweisen bis zum Governen — das Portfolio der Quantiva GmbH.',
@@ -46,7 +47,8 @@ const COPY: Record<Lang, OverviewCopy> = {
       { id: 'services', label: 'Services', href: '/en#services' },
       { id: 'cases', label: 'Projects', href: '/en/cases' },
       { id: 'team', label: 'Team', href: '/en/team' },
-      { id: 'career', label: 'Careers', href: '/en#career' },
+      { id: 'content', label: 'Content', href: '/en/content' },
+      { id: 'career', label: 'Careers', href: '/en/career' },
     ],
     heroSub:
       'Eight products, one principle: every claim needs evidence. From classifying to proving to governing — the portfolio of Quantiva GmbH.',
