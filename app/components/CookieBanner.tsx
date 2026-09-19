@@ -50,24 +50,21 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
 
   return (
     <>
-      <div
-        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity"
-        onClick={() => setShow(false)}
-      />
+      <div className="fixed inset-0 z-[45] bg-black/40 backdrop-blur-sm transition-opacity" />
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6 animate-slide-up">
-        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-          <div className="p-6 pb-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+      <div className="fixed inset-x-0 bottom-0 z-50 p-3 sm:p-6 animate-slide-up pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-h-[min(78dvh,560px)] max-w-4xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900">
+          <div className="p-4 pb-3 sm:p-6 sm:pb-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-100 dark:bg-teal-900/30">
                   <Shield className="h-5 w-5 text-teal-600 dark:text-teal-400" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <div className="min-w-0">
+                  <h3 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
                     {lang === 'de' ? 'Ihre Privatsphäre ist uns wichtig' : 'Your privacy matters to us'}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                  <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
                     {lang === 'de'
                       ? 'Analytics nur nach Ihrer Einwilligung'
                       : 'Analytics only after your consent'}
@@ -75,36 +72,47 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
                 </div>
               </div>
               <button
-                onClick={() => setShow(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition"
-                aria-label="Schließen"
+                type="button"
+                onClick={handleDecline}
+                className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-300"
+                aria-label={lang === 'de' ? 'Ablehnen und schließen' : 'Decline and close'}
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
           </div>
 
-          <div className="px-6 pb-6">
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3 sm:px-6 sm:pb-6">
+            <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
               {lang === 'de' ? (
                 <>
                   Mit Ihrer Einwilligung nutzen wir <strong>Vercel Analytics</strong> und{' '}
                   <strong>Speed Insights</strong>. Ohne Zustimmung wird kein Tracking-Skript geladen.
-                  Widerrufen Sie eine zuvor erteilte Einwilligung, wird die Seite neu geladen, damit
-                  bereits geladene Skripte entfernt werden. Sie können Ihre Wahl jederzeit über den
-                  Banner oder die Datenschutzerklärung ändern.
+                  {showDetails ? (
+                    <>
+                      {' '}
+                      Widerrufen Sie eine zuvor erteilte Einwilligung, wird die Seite neu geladen, damit
+                      bereits geladene Skripte entfernt werden. Sie können Ihre Wahl jederzeit über den
+                      Banner oder die Datenschutzerklärung ändern.
+                    </>
+                  ) : null}
                 </>
               ) : (
                 <>
                   With your consent we use <strong>Vercel Analytics</strong> and{' '}
                   <strong>Speed Insights</strong>. No tracking script is loaded until you accept.
-                  Withdrawing a previous consent reloads the page so already injected scripts are
-                  removed. You can change your choice later via the banner or the privacy policy.
+                  {showDetails ? (
+                    <>
+                      {' '}
+                      Withdrawing a previous consent reloads the page so already injected scripts are
+                      removed. You can change your choice later via the banner or the privacy policy.
+                    </>
+                  ) : null}
                 </>
               )}
             </p>
 
-            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className={`${showDetails ? 'mt-4 grid' : 'mt-4 hidden sm:grid'} grid-cols-2 gap-3 sm:grid-cols-4`}>
               <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                 <Shield className="h-4 w-4 text-teal-400" />
                 <span>Opt-in</span>
@@ -126,7 +134,9 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
             {showDetails && (
               <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-xs text-gray-600 dark:text-gray-300 space-y-2">
                 <div>
-                  <strong className="text-gray-900 dark:text-white">Was wir erfassen:</strong>
+                  <strong className="text-gray-900 dark:text-white">
+                    {lang === 'de' ? 'Was wir erfassen:' : 'What we collect:'}
+                  </strong>
                   <ul className="mt-1 ml-4 list-disc space-y-1">
                     {privacyConfig.trackedData.map((item, i) => (
                       <li key={i}>{item}</li>
@@ -134,7 +144,9 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
                   </ul>
                 </div>
                 <div>
-                  <strong className="text-gray-900 dark:text-white">Was wir NICHT erfassen:</strong>
+                  <strong className="text-gray-900 dark:text-white">
+                    {lang === 'de' ? 'Was wir NICHT erfassen:' : 'What we do not collect:'}
+                  </strong>
                   <ul className="mt-1 ml-4 list-disc space-y-1">
                     {privacyConfig.notTracked.slice(0, 5).map((item, i) => (
                       <li key={i}>{item}</li>
@@ -145,36 +157,46 @@ export default function CookieBanner({ lang = 'de' }: { lang?: 'de' | 'en' }) {
             )}
 
             <button
+              type="button"
               onClick={() => setShowDetails(!showDetails)}
-              className="mt-3 text-xs text-teal-600 dark:text-teal-400 hover:underline"
+              className="mt-3 min-h-11 text-left text-xs text-teal-600 hover:underline dark:text-teal-400"
             >
-              {showDetails ? 'Weniger anzeigen' : 'Mehr Details anzeigen'}
+              {showDetails
+                ? lang === 'de'
+                  ? 'Weniger anzeigen'
+                  : 'Show less'
+                : lang === 'de'
+                  ? 'Mehr Details anzeigen'
+                  : 'Show more details'}
             </button>
           </div>
 
-          <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={handleAccept}
-              className="flex-1 rounded-xl bg-teal-600 px-6 py-3 font-medium text-white hover:bg-teal-500 transition shadow-lg shadow-teal-500/20"
-            >
-              {lang === 'de' ? 'Akzeptieren' : 'Accept'}
-            </button>
-            <button
-              onClick={handleDecline}
-              className="flex-1 rounded-xl border border-gray-300 dark:border-gray-700 px-6 py-3 font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-            >
-              {lang === 'de' ? 'Ablehnen' : 'Decline'}
-            </button>
-          </div>
-
-          <div className="px-6 pb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-            {lang === 'de' ? 'Mehr Informationen in unserer' : 'More information in our'}{' '}
-            <Link
-              href={lang === 'de' ? '/de/datenschutz' : '/en/privacy'}
-              className="text-teal-600 dark:text-teal-400 hover:underline"
-            >
-              {lang === 'de' ? 'Datenschutzerklärung' : 'privacy policy'}
-            </Link>
+          <div className="shrink-0 border-t border-gray-200 px-4 pb-3 pt-3 sm:px-6 sm:pb-4 dark:border-gray-800">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={handleAccept}
+                className="min-h-11 flex-1 rounded-xl bg-teal-600 px-6 py-3 font-medium text-white shadow-lg shadow-teal-500/20 transition hover:bg-teal-500"
+              >
+                {lang === 'de' ? 'Akzeptieren' : 'Accept'}
+              </button>
+              <button
+                type="button"
+                onClick={handleDecline}
+                className="min-h-11 flex-1 rounded-xl border border-gray-300 px-6 py-3 font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                {lang === 'de' ? 'Ablehnen' : 'Decline'}
+              </button>
+            </div>
+            <p className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
+              {lang === 'de' ? 'Mehr Informationen in unserer' : 'More information in our'}{' '}
+              <Link
+                href={lang === 'de' ? '/de/datenschutz' : '/en/privacy'}
+                className="text-teal-600 hover:underline dark:text-teal-400"
+              >
+                {lang === 'de' ? 'Datenschutzerklärung' : 'privacy policy'}
+              </Link>
+            </p>
           </div>
         </div>
       </div>

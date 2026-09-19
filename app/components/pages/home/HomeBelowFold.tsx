@@ -636,7 +636,7 @@ function MeetingSection({ copy }: { copy: MeetingCopy }) {
           <div
             className="calendly-inline-widget"
             data-url={widgetUrl}
-            style={{ minWidth: 320, height: 720, width: '100%' }}
+            style={{ minWidth: 0, height: 720, width: '100%' }}
           />
         </motion.div>
 
@@ -671,7 +671,7 @@ function HomeFooter({ copy }: { copy: FooterCopy }) {
           <ul className="mt-5 space-y-2.5">
             {copy.quickLinks.map((link) => (
               <li key={link.id}>
-                <Link href={link.href} className="text-sm font-light text-gray-300 transition hover:text-white">
+                <Link href={link.href} className="inline-flex min-h-11 items-center text-sm font-light text-gray-300 transition hover:text-white">
                   {link.label}
                 </Link>
               </li>
@@ -726,12 +726,12 @@ function HomeFooter({ copy }: { copy: FooterCopy }) {
           </div>
         ) : null}
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-white/5 py-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.25em] text-gray-600">
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 border-t border-white/5 py-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.25em] text-gray-600">
         <span>{copy.copyright}</span>
-        <Link href={copy.legal.imprint.href} className="transition hover:text-white">
+        <Link href={copy.legal.imprint.href} className="inline-flex min-h-11 items-center transition hover:text-white">
           {copy.legal.imprint.label}
         </Link>
-        <Link href={copy.legal.privacy.href} className="transition hover:text-white">
+        <Link href={copy.legal.privacy.href} className="inline-flex min-h-11 items-center transition hover:text-white">
           {copy.legal.privacy.label}
         </Link>
       </div>

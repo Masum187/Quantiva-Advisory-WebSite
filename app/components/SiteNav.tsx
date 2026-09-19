@@ -77,6 +77,15 @@ export default function SiteNav({ lang, variant = 'solid' }: SiteNavProps) {
     setOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   const switchLangHref = switchLocalePath(pathname || `/${lang}`, lang === 'de' ? 'en' : 'de');
 
   const isDark =
@@ -93,7 +102,7 @@ export default function SiteNav({ lang, variant = 'solid' }: SiteNavProps) {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
         <Link
           href={`/${lang}`}
-          className="font-mono text-sm uppercase tracking-[0.3em] text-white"
+          className="font-mono text-sm uppercase tracking-[0.16em] text-white sm:tracking-[0.3em]"
         >
           Quantiva<span style={{ color: ACCENT }}>·</span>Advisory
         </Link>
@@ -138,8 +147,8 @@ export default function SiteNav({ lang, variant = 'solid' }: SiteNavProps) {
         {/* Mobile */}
         <button
           onClick={() => setOpen((v) => !v)}
-          className="rounded-md p-2 text-white transition hover:bg-white/10 md:hidden"
-          aria-label="Menu"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2 text-white transition hover:bg-white/10 md:hidden"
+          aria-label={open ? (lang === 'de' ? 'Menü schließen' : 'Close menu') : (lang === 'de' ? 'Menü öffnen' : 'Open menu')}
           aria-expanded={open}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -154,7 +163,7 @@ export default function SiteNav({ lang, variant = 'solid' }: SiteNavProps) {
                 key={item.id}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-2.5 text-sm uppercase tracking-[0.15em] text-gray-200 transition hover:bg-white/5"
+                className="min-h-11 rounded-md px-3 py-3 text-sm uppercase tracking-[0.15em] text-gray-200 transition hover:bg-white/5"
               >
                 {item.label}
               </Link>
@@ -162,14 +171,14 @@ export default function SiteNav({ lang, variant = 'solid' }: SiteNavProps) {
             <div className="mt-3 flex items-center gap-3 border-t border-white/10 pt-4">
               <Link
                 href={switchLangHref}
-                className="flex-1 rounded-full border border-white/15 px-3 py-2 text-center font-mono text-xs uppercase tracking-widest text-gray-300"
+                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-white/15 px-3 py-2 text-center font-mono text-xs uppercase tracking-widest text-gray-300"
               >
                 {copy.langLabel}
               </Link>
               <Link
                 href={`/${lang}#contact`}
                 onClick={() => setOpen(false)}
-                className="flex-1 rounded-full px-4 py-2 text-center text-sm font-semibold text-black"
+                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full px-4 py-2 text-center text-sm font-semibold text-black"
                 style={{ background: ACCENT }}
               >
                 {copy.cta}

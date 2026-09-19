@@ -123,7 +123,7 @@ export default function ProcuveraLayout({
             >
               ● {venture.category}
             </motion.p>
-            <h1 className="mt-6 whitespace-nowrap text-[clamp(2.4rem,5.6vw,5.2rem)] font-bold uppercase leading-[0.92] tracking-tight">
+            <h1 className="mt-6 text-[clamp(2.4rem,5.6vw,5.2rem)] font-bold uppercase leading-[0.92] tracking-tight md:whitespace-nowrap">
               <LetterHeadline text={venture.name} delay={0.25} />
             </h1>
             <motion.p
