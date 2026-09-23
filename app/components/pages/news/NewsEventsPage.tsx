@@ -73,6 +73,8 @@ const COPY = {
   },
 } as const;
 
+type Copy = (typeof COPY)[Lang];
+
 function formatNewsDate(iso: string, lang: Lang): string {
   return new Intl.DateTimeFormat(lang === 'de' ? 'de-DE' : 'en-GB', {
     day: 'numeric',
@@ -415,7 +417,7 @@ function EventCard({
 }: {
   event: ListedEvent;
   lang: Lang;
-  copy: (typeof COPY)['de'];
+  copy: Copy;
 }) {
   const reduce = useReducedMotion();
 
