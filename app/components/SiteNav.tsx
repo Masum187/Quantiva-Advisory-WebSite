@@ -38,7 +38,7 @@ const NAV_COPY: Record<Lang, { items: NavItem[]; cta: string; langLabel: string 
       { id: 'services', label: 'Services', href: '/de#services' },
       { id: 'cases', label: 'Projekte', href: '/de/cases' },
       { id: 'team', label: 'Team', href: '/de/team' },
-      { id: 'content', label: 'Content', href: '/de/content' },
+      { id: 'news', label: 'News & Events', href: '/de/news' },
       { id: 'career', label: 'Karriere', href: '/de/career' },
     ],
     cta: 'Kontakt',
@@ -50,7 +50,7 @@ const NAV_COPY: Record<Lang, { items: NavItem[]; cta: string; langLabel: string 
       { id: 'services', label: 'Services', href: '/en#services' },
       { id: 'cases', label: 'Projects', href: '/en/cases' },
       { id: 'team', label: 'Team', href: '/en/team' },
-      { id: 'content', label: 'Content', href: '/en/content' },
+      { id: 'news', label: 'News & Events', href: '/en/news' },
       { id: 'career', label: 'Careers', href: '/en/career' },
     ],
     cta: 'Contact',
@@ -99,23 +99,23 @@ export default function SiteNav({ lang, variant = 'solid' }: SiteNavProps) {
           : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:py-5">
         <Link
           href={`/${lang}`}
-          className="font-mono text-sm uppercase tracking-[0.16em] text-white sm:tracking-[0.3em]"
+          className="shrink-0 font-mono text-sm uppercase tracking-[0.12em] text-white xl:tracking-[0.28em]"
         >
           Quantiva<span style={{ color: ACCENT }}>·</span>Advisory
         </Link>
 
         {/* Desktop */}
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden min-w-0 items-center gap-3 xl:gap-6 md:flex">
           {copy.items.map((item) => {
             const active = pathname === item.href;
             return (
               <Link
                 key={item.id}
                 href={item.href}
-                className={`text-[0.8rem] uppercase tracking-[0.18em] transition ${
+                className={`text-[0.68rem] uppercase tracking-[0.1em] transition xl:text-[0.8rem] xl:tracking-[0.16em] ${
                   active ? 'text-white' : 'text-gray-400 hover:text-white'
                 }`}
                 style={active ? { color: ACCENT } : undefined}
@@ -132,7 +132,7 @@ export default function SiteNav({ lang, variant = 'solid' }: SiteNavProps) {
           </Link>
           <Link
             href={`/${lang}#contact`}
-            className="group relative overflow-hidden rounded-full border px-6 py-2 text-[0.8rem] font-semibold uppercase tracking-[0.18em] text-white transition-colors duration-300 hover:text-black"
+            className="group relative shrink-0 overflow-hidden rounded-full border px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:text-black xl:px-6 xl:text-[0.8rem] xl:tracking-[0.16em]"
             style={{ borderColor: `${ACCENT}66` }}
           >
             <span

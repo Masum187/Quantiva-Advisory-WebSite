@@ -1,7 +1,7 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
-const ALLOWED_TAGS = new Set(['content', 'jobs']);
+const ALLOWED_TAGS = new Set(['content', 'jobs', 'events', 'news']);
 
 function localizedString(value: unknown): string | undefined {
   if (typeof value === 'string' && value.trim()) return value.trim();
@@ -48,6 +48,10 @@ export async function POST(req: NextRequest) {
   revalidatePath('/en/content');
   revalidatePath('/de/career');
   revalidatePath('/en/career');
+  revalidatePath('/de/news');
+  revalidatePath('/en/news');
+  revalidatePath('/de/content/[slug]', 'page');
+  revalidatePath('/en/content/[slug]', 'page');
   if (slug) {
     revalidatePath(`/de/content/${slug}`);
     revalidatePath(`/en/content/${slug}`);

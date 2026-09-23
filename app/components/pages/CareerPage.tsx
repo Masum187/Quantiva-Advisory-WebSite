@@ -270,7 +270,6 @@ export default function CareerPage({ jobs = [] }: { jobs?: JobListing[] }) {
     { id: 'services', label: 'Services', href: localePath('/#services') },
     { id: 'cases', label: lang === 'de' ? 'Projekte' : 'Cases', href: localePath('/cases') },
     { id: 'team', label: 'Team', href: localePath('/team') },
-    { id: 'content', label: 'Content', href: localePath('/content') },
     { id: 'career', label: lang === 'de' ? 'Karriere' : 'Career', href: localePath('/career') },
   ];
   const [isVoicePlaying, setIsVoicePlaying] = useState(false);

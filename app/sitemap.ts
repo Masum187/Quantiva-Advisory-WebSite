@@ -18,6 +18,7 @@ const STATIC_PATHS = [
   '/cases',
   '/strategy-consulting',
   '/content',
+  '/news',
 ] as const;
 
 const SERVICE_SLUGS = Array.from(

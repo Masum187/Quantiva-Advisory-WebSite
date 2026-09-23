@@ -94,7 +94,6 @@ const COPY: Record<Lang, AboutCopy> = {
       { id: 'services', label: 'Services', href: '/de#services' },
       { id: 'cases', label: 'Projekte', href: '/de/cases' },
       { id: 'team', label: 'Team', href: '/de/team' },
-      { id: 'content', label: 'Content', href: '/de/content' },
       { id: 'career', label: 'Karriere', href: '/de/career' },
     ],
     hero: {
@@ -174,7 +173,6 @@ const COPY: Record<Lang, AboutCopy> = {
       { id: 'services', label: 'Services', href: '/en#services' },
       { id: 'cases', label: 'Cases', href: '/en/cases' },
       { id: 'team', label: 'Team', href: '/en/team' },
-      { id: 'content', label: 'Content', href: '/en/content' },
       { id: 'career', label: 'Career', href: '/en/career' },
     ],
     hero: {
